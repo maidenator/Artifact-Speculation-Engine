@@ -24,3 +24,9 @@ dist-ssr
 *.sw?
 *.exe
 emscripten/
+external/
+
+# CMake build directories
+build/
+build-*/
+out/

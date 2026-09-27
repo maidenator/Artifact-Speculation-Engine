@@ -81,7 +81,6 @@ constexpr std::array<MainStatWeight, CIRCLET_MAIN_STAT_COUNT> CIRCLET_MAIN_STATS
     with its corresponding roll chance (in percent)
     given a valid Artifact Slot.
 */
-
 inline std::span<const MainStatWeight> getMainStatWeights(ArtifactSlot slot) {
     switch (slot) {
         case ArtifactSlot::flower:  return FLOWER_MAIN_STATS;
