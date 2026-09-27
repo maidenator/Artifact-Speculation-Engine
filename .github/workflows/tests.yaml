@@ -1,8 +1,10 @@
-name: Tests
+name: C++ Tests
 
 on:
   push:
+    paths: 'cpp/**'
   pull_request:
+    paths: 'cpp/**'
 
 jobs:
   test:
