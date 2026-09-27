@@ -15,6 +15,6 @@ ___
 - [ ] Multithreading
 
 **Testing & CI**
-- [ ] Unit tests for distributions (verify weight tables actually sum to 100)
-- [ ] Unit tests for RNG
-- [ ] Automated testing via GitHub Actions
+- [x] Unit tests for distributions (verify weight tables actually sum to 100)
+- [x] Unit tests for RNG (Just a smokescreen test, cant really test Xoshiro without beating it with TestU01)
+- [x] Automated testing via GitHub Actions
