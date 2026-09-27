@@ -1,0 +1,20 @@
+## Artifact Speculation Engine
+
+**An artifact domain simulator that uses a Monte Carlo engine to simulate game accurate artifact runs.**
+___
+### TODO:
+
+**Core Engine**
+- [x] Artifact generation (slot, main stat, initial substats)
+- [x] Level-up simulation (+4 per upgrade, substat unlock/reroll)
+- [x] Crit Value calculation
+- [ ] Artifact set bonuses (2pc/4pc) `SET_SPLIT_RATE` exists but sets aren't modeled yet
+
+**Performance**
+- [ ] Profile the hot loop (identify real bottlenecks before optimizing)
+- [ ] Multithreading
+
+**Testing & CI**
+- [ ] Unit tests for distributions (verify weight tables actually sum to 100)
+- [ ] Unit tests for RNG
+- [ ] Automated testing via GitHub Actions
