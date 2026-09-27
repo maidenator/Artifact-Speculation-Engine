@@ -177,7 +177,7 @@ inline Artifact generateArtifact(rng::Xoshiro256 &rng) {
  * @param rng Reference to the Xoshiro256 random engine.
  */
 inline void upgradeArtifactOnce(Artifact &art, rng::Xoshiro256 &rng) {
-    assert(art.level < 20 && "Artifact level must be less than to equal to 20");
+    assert(art.level < 20 && "Artifact level must be less than 20");
 
     size_t totalPoolSize = distributions::ALL_SUBSTATS.size();
     
@@ -207,7 +207,7 @@ inline void upgradeArtifactOnce(Artifact &art, rng::Xoshiro256 &rng) {
     // Check if the artifact is a four liner
     bool isFourLiner = (art.substatCount == 4);
 
-    if(!isFourLiner) {
+    if (!isFourLiner) {
         // Case A: Adding the 4th substat (3-liner upgrades to 4-liner)
         uint32_t totalWeight = 0;
         for (size_t j = 0; j < totalPoolSize; ++j) {
@@ -229,17 +229,18 @@ inline void upgradeArtifactOnce(Artifact &art, rng::Xoshiro256 &rng) {
             }
         }
 
-        // Add the new 4th substat
+        // Add the new 4th substat with rolls = 1
         art.subStats[3] = {
             distributions::ALL_SUBSTATS[chosenIndex],
-            rollSubstatValue(distributions::ALL_SUBSTATS[chosenIndex], rng)
+            rollSubstatValue(distributions::ALL_SUBSTATS[chosenIndex], rng),
+            1 // <--- Initial roll count
         };
         art.substatCount = 4;
     } else {
         // Case B: Boosting an existing substat (Randomly pick one of the 4 to upgrade)
         int upgradeIndex = rng::fastUniformRange(0, 3, rng);
-        // Add a roll's worth of value to the chosen substat
         art.subStats[upgradeIndex].value += rollSubstatValue(art.subStats[upgradeIndex].type, rng);
+        art.subStats[upgradeIndex].rolls++;
     }
 
     art.level += 4;

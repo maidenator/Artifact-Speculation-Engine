@@ -12,7 +12,7 @@ inline std::ostream& operator<<(std::ostream& out, const ArtifactSlot value) {
         case ArtifactSlot::sands: out << "Sands of Eon"; break;
         case ArtifactSlot::goblet: out << "Goblet of Eonothem"; break;
         case ArtifactSlot::circlet: out << "Circlet of Logos"; break;
-        default: "Unknown"; break;
+        default: out << "Unknown"; break;
     }
     return out;
 }
@@ -34,7 +34,7 @@ inline std::ostream& operator<<(std::ostream& out, const ArtifactSubstat value) 
         case ArtifactSubstat::hpFlat: out << "HP"; break;
         case ArtifactSubstat::defFlat: out << "DEF"; break;
 
-        default: "Unknown"; break;
+        default: out << "Unknown"; break;
 
     }
     return out;

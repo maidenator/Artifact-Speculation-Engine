@@ -15,9 +15,13 @@ add_executable(tests
     cpp/tests/test_distributions.cpp
     cpp/tests/test_random_utils.cpp
     cpp/tests/test_generator.cpp
+    cpp/tests/test_simulator.cpp
 )
 
-target_include_directories(tests PRIVATE cpp/artifact)
+target_include_directories(tests PRIVATE 
+    cpp/artifact
+    cpp/domain
+)
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
 
 include(CTest)
