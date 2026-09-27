@@ -17,7 +17,6 @@ inline std::ostream& operator<<(std::ostream& out, const ArtifactSlot value) {
     return out;
 }
 
-
 // Artifact Substat
 inline std::ostream& operator<<(std::ostream& out, const ArtifactSubstat value) {
     switch(value) {

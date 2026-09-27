@@ -171,12 +171,11 @@ inline Artifact generateArtifact(rng::Xoshiro256 &rng) {
 }
 
 /**
- * @brief TODO: Simulates upgrading an artifact level, either adding a new substat or boosting an existing one.
+ * Simulates upgrading an artifact level, either adding a new substat or boosting an existing one.
  * 
  * @param art Reference to the artifact being upgraded.
  * @param rng Reference to the Xoshiro256 random engine.
  */
-// TODO: implement upgradeArtifact(...)
 inline void upgradeArtifactOnce(Artifact &art, rng::Xoshiro256 &rng) {
     assert(art.level < 20 && "Artifact level must be less than to equal to 20");
 
