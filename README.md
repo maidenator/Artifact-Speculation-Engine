@@ -8,7 +8,6 @@ ___
 - [x] Artifact generation (slot, main stat, initial substats)
 - [x] Level-up simulation (+4 per upgrade, substat unlock/reroll)
 - [x] Crit Value calculation
-- [ ] Artifact set bonuses (2pc/4pc) `SET_SPLIT_RATE` exists but sets aren't modeled yet
 
 **Performance**
 - [ ] Profile the hot loop (identify real bottlenecks before optimizing)
