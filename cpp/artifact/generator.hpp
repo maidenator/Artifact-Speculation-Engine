@@ -131,6 +131,7 @@ inline Artifact generateArtifactSubstats(MainStat mainStat, rng::Xoshiro256 &rng
         selectedStats[chosenIndex] = true;
         art.subStats[i].type = distributions::ALL_SUBSTATS[chosenIndex];
         art.subStats[i].value = rollSubstatValue(distributions::ALL_SUBSTATS[chosenIndex], rng);
+        art.subStats[i].rolls = 1;
     }
 
     return art;
