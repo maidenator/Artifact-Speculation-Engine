@@ -263,25 +263,25 @@ export default function App() {
       <style>{CSS}</style>
 
       <header>
-        <h1>Artifact Speculation Engine</h1>
-        <p className="lede">Spend a resin budget on artifact domains and see what you would realistically end up with.</p>
+        <h1 className="font-genshin font-bold text-3xl">Artifact Speculation Engine</h1>
+        <p className="lede">Simulate resin spending and see what you'd realistically get</p>
         <p className={`status ${engineError ? "bad" : engineReady ? "ok" : ""}`} role="status">
           <span className="dot" />
           {engineError ?? (engineReady ? "Engine ready" : "Loading engine...")}
         </p>
       </header>
 
-      <section className="card">
+      <section className="card">  
         <h2>Resin</h2>
         <div className="grid">
           <Field id="mode" label="What should it do?" hint={mode === 0 ? "Spend the whole budget and show the best pieces." : "Keep farming until a piece meets your goal or the budget runs out."}>
             <select id="mode" value={mode} onChange={(e) => setMode(Number(e.target.value))}>
-              <option value={0}>Spend a fixed amount of resin</option>
-              <option value={1}>Farm until I hit a goal</option>
+              <option value={0}>Total resin to spend</option>
+              <option value={1}>Farm until target is reached</option>
             </select>
           </Field>
 
-          <Field id="resin" label={mode === 0 ? "Resin to spend" : "Most resin to spend"} hint={`${runs.toLocaleString()} domain runs, about ${fmtDays(resinBudget / RESIN_PER_DAY)} of resin at ${RESIN_PER_DAY}/day`}>
+          <Field id="resin" label={mode === 0 ? "Resin to spend" : "Maximum resin to spend"} hint={`${runs.toLocaleString()} domain runs, about ${fmtDays(resinBudget / RESIN_PER_DAY)} of resin at ${RESIN_PER_DAY}/day`}>
             <input
               id="resin" type="number" inputMode="numeric" min={RESIN_PER_RUN} step={RESIN_PER_RUN}
               value={resinBudget || ""}
@@ -298,14 +298,14 @@ export default function App() {
         <label className="check">
           <input type="checkbox" checked={useStrongBox} onChange={(e) => setUseStrongBox(e.target.checked)} />
           <span>
-            Recycle unwanted 5★ pieces in the Strongbox
+            Strongbox?
             <small>Turns 3 unwanted pieces into 1 extra roll.</small>
           </span>
         </label>
       </section>
 
       <section className="card">
-        <h2>Speculator configuration</h2>
+        <h2>Speculator Config</h2>
         <div className="grid">
           <Field id="topk" label="Pieces to keep" hint="The best pieces by score are shown after the run.">
             <input
