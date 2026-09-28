@@ -339,8 +339,8 @@ export default function App() {
         </div>
 
         <details className="advanced">
-          <summary>Scoring weights {hasWeights ? "" : "(none set, using Crit Value)"}</summary>
-          <p className="hint">Pieces are ranked by summing each substat × its weight. Set a weight to 0 to ignore that stat.</p>
+          <summary>Substat Priority {hasWeights ? "" : "(none set, using Crit Value)"}</summary>
+          <p className="hint">Pieces are ranked by summing each substat * its weight. Setting a weight to 0 to ignores that substat.</p>
           <div className="chips">
             {WEIGHT_PRESETS.map((p) => (
               <button key={p.label} type="button" className="chip" onClick={() => setWeights(weightsFrom(p.weights))}>{p.label}</button>
