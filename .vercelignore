@@ -1,0 +1,10 @@
+node_modules
+.git
+.vercel
+dist
+build
+emscripten
+emsdk
+.vscode
+.idea
+*.log
