@@ -305,7 +305,7 @@ export default function App() {
       </section>
 
       <section className="card">
-        <h2>What you are hunting for</h2>
+        <h2>Speculator configuration</h2>
         <div className="grid">
           <Field id="topk" label="Pieces to keep" hint="The best pieces by score are shown after the run.">
             <input
