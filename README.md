@@ -11,7 +11,7 @@ ___
 
 **Performance**
 - [ ] Profile the hot loop (identify real bottlenecks before optimizing)
-- [ ] Multithreading
+- [x] Multithreading
 
 **Testing & CI**
 - [x] Unit tests for distributions (verify weight tables actually sum to 100)
