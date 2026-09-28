@@ -27,28 +27,115 @@ interface WorkerMessageData {
   error?: string
 }
 
-const MAIN_STAT_NAMES: Record<number, string> = {
-  0: "Crit DMG", 1: "Crit Rate", 2: "Elemental Mastery", 3: "Energy Recharge",
-  4: "ATK%", 5: "Flat ATK", 6: "HP%", 7: "Flat HP", 8: "DEF%", 9: "Flat DEF",
-  10: "Healing Bonus", 11: "Pyro DMG", 12: "Hydro DMG", 13: "Electro DMG",
-  14: "Cryo DMG", 15: "Anemo DMG", 16: "Geo DMG", 17: "Dendro DMG", 18: "Physical DMG",
-}
+export const Stat = {
+  CritDMG: 0,
+  CritRate: 1,
+  ElementalMastery: 2,
+  EnergyRecharge: 3,
+  AtkPercent: 4,
+  FlatAtk: 5,
+  HpPercent: 6,
+  FlatHp: 7,
+  DefPercent: 8,
+  FlatDef: 9,
+  HealingBonus: 10,
+  PyroDMG: 11,
+  HydroDMG: 12,
+  ElectroDMG: 13,
+  CryoDMG: 14,
+  AnemoDMG: 15,
+  GeoDMG: 16,
+  DendroDMG: 17,
+  PhysicalDMG: 18,
+} as const;
 
-const SUBSTAT_NAMES: Record<number, string> = {
-  0: "Crit DMG", 1: "Crit Rate", 2: "Elemental Mastery", 3: "Energy Recharge",
-  4: "ATK%", 5: "Flat ATK", 6: "HP%", 7: "Flat HP", 8: "DEF%", 9: "Flat DEF",
-}
+export type StatId = (typeof Stat)[keyof typeof Stat];
 
-const SLOT_NAMES = ["Flower", "Feather", "Sands", "Goblet", "Circlet"]
+export const Slot = {
+  Flower: 0,
+  Feather: 1,
+  Sands: 2,
+  Goblet: 3,
+  Circlet: 4,
+} as const;
 
-// Main stats each slot can roll, so the target picker never offers impossible combos
-const SLOT_MAIN_STATS: Record<number, number[]> = {
-  0: [7],
-  1: [5],
-  2: [6, 4, 8, 3, 2],
-  3: [6, 4, 8, 11, 12, 13, 14, 15, 16, 17, 18, 2],
-  4: [6, 4, 8, 1, 0, 10, 2],
-}
+export type SlotId = (typeof Slot)[keyof typeof Slot];
+
+export const MAIN_STAT_NAMES: Record<number, string> = {
+  [Stat.CritDMG]: "Crit DMG",
+  [Stat.CritRate]: "Crit Rate",
+  [Stat.ElementalMastery]: "Elemental Mastery",
+  [Stat.EnergyRecharge]: "Energy Recharge",
+  [Stat.AtkPercent]: "ATK%",
+  [Stat.FlatAtk]: "Flat ATK",
+  [Stat.HpPercent]: "HP%",
+  [Stat.FlatHp]: "Flat HP",
+  [Stat.DefPercent]: "DEF%",
+  [Stat.FlatDef]: "Flat DEF",
+  [Stat.HealingBonus]: "Healing Bonus",
+  [Stat.PyroDMG]: "Pyro DMG",
+  [Stat.HydroDMG]: "Hydro DMG",
+  [Stat.ElectroDMG]: "Electro DMG",
+  [Stat.CryoDMG]: "Cryo DMG",
+  [Stat.AnemoDMG]: "Anemo DMG",
+  [Stat.GeoDMG]: "Geo DMG",
+  [Stat.DendroDMG]: "Dendro DMG",
+  [Stat.PhysicalDMG]: "Physical DMG",
+};
+
+export const SUBSTAT_NAMES: Record<number, string> = {
+  [Stat.CritDMG]: "Crit DMG",
+  [Stat.CritRate]: "Crit Rate",
+  [Stat.ElementalMastery]: "Elemental Mastery",
+  [Stat.EnergyRecharge]: "Energy Recharge",
+  [Stat.AtkPercent]: "ATK%",
+  [Stat.FlatAtk]: "Flat ATK",
+  [Stat.HpPercent]: "HP%",
+  [Stat.FlatHp]: "Flat HP",
+  [Stat.DefPercent]: "DEF%",
+  [Stat.FlatDef]: "Flat DEF",
+};
+
+export const SLOT_NAMES = ["Flower", "Feather", "Sands", "Goblet", "Circlet"];
+
+export const SLOT_MAIN_STATS: Record<number, number[]> = {
+  [Slot.Flower]: [
+    Stat.FlatHp,
+  ],
+  [Slot.Feather]: [
+    Stat.FlatAtk,
+  ],
+  [Slot.Sands]: [
+    Stat.HpPercent,
+    Stat.AtkPercent,
+    Stat.DefPercent,
+    Stat.EnergyRecharge,
+    Stat.ElementalMastery,
+  ],
+  [Slot.Goblet]: [
+    Stat.HpPercent,
+    Stat.AtkPercent,
+    Stat.DefPercent,
+    Stat.PyroDMG,
+    Stat.HydroDMG,
+    Stat.ElectroDMG,
+    Stat.CryoDMG,
+    Stat.AnemoDMG,
+    Stat.GeoDMG,
+    Stat.DendroDMG,
+    Stat.PhysicalDMG,
+    Stat.ElementalMastery,
+  ],
+  [Slot.Circlet]: [
+    Stat.HpPercent,
+    Stat.AtkPercent,
+    Stat.DefPercent,
+    Stat.CritRate,
+    Stat.CritDMG,
+    Stat.HealingBonus,
+    Stat.ElementalMastery,
+  ],
+};
 
 // Stats shown without a % sign
 const FLAT_STATS = new Set([2, 5, 7, 9])
@@ -62,12 +149,54 @@ const RESIN_SHORTCUTS = [
 ]
 
 const WEIGHT_PRESETS: { label: string; weights: Record<number, number> }[] = [
-  { label: "Crit DPS (ATK%)", weights: { 0: 1, 1: 2, 4: 0.5, 3: 0.5 } },
-  { label: "Crit + Energy Recharge", weights: { 0: 1, 1: 2, 3: 0.5 } },
-  { label: "Crit + Elemental Mastery", weights: { 0: 1, 1: 2, 2: 0.5 } },
-  { label: "Crit + HP%", weights: { 0: 1, 1: 2, 6: 0.5 } },
-  { label: "Crit Value only", weights: { 0: 1, 1: 2 } },
-]
+  {
+    label: "Crit Value",
+    weights: {
+      [Stat.CritDMG]: 1,
+      [Stat.CritRate]: 1,
+    },
+  },
+  {
+    label: "Crit + ATK%",
+    weights: {
+      [Stat.CritDMG]: 1,
+      [Stat.CritRate]: 1,
+      [Stat.AtkPercent]: 0.5,
+    },
+  },
+  {
+    label: "Crit + ER%",
+    weights: {
+      [Stat.CritDMG]: 1,
+      [Stat.CritRate]: 1,
+      [Stat.EnergyRecharge]: 0.5,
+    },
+  },
+  {
+    label: "Crit + EM",
+    weights: {
+      [Stat.CritDMG]: 1,
+      [Stat.CritRate]: 1,
+      [Stat.ElementalMastery]: 0.5,
+    },
+  },
+  {
+    label: "Crit + HP%",
+    weights: {
+      [Stat.CritDMG]: 1,
+      [Stat.CritRate]: 1,
+      [Stat.HpPercent]: 0.5,
+    },
+  },
+  {
+    label: "Crit + DEF%",
+    weights: {
+      [Stat.CritDMG]: 1,
+      [Stat.CritRate]: 1,
+      [Stat.DefPercent]: 0.5,
+    },
+  },
+];
 
 const weightsFrom = (partial: Record<number, number>) =>
   Object.fromEntries(Object.keys(SUBSTAT_NAMES).map((id) => [id, partial[Number(id)] ?? 0])) as Record<number, number>
@@ -272,16 +401,16 @@ export default function App() {
       </header>
 
       <section className="card">  
-        <h2>Resin</h2>
+        <h2 className="font-genshin font-bold text-3xl">Resin Config</h2>
         <div className="grid">
-          <Field id="mode" label="What should it do?" hint={mode === 0 ? "Spend the whole budget and show the best pieces." : "Keep farming until a piece meets your goal or the budget runs out."}>
+          <Field id="mode" label="How should the simulator spend resin?" hint={mode === 0 ? "Spend the whole budget and show the best pieces." : "Keep farming until a piece meets your goal or the budget runs out."}>
             <select id="mode" value={mode} onChange={(e) => setMode(Number(e.target.value))}>
-              <option value={0}>Total resin to spend</option>
-              <option value={1}>Farm until target is reached</option>
+              <option value={0}>Set resin budget</option>
+              <option value={1}>Target specific artifact</option>
             </select>
           </Field>
 
-          <Field id="resin" label={mode === 0 ? "Resin to spend" : "Maximum resin to spend"} hint={`${runs.toLocaleString()} domain runs, about ${fmtDays(resinBudget / RESIN_PER_DAY)} of resin at ${RESIN_PER_DAY}/day`}>
+          <Field id="resin" label={mode === 0 ? "Resin to spend" : "Maximum Resin to spend"} hint={`${runs.toLocaleString()} domain runs, about ${fmtDays(resinBudget / RESIN_PER_DAY)} of resin at ${RESIN_PER_DAY}/day`}>
             <input
               id="resin" type="number" inputMode="numeric" min={RESIN_PER_RUN} step={RESIN_PER_RUN}
               value={resinBudget || ""}
@@ -298,18 +427,23 @@ export default function App() {
         <label className="check">
           <input type="checkbox" checked={useStrongBox} onChange={(e) => setUseStrongBox(e.target.checked)} />
           <span>
-            Strongbox?
-            <small>Turns 3 unwanted pieces into 1 extra artifact</small>
+            Use Strongbox?
+            <small>Turns 3 unwanted pieces into 1 extra Artifact</small>
           </span>
         </label>
       </section>
 
       <section className="card">
-        <h2>Speculator Config</h2>
-        <div className="grid">
-          <Field id="topk" label="Pieces to keep" hint="The best pieces by score are shown after the run.">
+        <h2 className="font-genshin font-bold text-3xl">Speculator Config</h2>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <Field id="topk" label="How Many Pieces to Keep?" hint="The best pieces by score are shown after the run.">
             <input
-              id="topk" type="number" inputMode="numeric" min={1} max={50}
+              id="topk"
+              type="number"
+              inputMode="numeric"
+              min={1}
+              max={50}
               value={topK || ""}
               onChange={(e) => setTopK(Number(e.target.value))}
               onBlur={() => setTopK((prev) => Math.min(50, Math.max(1, Math.round(prev))))}
@@ -318,20 +452,41 @@ export default function App() {
 
           {mode === 1 && (
             <>
-              <Field id="mincv" label="Minimum Crit Value" hint="Crit Value = Crit DMG + 2 × Crit Rate. 30 is solid and 40+ is excellent.">
-                <input id="mincv" type="number" inputMode="decimal" min={0} step={0.5} value={minCritValue}
-                  onChange={(e) => setMinCritValue(Number(e.target.value))} />
+              <Field id="mincv" label="Minimum Crit Value" hint="Crit Value = Crit DMG + 2 * Crit Rate.">
+                <input
+                  id="mincv"
+                  type="number"
+                  inputMode="decimal"
+                  min={0}
+                  step={0.5}
+                  value={minCritValue}
+                  onChange={(e) => setMinCritValue(Number(e.target.value))}
+                />
               </Field>
+
               <Field id="slot" label="Piece type">
                 <select id="slot" value={targetSlot} onChange={(e) => changeSlot(e.target.value)}>
                   <option value="">Any piece</option>
-                  {SLOT_NAMES.map((name, i) => <option key={name} value={i}>{name}</option>)}
+                  {SLOT_NAMES.map((name, i) => (
+                    <option key={name} value={i}>
+                      {name}
+                    </option>
+                  ))}
                 </select>
               </Field>
+
               <Field id="mainstat" label="Main stat">
-                <select id="mainstat" value={targetMainStat} onChange={(e) => setTargetMainStat(e.target.value === "" ? "" : Number(e.target.value))}>
+                <select
+                  id="mainstat"
+                  value={targetMainStat}
+                  onChange={(e) => setTargetMainStat(e.target.value === "" ? "" : Number(e.target.value))}
+                >
                   <option value="">Any main stat</option>
-                  {mainStatOptions.map((id) => <option key={id} value={id}>{MAIN_STAT_NAMES[id]}</option>)}
+                  {mainStatOptions.map((id) => (
+                    <option key={id} value={id}>
+                      {MAIN_STAT_NAMES[id]}
+                    </option>
+                  ))}
                 </select>
               </Field>
             </>
@@ -340,8 +495,10 @@ export default function App() {
 
         <details className="advanced">
           <summary>Substat Priority {hasWeights ? "" : "(none set, using Crit Value)"}</summary>
-          <p className="hint">Pieces are ranked by summing each substat * its weight. Setting a weight to 0 to ignores that substat.</p>
+          <p className="hint" style={{ marginBottom: '20px' }}>Pieces are ranked by summing each substat * its weight. Setting a weight to 0 to ignores that substat.</p>
+          <p className="text-sm">Some pre-defined presets:</p>
           <div className="chips">
+            
             {WEIGHT_PRESETS.map((p) => (
               <button key={p.label} type="button" className="chip" onClick={() => setWeights(weightsFrom(p.weights))}>{p.label}</button>
             ))}
