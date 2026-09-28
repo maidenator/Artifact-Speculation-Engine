@@ -299,7 +299,7 @@ export default function App() {
           <input type="checkbox" checked={useStrongBox} onChange={(e) => setUseStrongBox(e.target.checked)} />
           <span>
             Strongbox?
-            <small>Turns 3 unwanted pieces into 1 extra roll.</small>
+            <small>Turns 3 unwanted pieces into 1 extra artifact</small>
           </span>
         </label>
       </section>
