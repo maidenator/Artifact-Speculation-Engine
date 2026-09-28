@@ -263,7 +263,7 @@ export default function App() {
       <style>{CSS}</style>
 
       <header>
-        <h1>Artifact speculation engine</h1>
+        <h1>Artifact Speculation Engine</h1>
         <p className="lede">Spend a resin budget on artifact domains and see what you would realistically end up with.</p>
         <p className={`status ${engineError ? "bad" : engineReady ? "ok" : ""}`} role="status">
           <span className="dot" />
