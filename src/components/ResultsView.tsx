@@ -2,6 +2,7 @@ import { useState } from "react"
 import { ArtifactCard } from "./ArtifactCard"
 import { fmtDays, fmtTime } from "../utils/format"
 import { SimulationMode, type ScoreMode, type SimulationResult } from "../types/artifact"
+import { exportSimulationToGOOD } from "../utils/good"
 
 function ArtifactSkeleton({ loading }: { loading: boolean }) {
   return (
@@ -86,23 +87,45 @@ export function ResultsView({ result, loading, ranMode, ranPriority, elapsedMs }
 
         <div className="flex justify-between items-center gap-3 flex-wrap mt-4">
           <h3 className="font-genshin text-[16px] m-0 text-gold tracking-[0.5px]">Best pieces ({loading ? "..." : result.topArtifacts.length})</h3>
-          <div className="font-genshin inline-flex border border-line rounded-full overflow-hidden bg-black/15" role="group" aria-label="Score shown on each piece">
-            <button 
-              type="button" 
-              aria-pressed={scoreMode === "cv"} 
-              onClick={() => setScoreMode("cv")}
-              className={`px-3.5 py-1 text-[12.5px] border-0 cursor-pointer hover:text-gold ${scoreMode === "cv" ? "bg-gold text-[#121620] font-semibold" : "bg-transparent text-muted"}`}
-            >
-              Crit Value
-            </button>
-            <button 
-              type="button" 
-              aria-pressed={scoreMode === "rv"} 
-              onClick={() => setScoreMode("rv")}
-              className={`px-3.5 py-1 text-[12.5px] border-0 cursor-pointer hover:text-gold ${scoreMode === "rv" ? "bg-gold text-[#121620] font-semibold" : "bg-transparent text-muted"}`}
-            >
-              Roll Value
-            </button>
+          
+          <div className="flex items-center gap-3">
+            {!loading && result.topArtifacts.length > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  const goodData = exportSimulationToGOOD(result.topArtifacts);
+                  const blob = new Blob([JSON.stringify(goodData, null, 2)], { type: "application/json" });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `speculation_results_good_${Date.now()}.json`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                className="font-genshin px-3.5 py-1 text-[12.5px] border border-line rounded-full cursor-pointer hover:border-gold hover:text-gold bg-black/15 text-muted transition-colors"
+              >
+                Export to GOOD
+              </button>
+            )}
+            
+            <div className="font-genshin inline-flex border border-line rounded-full overflow-hidden bg-black/15" role="group" aria-label="Score shown on each piece">
+              <button 
+                type="button" 
+                aria-pressed={scoreMode === "cv"} 
+                onClick={() => setScoreMode("cv")}
+                className={`px-3.5 py-1 text-[12.5px] border-0 cursor-pointer hover:text-gold ${scoreMode === "cv" ? "bg-gold text-[#121620] font-semibold" : "bg-transparent text-muted"}`}
+              >
+                Crit Value
+              </button>
+              <button 
+                type="button" 
+                aria-pressed={scoreMode === "rv"} 
+                onClick={() => setScoreMode("rv")}
+                className={`px-3.5 py-1 text-[12.5px] border-0 cursor-pointer hover:text-gold ${scoreMode === "rv" ? "bg-gold text-[#121620] font-semibold" : "bg-transparent text-muted"}`}
+              >
+                Roll Value
+              </button>
+            </div>
           </div>
         </div>
       </div>
