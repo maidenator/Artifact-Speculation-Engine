@@ -46,7 +46,7 @@ interface ArtifactCardProps {
 
 export function ArtifactCard({ artifact: art, rank, scoreMode, priority }: ArtifactCardProps) {
   const mainStatName = MAIN_STAT_NAMES[art.mainStat.type] ?? art.mainStat.type;
-  const mainStatIcon = getStatIcon(mainStatName);
+  const mainStatIcon = getStatIcon(String(mainStatName));
 
   // Removed the dynamic card-tier class so the outer border stays clean, as requested
   return (
@@ -95,7 +95,7 @@ export function ArtifactCard({ artifact: art, rank, scoreMode, priority }: Artif
       <ul>
         {art.subStats.map((sub, i) => {
           const subName = SUBSTAT_NAMES[sub.type] ?? sub.type;
-          const subIcon = getStatIcon(subName);
+          const subIcon = getStatIcon(String(subName));
           
           //Temp
           const rollHistory = (sub as typeof sub & { rollTiers?: string[] }).rollTiers 
