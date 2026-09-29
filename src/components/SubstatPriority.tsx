@@ -11,7 +11,7 @@ export function SubstatPriority({ priority, setPriority }: SubstatPriorityProps)
   const unpicked = Object.keys(SUBSTAT_NAMES).map(Number).filter((id) => !priority.includes(id))
 
   return (
-    <details className="advanced font-genshin">
+    <details className="advanced font-genshin" open style={{ borderTop: "none", marginTop: "24px" }}>
       <style>{`
         details.advanced summary::-webkit-details-marker { display: none; }
         details.advanced summary { list-style: none; }
@@ -19,7 +19,6 @@ export function SubstatPriority({ priority, setPriority }: SubstatPriorityProps)
           display: flex;
           justify-content: space-between;
           align-items: center;
-          cursor: pointer;
           margin-bottom: 12px;
         }
         .substat-summary .arrow-box {
@@ -36,14 +35,18 @@ export function SubstatPriority({ priority, setPriority }: SubstatPriorityProps)
         }
       `}</style>
       
-      <summary className="font-genshin substat-summary">
+      {/* 2. Added onClick preventDefault and default cursor so it can no longer be closed */}
+      <summary 
+        className="font-genshin substat-summary" 
+        onClick={(e) => e.preventDefault()}
+        style={{ cursor: "default" }}
+      >
         <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-          <span>Substat Priority</span>
+          <span style={{ fontWeight: "bold", fontSize: "1.1rem" }}>Substat Priority</span>
           <span className="hint font-genshin" style={{ fontSize: "0.85em", opacity: 0.7, fontWeight: "normal" }}>
             Select None for Pure Crit Value
           </span>
         </div>
-        <span className="arrow-box" style={{ fontSize: "0.8em", opacity: 0.8 }}>▼</span>
       </summary>
 
       <p className="pick-label font-genshin">Some pre-defined presets</p>

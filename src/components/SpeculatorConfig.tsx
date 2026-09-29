@@ -163,6 +163,7 @@ export function SpeculatorConfig({
           </>
         )}
       </div>
+      <hr style={{ border: "none", borderTop: "1px solid rgba(255, 255, 255, 0.15)", margin: "24px 0" }} />
       <SubstatPriority priority={priority} setPriority={setPriority} />
     </section>
   )
