@@ -405,7 +405,7 @@ body {
   background: transparent;
   cursor: pointer;
   border: 1px solid transparent; 
-  border-radius: 999px;
+  border-radius: 6px;
   transition: all 0.15s ease;
 }
 .ghost:hover:not(:disabled) {

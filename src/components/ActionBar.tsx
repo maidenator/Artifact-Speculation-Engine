@@ -1,3 +1,5 @@
+import { useState } from "react"
+
 interface ActionBarProps {
   canRun: boolean
   loading: boolean
@@ -8,39 +10,122 @@ interface ActionBarProps {
 }
 
 export function ActionBar({ canRun, loading, engineReady, engineError, onRun, onReset }: ActionBarProps) {
+  const [showMenu, setShowMenu] = useState(false)
+
   return (
     <div style={{
       position: "fixed",
-      bottom: "40px", /* Distance from the bottom of your screen */
+      bottom: "40px",
       left: "50%",
-      transform: "translateX(-50%)", /* Perfectly centers the pill horizontally */
+      transform: "translateX(-50%)",
+      zIndex: 99999,
       display: "flex",
-      alignItems: "center",
-      gap: "12px",
-      background: "var(--card)", /* Uses your global dark card theme */
-      border: "1px solid var(--line)", 
-      padding: "6px 20px 6px 6px", /* Tight on the left, extra space on the right for text */
-      borderRadius: "8px", /* Perfect rounded pill shape */
-      boxShadow: "0 12px 40px rgba(0, 0, 0, 0.4)", /* Strong shadow to force it forward visually */
-      zIndex: 99999 /* Guarantees it stays in front of everything */
+      flexDirection: "column",
+      alignItems: "center"
     }}>
-      <button 
-        className="primary font-genshin" 
-        onClick={onRun} 
-        disabled={!canRun}
-        style={{ margin: 0, padding: "12px 24px", borderRadius: "8px" }}
-      >
-        {loading ? "Running..." : "Run simulation"}
-      </button>
       
-      <button 
-        className="ghost font-genshin" 
-        onClick={onReset} 
-        disabled={loading}
-        style={{ margin: 0, padding: "12px 8px" }}
-      >
-        Reset settings
-      </button>
+      {/* 1. The Popup Menu (Appears above the button when arrow is clicked) */}
+      {showMenu && (
+        <div style={{
+          position: "absolute",
+          bottom: "100%",
+          marginBottom: "12px",
+          background: "var(--card)",
+          border: "1px solid var(--line)",
+          borderRadius: "12px",
+          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
+          minWidth: "140px",
+          maxHeight: "50px",
+          display: "flex",
+          flexDirection: "column"
+        }}>
+          <button 
+            className="ghost font-genshin" 
+            onClick={() => {
+              onReset()
+              setShowMenu(false)
+            }}
+            disabled={loading}
+            style={{ 
+              margin: 0, 
+              padding: "10px 16px", 
+              width: "100%", 
+              textAlign: "center" 
+            }}
+          >
+            Reset settings
+          </button>
+        </div>
+      )}
+
+      {/* 2. The Split Button Container */}
+      <div style={{
+        display: "flex",
+        alignItems: "stretch",
+        height: "48px",
+        borderRadius: "12px", /* Kept your 12px setting */
+        overflow: "hidden", /* Clips the inner square buttons into a pill shape */
+        boxShadow: "0 12px 40px rgba(0, 0, 0, 0.5)",
+        border: "1px solid var(--line)"
+      }}>
+        
+        {/* Main Action Button */}
+        <button 
+          className="primary font-genshin" 
+          onClick={onRun} 
+          disabled={!canRun}
+          style={{
+            margin: 0,
+            padding: "0 24px",
+            border: "none",
+            borderRadius: 0, /* Radius is handled by the wrapper */
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "1.05rem"
+          }}
+        >
+          {loading ? "Running..." : "Run simulation"}
+        </button>
+        
+        {/* Vertical Divider Line */}
+        <div style={{ width: "1px", background: "rgba(0, 0, 0, 0.15)", zIndex: 2 }} />
+
+        {/* Toggle Arrow Button */}
+        <button 
+          className="primary font-genshin" 
+          onClick={() => setShowMenu(!showMenu)}
+          style={{
+            margin: 0,
+            padding: "0 16px",
+            border: "none",
+            borderRadius: 0,
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+        >
+          {/* SVG Chevron for a perfectly centered '^' shape that flips when opened */}
+          <svg 
+            width="18" 
+            height="18" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="3" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+            style={{
+              transform: showMenu ? "rotate(180deg)" : "none",
+              transition: "transform 0.2s ease"
+            }}
+          >
+            <path d="M18 15l-6-6-6 6" />
+          </svg>
+        </button>
+      </div>
 
       {!engineReady && !engineError && (
         <span 
@@ -48,8 +133,6 @@ export function ActionBar({ canRun, loading, engineReady, engineError, onRun, on
           style={{ 
             position: "absolute", 
             top: "-30px", 
-            left: "50%", 
-            transform: "translateX(-50%)", 
             whiteSpace: "nowrap",
             color: "var(--muted)",
             fontSize: "0.85em" 
