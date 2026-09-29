@@ -21,7 +21,7 @@ export function SubstatPriority({ priority, setPriority }: SubstatPriorityProps)
           <button key={p.label} type="button" className="chip" onClick={() => setPriority(priorityFrom(p.weights))}>{p.label}</button>
         ))}
       </div>
-      <p className="pick-label">Click a substat to rank it. Click it again to remove it.</p>
+      <p className="pick-label">Sort by Affix</p>
       <div className="chips">
         {[...priority, ...unpicked].map((id) => {
           const rank = priority.indexOf(id)

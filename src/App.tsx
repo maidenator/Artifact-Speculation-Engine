@@ -22,7 +22,7 @@ export default function App() {
     resetSettings,
   } = useSimulationSettings()
 
-  const { engineReady, engineError, loading, runError, result, ranMode, elapsedMs, run } =
+  const { engineReady, engineError, loading, runError, result, ranMode, ranPriority, elapsedMs, run } =
     useSimulationWorkers()
 
   const canRun = engineReady && !loading && settings.resinBudget >= RESIN_PER_RUN
@@ -70,7 +70,7 @@ export default function App() {
 
       {runError && <p className="error" role="alert">{runError}</p>}
 
-      {result && <ResultsView result={result} ranMode={ranMode} elapsedMs={elapsedMs} />}
+      {result && <ResultsView result={result} ranMode={ranMode} ranPriority={ranPriority} elapsedMs={elapsedMs} />}
     </div>
   )
 }

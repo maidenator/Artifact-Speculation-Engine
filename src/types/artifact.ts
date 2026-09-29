@@ -53,3 +53,5 @@ export interface SimulationSettings {
   targetMainStat: number | ""
   priority: number[]
 }
+
+export type ScoreMode = "cv" | "rv"

@@ -123,6 +123,13 @@ export const WEIGHT_PRESETS: WeightPreset[] = [
     },
   },
   {
+    label: "ER% + HP%",
+    weights: {
+      [Stat.EnergyRecharge]: 1,
+      [Stat.HpPercent]: 1,
+    },
+  },
+  {
     label: "Crit + ATK%",
     weights: {
       [Stat.CritDMG]: 1,
@@ -163,3 +170,18 @@ export const WEIGHT_PRESETS: WeightPreset[] = [
     },
   },
 ]
+
+// Biggest single roll each substat can get (top tier from distributions.hpp,
+// rounded to 1 decimal like the engine rounds every roll)
+export const MAX_SUBSTAT_ROLL: Record<number, number> = {
+  [Stat.CritDMG]: 7.8,
+  [Stat.CritRate]: 3.9,
+  [Stat.ElementalMastery]: 23.3,
+  [Stat.EnergyRecharge]: 6.5,
+  [Stat.AtkPercent]: 5.8,
+  [Stat.FlatAtk]: 19.5,
+  [Stat.HpPercent]: 5.8,
+  [Stat.FlatHp]: 298.8,
+  [Stat.DefPercent]: 7.3,
+  [Stat.FlatDef]: 23.2,
+}

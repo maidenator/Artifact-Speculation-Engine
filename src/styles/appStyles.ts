@@ -57,4 +57,11 @@ html,body{margin:0;background:var(--page);color:var(--ink)}
 .artifact.card-cv-mid{border-color:var(--muted)}
 .artifact.card-cv-low{border-color:var(--line)}
 .cv-top strong{color:var(--gold)}.cv-high strong{color:var(--ok)}.cv-low strong{color:var(--muted)}
+
+.pieces-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:22px 0 10px}
+.pieces-head h3{margin:0}
+.toggle{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.toggle button{padding:4px 14px;font:inherit;font-size:12.5px;color:var(--muted);background:transparent;border:0;cursor:pointer}
+.toggle button:hover{color:var(--accent)}
+.toggle button[aria-pressed=true]{color:var(--on-accent);background:var(--accent)}
 `

@@ -1,16 +1,18 @@
 import { MAIN_STAT_NAMES, SLOT_NAMES, SUBSTAT_NAMES } from "../constants/artifactData"
 import { fmtStat } from "../utils/format"
-import { cvTier } from "../utils/scoring"
-import type { ArtifactOutput } from "../types/artifact"
+import { rvTier, cvTier, rollValue } from "../utils/scoring"
+import type { ArtifactOutput, ScoreMode } from "../types/artifact"
 
 interface ArtifactCardProps {
   artifact: ArtifactOutput
   rank: number
+  scoreMode: ScoreMode
+  priority: number[]
 }
 
-export function ArtifactCard({ artifact: art, rank }: ArtifactCardProps) {
+export function ArtifactCard({ artifact: art, rank, scoreMode, priority }: ArtifactCardProps) {
   return (
-    <article className={`artifact card-${cvTier(art.critValue)}`}>
+    <article className={`artifact card-${scoreMode === "cv" ? cvTier(art.critValue) : rvTier(rollValue(art, priority))}`}>
       <header>
         <span className="rank">#{rank}</span>
         <strong>{SLOT_NAMES[art.slot] ?? "Piece"}</strong>
@@ -28,9 +30,11 @@ export function ArtifactCard({ artifact: art, rank }: ArtifactCardProps) {
           </li>
         ))}
       </ul>
-      <footer className={cvTier(art.critValue)}>
-        <span>Crit Value</span>
-        <strong>{art.critValue.toFixed(1)}</strong>
+      <footer className={scoreMode === "cv" ? cvTier(art.critValue) : rvTier(rollValue(art, priority))}>
+        <span>{scoreMode === "cv" ? "Crit Value" : "Roll Value"}</span>
+        <strong>
+          {scoreMode === "cv" ? art.critValue.toFixed(1) : `${Math.round(rollValue(art, priority))}%`}
+        </strong>
       </footer>
     </article>
   )

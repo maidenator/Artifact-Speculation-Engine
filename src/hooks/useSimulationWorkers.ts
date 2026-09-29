@@ -11,6 +11,7 @@ export function useSimulationWorkers() {
   const [runError, setRunError] = useState<string | null>(null)
   const [result, setResult] = useState<SimulationResult | null>(null)
   const [ranMode, setRanMode] = useState(0)
+  const [ranPriority, setRanPriority] = useState<number[]>([])
   const [elapsedMs, setElapsedMs] = useState<number | null>(null)
   const workersRef = useRef<Worker[]>([])
 
@@ -125,6 +126,7 @@ export function useSimulationWorkers() {
 
       setElapsedMs(performance.now() - start)
       setRanMode(mode)
+      setRanPriority(priority)
       setResult(aggregated)
     } catch (err: unknown) {
       console.error("Simulation run error:", err)
@@ -134,5 +136,5 @@ export function useSimulationWorkers() {
     }
   }
 
-  return { engineReady, engineError, loading, runError, result, ranMode, elapsedMs, run }
+  return { engineReady, engineError, loading, runError, result, ranMode, ranPriority, elapsedMs, run }
 }
