@@ -61,7 +61,7 @@ export function ArtifactCard({ artifact: art, rank, scoreMode, priority }: Artif
               className="slot-icon" 
             />
           )}
-          <strong>{SLOT_NAMES[art.slot] ?? "Piece"}</strong>
+          <strong className="font-genshin">{SLOT_NAMES[art.slot] ?? "Piece"}</strong>
         </div>
 
         <span className="level">+{art.level}</span>
