@@ -6,6 +6,7 @@ export interface ArtifactSubstatEntry {
   type: number
   value: number
   rolls: number
+  rollTiers?: string[]
 }
 
 export interface ArtifactOutput {

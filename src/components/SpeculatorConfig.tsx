@@ -2,6 +2,46 @@ import { Field } from "./Field"
 import { SubstatPriority } from "./SubstatPriority"
 import { MAIN_STAT_NAMES, SLOT_MAIN_STATS, SLOT_NAMES } from "../constants/artifactData"
 import type { StateSetter } from "../types/artifact"
+import { GenshinSelect } from "./selection"
+
+// 1. UPDATED PATHS: Pointing to the new "stat" folder
+const SLOT_ICONS: Record<number, string> = {
+  0: "/icons/flower.png",
+  1: "/icons/feather.png",
+  2: "/icons/sands.png",
+  3: "/icons/goblet.png",
+  4: "/icons/circlet.png",
+}
+
+function getStatIcon(statName: string): string | undefined {
+  // Elements & Physical
+  if (statName.includes("Anemo")) return "/icons/element/anemo.png";
+  if (statName.includes("Cryo")) return "/icons/element/cryo.png";
+  if (statName.includes("Dendro")) return "/icons/element/dendro.png";
+  if (statName.includes("Electro")) return "/icons/element/electro.png";
+  if (statName.includes("Geo")) return "/icons/element/geo.png";
+  if (statName.includes("Hydro")) return "/icons/element/hydro.png";
+  if (statName.includes("Pyro")) return "/icons/element/pyro.png";
+  if (statName.includes("Physical")) return "/icons/element/physical.png";
+
+  // Percent Stats (Must be checked BEFORE flat stats)
+  if (statName.includes("ATK %")) return "/icons/stat/attack_percent.png";
+  if (statName.includes("DEF %")) return "/icons/stat/defense_percent.png";
+  if (statName.includes("HP %")) return "/icons/stat/hp_percent.png";
+
+  // Flat Stats
+  if (statName.includes("ATK")) return "/icons/stat/attack.png";
+  if (statName.includes("DEF")) return "/icons/stat/defense.png";
+  if (statName.includes("HP")) return "/icons/stat/hp.png";
+
+  // Other Base Stats
+  if (statName.includes("Crit DMG")) return "/icons/stat/crit_damage.png";
+  if (statName.includes("Crit Rate")) return "/icons/stat/crit_rate.png";
+  if (statName.includes("Elemental Mastery")) return "/icons/stat/elemental_mastery.png";
+  if (statName.includes("Energy Recharge")) return "/icons/stat/energy_recharge.png";
+  if (statName.includes("Healing Bonus")) return "/icons/stat/healing_bonus.png";
+  return undefined; 
+}
 
 interface SpeculatorConfigProps {
   mode: number
@@ -31,6 +71,28 @@ export function SpeculatorConfig({
   onSlotChange,
 }: SpeculatorConfigProps) {
   const mainStatOptions = targetSlot === "" ? Object.keys(MAIN_STAT_NAMES).map(Number) : SLOT_MAIN_STATS[targetSlot]
+
+  const slotOptionsList = [
+    { label: "Any piece", value: "" },
+    ...SLOT_NAMES.map((name, i) => ({
+      label: name,
+      value: i,
+      icon: SLOT_ICONS[i],
+    })),
+  ]
+
+  // 3. APPLIED HELPER: Attaches the icon to the dropdown options
+  const mainStatOptionsList = [
+    { label: "Any main stat", value: "" },
+    ...mainStatOptions.map((id) => {
+      const statName = MAIN_STAT_NAMES[id];
+      return {
+        label: statName,
+        value: id,
+        icon: getStatIcon(statName),
+      };
+    }),
+  ]
 
   return (
     <section className="card">
@@ -65,29 +127,19 @@ export function SpeculatorConfig({
             </Field>
 
             <Field id="slot" label="Piece type">
-              <select id="slot" value={targetSlot} onChange={(e) => onSlotChange(e.target.value)}>
-                <option value="">Any piece</option>
-                {SLOT_NAMES.map((name, i) => (
-                  <option key={name} value={i}>
-                    {name}
-                  </option>
-                ))}
-              </select>
+              <GenshinSelect
+                value={targetSlot}
+                onChange={(val) => onSlotChange(String(val))}
+                options={slotOptionsList}
+              />
             </Field>
 
             <Field id="mainstat" label="Main stat">
-              <select
-                id="mainstat"
+              <GenshinSelect
                 value={targetMainStat}
-                onChange={(e) => setTargetMainStat(e.target.value === "" ? "" : Number(e.target.value))}
-              >
-                <option value="">Any main stat</option>
-                {mainStatOptions.map((id) => (
-                  <option key={id} value={id}>
-                    {MAIN_STAT_NAMES[id]}
-                  </option>
-                ))}
-              </select>
+                onChange={(val) => setTargetMainStat(val === "" ? "" : Number(val))}
+                options={mainStatOptionsList}
+              />
             </Field>
           </>
         )}
