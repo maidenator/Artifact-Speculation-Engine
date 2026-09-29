@@ -1,6 +1,5 @@
 import { Field } from "./Field"
-import { RESIN_PER_DAY, RESIN_PER_RUN, RESIN_SHORTCUTS } from "../constants/resin"
-import { fmtDays } from "../utils/format"
+import { RESIN_PER_RUN, RESIN_SHORTCUTS } from "../constants/resin"
 import type { StateSetter } from "../types/artifact"
 import { GenshinSelect } from "./selection";
 
@@ -21,7 +20,6 @@ export function ResinConfig({
   setResinBudget,
   setUseStrongBox,
 }: ResinConfigProps) {
-  const runs = Math.floor(resinBudget / RESIN_PER_RUN)
 
   return (
     <section className="card">
