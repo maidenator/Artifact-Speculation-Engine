@@ -46,7 +46,6 @@ export function SubstatPriority({ priority, setPriority }: SubstatPriorityProps)
         <span className="arrow-box" style={{ fontSize: "0.8em", opacity: 0.8 }}>▼</span>
       </summary>
 
-      <p className="hint font-genshin" style={{ marginBottom: '20px' }}>Pieces are ranked by summing each substat * its weight. Setting a weight to 0 ignores that substat.</p>
       <p className="pick-label font-genshin">Some pre-defined presets</p>
       <div className="chips">
         {WEIGHT_PRESETS.map((p) => (

@@ -25,20 +25,12 @@ export function ResinConfig({
 
   return (
     <section className="card">
-      <h2 className="font-genshin font-bold text-3xl">Resin Config</h2>
-      <div className="grid">
-        <Field id="mode" label="How should the simulator spend resin?" hint={mode === 0 ? "Spend the whole budget and show the best pieces." : "Keep farming until a piece meets your goal or the budget runs out."}>
-          <GenshinSelect
-            value={mode}
-            onChange={(val) => setMode(Number(val))}
-            options={[
-              { label: "Set resin budget", value: 0 },
-              { label: "Target specific artifact", value: 1 },
-            ]}
-          />
-        </Field>
-
-        <Field id="resin" label={mode === 0 ? "Resin to spend" : "Maximum Resin to spend"} hint={`${runs.toLocaleString()} domain runs, about ${fmtDays(resinBudget / RESIN_PER_DAY)} of resin at ${RESIN_PER_DAY}/day`}>
+      {/* 24px space below title */}
+      <h2 className="font-genshin font-bold text-3xl" style={{ marginBottom: "24px" }}>Resin Config</h2>
+      
+      {/* Set gap to exactly 24px so the space between fields and lines is uniform */}
+      <div className="grid" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+        <Field id="resin" label={mode === 0 ? "Resin to spend" : "Maximum Resin to spend"}>
           <div 
             style={{
               display: "flex",
@@ -76,7 +68,7 @@ export function ResinConfig({
             />
           </div>
 
-          <div className="chips" style={{ marginTop: "8px" }}>
+          <div className="chips" style={{ marginTop: "12px" }}>
             {RESIN_SHORTCUTS.map((s) => (
               <button key={s.label} type="button" className="chip font-genshin" onClick={() => setResinBudget(s.resin)}>
                 {s.label}
@@ -84,13 +76,32 @@ export function ResinConfig({
             ))}
           </div>
         </Field>
+        
+        {/* Margin 0 here because the grid's 24px gap will handle the top and bottom spacing automatically */}
+        <hr style={{ border: "none", borderTop: "1px solid rgba(255, 255, 255, 0.15)", margin: 0 }} />
+        
+        <Field id="mode" label="How should the simulator spend resin?">
+          <GenshinSelect
+            value={mode}
+            onChange={(val) => setMode(Number(val))}
+            options={[
+              { label: "Set resin budget", value: 0 },
+              { label: "Target specific artifact", value: 1 },
+            ]}
+          />
+        </Field>
       </div>
-      <label className="check font-genshin" style={{ display: "flex", alignItems: "center", gap: "12px", marginTop: "16px", cursor: "pointer" }}>
+      
+      {/* Exactly 24px margin above and below the line to match the grid gap above */}
+      <hr style={{ border: "none", borderTop: "1px solid rgba(255, 255, 255, 0.15)", margin: "24px 0" }} />
+      
+      {/* Removed marginTop completely, allowing the hr's 24px bottom margin to push this down perfectly */}
+      <label className="check font-genshin" style={{ display: "flex", alignItems: "center", gap: "12px", cursor: "pointer" }}>
         <input 
           type="checkbox" 
           checked={useStrongBox} 
           onChange={(e) => setUseStrongBox(e.target.checked)} 
-          style={{ display: "none" }} // Hides the native checkbox completely
+          style={{ display: "none" }}
         />
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <img 

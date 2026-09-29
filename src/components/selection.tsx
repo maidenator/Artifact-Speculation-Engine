@@ -46,7 +46,8 @@ export function GenshinSelect({ value, onChange, options, maxHeight = "220px" }:
           padding: "8px 12px",
           color: "inherit",
           cursor: "pointer",
-          textAlign: "left"
+          textAlign: "left",
+          fontSize: "0.85rem",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -73,6 +74,7 @@ export function GenshinSelect({ value, onChange, options, maxHeight = "220px" }:
             borderRadius: "6px",
             boxShadow: "0 10px 25px rgba(0,0,0,0.5)",
             scrollbarWidth: "thin",
+            fontSize: "0.80rem",
           }}
         >
           {options.map((opt) => (

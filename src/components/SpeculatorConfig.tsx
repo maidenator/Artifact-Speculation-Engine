@@ -90,25 +90,27 @@ export function SpeculatorConfig({
 
   return (
     <section className="card">
-      <h2 className="font-genshin font-bold text-3xl">Speculator Config</h2>
+      <h2 className="font-genshin font-bold text-3xl" style={{ marginBottom: "24px" }}>Speculator Config</h2>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', alignItems: 'start' }}>
-        <Field id="topk" label="Pieces to Show" hint="The best pieces by score are shown after the run.">
-          <input
-            id="topk"
-            type="number"
-            inputMode="numeric"
-            min={1}
-            max={50}
-            value={topK || ""}
-            onChange={(e) => setTopK(Number(e.target.value))}
-            onBlur={() => setTopK((prev) => Math.min(50, Math.max(1, Math.round(prev))))}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', alignItems: 'start' }}>
+        
+        <Field id="topk" label="Artifacts to Show">
+          <GenshinSelect
+            value={topK}
+            onChange={(val) => setTopK(Number(val))}
+            options={[
+              { label: "1 piece", value: 1 },
+              { label: "5 pieces", value: 5 },
+              { label: "10 pieces", value: 10 },
+              { label: "25 pieces", value: 25 },
+              { label: "50 pieces", value: 50 },
+            ]}
           />
         </Field>
 
         {mode === 1 && (
           <>
-            <Field id="mincv" label="Minimum Crit Value" hint="Crit DMG + 2 * Crit Rate.">
+            <Field id="mincv" label="Minimum Crit Value">
               <input
                 id="mincv"
                 type="text"
@@ -139,7 +141,9 @@ export function SpeculatorConfig({
               />
             </Field>
 
-            <Field id="slot" label="Piece type">
+            <hr style={{ gridColumn: "1 / -1", border: "none", borderTop: "1px solid rgba(255, 255, 255, 0.15)", margin: 0 }} />
+
+            <Field id="slot" label="Artifact type">
               <GenshinSelect
                 value={targetSlot}
                 onChange={(val) => onSlotChange(String(val))}
@@ -159,7 +163,6 @@ export function SpeculatorConfig({
           </>
         )}
       </div>
-
       <SubstatPriority priority={priority} setPriority={setPriority} />
     </section>
   )
