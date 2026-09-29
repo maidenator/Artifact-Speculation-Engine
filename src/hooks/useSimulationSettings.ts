@@ -1,53 +1,60 @@
-import { useState } from "react"
+import { create } from "zustand"
 import { SLOT_MAIN_STATS, WEIGHT_PRESETS } from "../constants/artifactData"
 import { priorityFrom } from "../utils/scoring"
-import type { SimulationSettings } from "../types/artifact"
+import { SimulationMode, type SimulationSettings } from "../types/artifact"
 
-export function useSimulationSettings() {
-  const [mode, setMode] = useState(1)
-  const [resinBudget, setResinBudget] = useState(2000)  
-  const [topK, setTopK] = useState(10)
-  const [useStrongBox, setUseStrongBox] = useState(true)
-  const [minCritValue, setMinCritValue] = useState(25)
-  const [targetSlot, setTargetSlot] = useState<number | "">("")
-  const [targetMainStat, setTargetMainStat] = useState<number | "">("")
-  const [priority, setPriority] = useState<number[]>(priorityFrom(WEIGHT_PRESETS[0].weights))
-
-  // Changing the slot clears a main stat that slot can't roll
-  const changeSlot = (value: string) => {
-    const slot = value === "" ? "" : Number(value)
-    setTargetSlot(slot)
-    if (slot !== "" && targetMainStat !== "" && !SLOT_MAIN_STATS[slot].includes(targetMainStat)) {
-      setTargetMainStat("")
-    }
-  }
-
-  const resetSettings = () => {
-    setMode(0); setResinBudget(2000); setTopK(3); setUseStrongBox(true); setMinCritValue(25)
-    setTargetSlot(""); setTargetMainStat(""); setPriority(priorityFrom(WEIGHT_PRESETS[0].weights))
-  }
-
-  const settings: SimulationSettings = {
-    mode,
-    resinBudget,
-    topK,
-    useStrongBox,
-    minCritValue,
-    targetSlot,
-    targetMainStat,
-    priority,
-  }
-
-  return {
-    settings,
-    setMode,
-    setResinBudget,
-    setTopK,
-    setUseStrongBox,
-    setMinCritValue,
-    setTargetMainStat,
-    setPriority,
-    changeSlot,
-    resetSettings,
-  }
+interface SimulationSettingsState {
+  settings: SimulationSettings
+  setMode: (mode: SimulationMode) => void
+  setResinBudget: (resinBudget: number) => void
+  setTopK: (topK: number) => void
+  setUseStrongBox: (useStrongBox: boolean) => void
+  setMinCritValue: (minCritValue: number) => void
+  setTargetSlot: (slot: number | null) => void
+  setTargetMainStat: (stat: number | null) => void
+  setPriority: (priority: number[]) => void
+  changeSlot: (value: string) => void
+  resetSettings: () => void
 }
+
+const defaultSettings: SimulationSettings = {
+  mode: SimulationMode.TargetPiece,
+  resinBudget: 2000,
+  topK: 10,
+  useStrongBox: true,
+  minCritValue: 25,
+  targetSlot: null,
+  targetMainStat: null,
+  priority: priorityFrom(WEIGHT_PRESETS[0].weights),
+}
+
+export const useSimulationSettings = create<SimulationSettingsState>((set) => ({
+  settings: defaultSettings,
+  setMode: (mode) => set((state) => ({ settings: { ...state.settings, mode } })),
+  setResinBudget: (resinBudget) => set((state) => ({ settings: { ...state.settings, resinBudget } })),
+  setTopK: (topK) => set((state) => ({ settings: { ...state.settings, topK } })),
+  setUseStrongBox: (useStrongBox) => set((state) => ({ settings: { ...state.settings, useStrongBox } })),
+  setMinCritValue: (minCritValue) => set((state) => ({ settings: { ...state.settings, minCritValue } })),
+  setTargetSlot: (targetSlot) => set((state) => ({ settings: { ...state.settings, targetSlot } })),
+  setTargetMainStat: (targetMainStat) => set((state) => ({ settings: { ...state.settings, targetMainStat } })),
+  setPriority: (priority) => set((state) => ({ settings: { ...state.settings, priority } })),
+  
+  changeSlot: (value: string) => set((state) => {
+    const slot = value === "" ? null : Number(value)
+    let mainStat = state.settings.targetMainStat
+    
+    if (slot !== null && mainStat !== null && !SLOT_MAIN_STATS[slot].includes(mainStat)) {
+      mainStat = null
+    }
+    
+    return { settings: { ...state.settings, targetSlot: slot, targetMainStat: mainStat } }
+  }),
+  
+  resetSettings: () => set({
+    settings: {
+      ...defaultSettings,
+      mode: SimulationMode.ResinBudget,
+      topK: 3, // As per original resetSettings logic
+    }
+  }),
+}))

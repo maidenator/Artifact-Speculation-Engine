@@ -1,8 +1,9 @@
 import { Field } from "./Field"
 import { SubstatPriority } from "./SubstatPriority"
 import { MAIN_STAT_NAMES, SLOT_MAIN_STATS, SLOT_NAMES } from "../constants/artifactData"
-import type { StateSetter } from "../types/artifact"
 import { GenshinSelect } from "./selection"
+import { useSimulationSettings } from "../hooks/useSimulationSettings"
+import { SimulationMode } from "../types/artifact"
 
 const SLOT_ICONS: Record<number, string> = {
   0: "/icons/slot/flower.png",
@@ -38,34 +39,17 @@ function getStatIcon(statName: string): string | undefined {
   return undefined; 
 }
 
-interface SpeculatorConfigProps {
-  mode: number
-  topK: number
-  minCritValue: number
-  targetSlot: number | ""
-  targetMainStat: number | ""
-  priority: number[]
-  setTopK: StateSetter<number>
-  setMinCritValue: StateSetter<number>
-  setTargetMainStat: StateSetter<number | "">
-  setPriority: StateSetter<number[]>
-  onSlotChange: (value: string) => void
-}
+export function SpeculatorConfig() {
+  const settings = useSimulationSettings((state) => state.settings)
+  const setTopK = useSimulationSettings((state) => state.setTopK)
+  const setMinCritValue = useSimulationSettings((state) => state.setMinCritValue)
+  const setTargetMainStat = useSimulationSettings((state) => state.setTargetMainStat)
+  const setPriority = useSimulationSettings((state) => state.setPriority)
+  const onSlotChange = useSimulationSettings((state) => state.changeSlot)
 
-export function SpeculatorConfig({
-  mode,
-  topK,
-  minCritValue,
-  targetSlot,
-  targetMainStat,
-  priority,
-  setTopK,
-  setMinCritValue,
-  setTargetMainStat,
-  setPriority,
-  onSlotChange,
-}: SpeculatorConfigProps) {
-  const mainStatOptions = targetSlot === "" ? Object.keys(MAIN_STAT_NAMES).map(Number) : SLOT_MAIN_STATS[targetSlot]
+  const { mode, topK, minCritValue, targetSlot, targetMainStat, priority } = settings
+
+  const mainStatOptions = targetSlot === null ? Object.keys(MAIN_STAT_NAMES).map(Number) : SLOT_MAIN_STATS[targetSlot]
 
   const slotOptionsList = [
     { label: "Any piece", value: "" },
@@ -89,10 +73,10 @@ export function SpeculatorConfig({
   ]
 
   return (
-    <section className="card">
-      <h2 className="font-genshin font-bold text-3xl" style={{ marginBottom: "24px" }}>Speculator Config</h2>
+    <section className="bg-card border border-line rounded-lg p-5 mb-4 shadow-[0_8px_24px_rgba(0,0,0,0.2),inset_0_0_0_1px_rgba(255,255,255,0.05)]">
+      <h2 className="font-genshin font-bold text-[28px] text-gold mb-6 leading-[1.2] tracking-[0.5px]">Speculator Config</h2>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', alignItems: 'start' }}>
+      <div className="grid grid-cols-2 gap-6 items-start">
         
         <Field id="topk" label="Artifacts to Show">
           <GenshinSelect
@@ -108,24 +92,14 @@ export function SpeculatorConfig({
           />
         </Field>
 
-        {mode === 1 && (
+        {mode === SimulationMode.TargetPiece && (
           <>
             <Field id="mincv" label="Minimum Crit Value">
               <input
                 id="mincv"
                 type="text"
                 inputMode="decimal"
-                className="font-genshin"
-                style={{
-                  width: "100%",
-                  background: "var(--input-bg, rgba(15, 23, 42, 0.6))",
-                  border: "1px solid var(--input-border, rgba(255, 255, 255, 0.15))",
-                  borderRadius: "6px",
-                  padding: "8px 12px",
-                  color: "inherit",
-                  outline: "none",
-                  fontSize: "0.95rem"
-                }}
+                className="font-genshin w-full bg-[var(--input-bg,rgba(15,23,42,0.6))] border border-white/15 rounded-md px-3 py-2 text-inherit outline-none text-[15.2px]"
                 value={minCritValue}
                 onChange={(e) => {
                   const val = e.target.value;
@@ -141,11 +115,11 @@ export function SpeculatorConfig({
               />
             </Field>
 
-            <hr style={{ gridColumn: "1 / -1", border: "none", borderTop: "1px solid rgba(255, 255, 255, 0.15)", margin: 0 }} />
+            <hr className="col-span-full border-none border-t border-white/15 m-0" />
 
             <Field id="slot" label="Artifact type">
               <GenshinSelect
-                value={targetSlot}
+                value={targetSlot ?? ""}
                 onChange={(val) => onSlotChange(String(val))}
                 options={slotOptionsList}
                 maxHeight="220px"
@@ -154,8 +128,8 @@ export function SpeculatorConfig({
 
             <Field id="mainstat" label="Main stat">
               <GenshinSelect
-                value={targetMainStat}
-                onChange={(val) => setTargetMainStat(val === "" ? "" : Number(val))}
+                value={targetMainStat ?? ""}
+                onChange={(val) => setTargetMainStat(val === "" ? null : Number(val))}
                 options={mainStatOptionsList}
                 maxHeight="220px"
               />
@@ -163,7 +137,7 @@ export function SpeculatorConfig({
           </>
         )}
       </div>
-      <hr style={{ border: "none", borderTop: "1px solid rgba(255, 255, 255, 0.15)", margin: "24px 0" }} />
+      <hr className="border-none border-t border-white/15 my-6" />
       <SubstatPriority priority={priority} setPriority={setPriority} />
     </section>
   )

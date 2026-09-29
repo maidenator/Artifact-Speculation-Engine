@@ -44,14 +44,19 @@ export interface WeightPreset {
   weights: Record<number, number>
 }
 
+export enum SimulationMode {
+  ResinBudget = 0,
+  TargetPiece = 1,
+}
+
 export interface SimulationSettings {
-  mode: number
+  mode: SimulationMode
   resinBudget: number
   topK: number
   useStrongBox: boolean
   minCritValue: number
-  targetSlot: number | ""
-  targetMainStat: number | ""
+  targetSlot: number | null
+  targetMainStat: number | null
   priority: number[]
 }
 

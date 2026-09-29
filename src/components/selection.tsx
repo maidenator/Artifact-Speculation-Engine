@@ -1,108 +1,60 @@
-import { useState, useRef, useEffect } from "react"
+import { Listbox } from "@headlessui/react"
 
 interface Option {
   label: string
-  value: string | number
+  value: string | number | null
   icon?: string
 }
 
 interface GenshinSelectProps {
-  value: string | number
+  value: string | number | null
   onChange: (value: string | number) => void
   options: Option[]
-  maxHeight?: string // <--- 1. Add this here
+  maxHeight?: string
 }
 
 export function GenshinSelect({ value, onChange, options, maxHeight = "220px" }: GenshinSelectProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const dropdownRef = useRef<HTMLDivElement>(null)
-
   const selectedOption = options.find((opt) => opt.value === value) || options[0]
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false)
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [])
-
   return (
-    <div className="genshin-select-container" ref={dropdownRef} style={{ position: "relative", width: "100%" }}>
-      <button
-        type="button"
-        className="font-genshin text-lg"
-        onClick={() => setIsOpen(!isOpen)}
-        style={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          background: "var(--input-bg, rgba(15, 23, 42, 0.6))",
-          border: "1px solid var(--input-border, rgba(255, 255, 255, 0.15))",
-          borderRadius: "6px",
-          padding: "8px 12px",
-          color: "inherit",
-          cursor: "pointer",
-          textAlign: "left",
-          fontSize: "0.85rem",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          {selectedOption.icon && <img src={selectedOption.icon} alt="" style={{ width: "20px", height: "20px" }} />}
-          <span>{selectedOption.label}</span>
-        </div>
-        <span style={{ fontSize: "0.8em", opacity: 0.8, transform: isOpen ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>▼</span>
-      </button>
+    <Listbox value={value} onChange={onChange}>
+      <div className="relative w-full">
+        <Listbox.Button className="font-genshin w-full flex items-center justify-between bg-[var(--input-bg,rgba(15,23,42,0.6))] border border-white/15 rounded-md px-3 py-2 text-inherit cursor-pointer text-left text-[0.85rem] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/50">
+          {({ open }) => (
+            <>
+              <div className="flex items-center gap-2">
+                {selectedOption.icon && <img src={selectedOption.icon} alt="" className="w-5 h-5" />}
+                <span className="truncate">{selectedOption.label}</span>
+              </div>
+              <span className={`text-[0.8em] opacity-80 transition-transform duration-200 ${open ? "rotate-180" : ""}`}>▼</span>
+            </>
+          )}
+        </Listbox.Button>
 
-      {isOpen && (
-        <div
-          className="font-genshin"
-          style={{
-            position: "absolute",
-            top: "100%",
-            left: 0,
-            width: "100%",
-            marginTop: "4px",
-            maxHeight: maxHeight,     // <--- 2. Use it here
-            overflowY: "auto",      // <--- 3. Makes it scrollable
-            zIndex: 50,
-            background: "#0f172a",
-            border: "1px solid rgba(255, 255, 255, 0.15)",
-            borderRadius: "6px",
-            boxShadow: "0 10px 25px rgba(0,0,0,0.5)",
-            scrollbarWidth: "thin",
-            fontSize: "0.80rem",
-          }}
+        <Listbox.Options
+          className="font-genshin absolute top-full left-0 w-full mt-1 overflow-y-auto z-50 bg-[#0f172a] border border-white/15 rounded-md shadow-[0_10px_25px_rgba(0,0,0,0.5)] text-[0.80rem] focus:outline-none"
+          style={{ maxHeight, scrollbarWidth: "thin" }}
         >
           {options.map((opt) => (
-            <div
-              key={opt.value}
-              onClick={() => {
-                onChange(opt.value)
-                setIsOpen(false)
-              }}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "10px 12px",
-                cursor: "pointer",
-                background: opt.value === value ? "rgba(245, 158, 11, 0.15)" : "transparent",
-                color: opt.value === value ? "var(--gold, #f59e0b)" : "inherit",
-                borderBottom: "1px solid rgba(255, 255, 255, 0.05)"
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = opt.value === value ? "rgba(245, 158, 11, 0.15)" : "transparent")}
+            <Listbox.Option
+              key={String(opt.value)}
+              value={opt.value}
+              className={({ active, selected }) =>
+                `flex items-center gap-2 px-3 py-2.5 cursor-pointer border-b border-white/5 transition-colors focus:outline-none ${
+                  selected 
+                    ? "bg-[rgba(245,158,11,0.15)] text-[var(--gold,#f59e0b)]" 
+                    : active 
+                    ? "bg-white/10" 
+                    : "hover:bg-white/5"
+                }`
+              }
             >
-              {opt.icon && <img src={opt.icon} alt="" style={{ width: "20px", height: "20px" }} />}
-              <span>{opt.label}</span>
-            </div>
+              {opt.icon && <img src={opt.icon} alt="" className="w-5 h-5" />}
+              <span className="truncate">{opt.label}</span>
+            </Listbox.Option>
           ))}
-        </div>
-      )}
-    </div>
+        </Listbox.Options>
+      </div>
+    </Listbox>
   )
 }

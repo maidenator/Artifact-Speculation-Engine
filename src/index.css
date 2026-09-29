@@ -8,14 +8,64 @@
   font-display: swap;
 }
 
-.font-genshin {
-  font-family: 'GenshinFont', sans-serif;
+:root {
+  color-scheme: light dark;
+  --page: #f0ebd8;
+  --card: #ffffff;
+  --ink: #3a3f4a;
+  --muted: #798290;
+  --line: #d2c8b4;
+  --accent: #d3a352;
+  --on-accent: #211c14;
+  --ok: #65a30d;
+  --bad: #dc2626;
+  --gold: #d89643;
+  --cyan: #0d9488;
+  --card-inner: #f9f8f3;
 }
 
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: #121620;
+    --card: #1c2232;
+    --ink: #ece5d8;
+    --muted: #94a3b8;
+    --line: #2f384f;
+    --accent: #d3a352;
+    --on-accent: #211c14;
+    --ok: #4ade80;
+    --bad: #ff5277;
+    --gold: #e4b76a;
+    --cyan: #4ce7cc;
+    --card-inner: #161a27;
+  }
+}
+
+@theme {
+  --color-page: var(--page);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-ok: var(--ok);
+  --color-bad: var(--bad);
+  --color-gold: var(--gold);
+  --color-cyan: var(--cyan);
+  --color-card-inner: var(--card-inner);
+}
+
+html { zoom: 1.2; }
+html, body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+}
+
+.font-genshin {
+  font-family: 'GenshinFont', "HYWenHei", system-ui, -apple-system, sans-serif;
+  transform: translateZ(0);
 }
 
 input::-webkit-outer-spin-button,
@@ -26,4 +76,15 @@ input::-webkit-inner-spin-button {
 
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+/* Custom scrollbar for artifacts container */
+.artifacts-scroll::-webkit-scrollbar {
+  width: 16px !important;
+  display: block !important;
+}
+
+.artifacts-scroll::-webkit-scrollbar-track {
+  background: rgba(18, 22, 32, 0.6) !important;
+  border-radius: 8px !important;
 }

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import SimulationWorker from "../workers/simulation.worker?worker"
 import { RESIN_PER_DAY, RESIN_PER_RUN } from "../constants/resin"
 import { scoreArtifact, weightsFromPriority } from "../utils/scoring"
-import type { SimulationResult, SimulationSettings, WorkerMessageData } from "../types/artifact"
+import { SimulationMode, type SimulationResult, type SimulationSettings, type WorkerMessageData } from "../types/artifact"
 
 export function useSimulationWorkers() {
   const [engineReady, setEngineReady] = useState(false)
@@ -10,10 +10,12 @@ export function useSimulationWorkers() {
   const [loading, setLoading] = useState(false)
   const [runError, setRunError] = useState<string | null>(null)
   const [result, setResult] = useState<SimulationResult | null>(null)
-  const [ranMode, setRanMode] = useState(0)
+  const [ranMode, setRanMode] = useState<SimulationMode>(SimulationMode.ResinBudget)
   const [ranPriority, setRanPriority] = useState<number[]>([])
   const [elapsedMs, setElapsedMs] = useState<number | null>(null)
+  
   const workersRef = useRef<Worker[]>([])
+  const currentRunId = useRef(0)
 
   useEffect(() => {
     const threadCount = navigator.hardwareConcurrency || 4
@@ -60,6 +62,9 @@ export function useSimulationWorkers() {
 
   const run = async (settings: SimulationSettings) => {
     if (workersRef.current.length === 0) return
+    
+    const runId = ++currentRunId.current
+    
     const { mode, resinBudget, topK, useStrongBox, minCritValue, targetSlot, targetMainStat, priority } = settings
 
     setLoading(true)
@@ -88,8 +93,8 @@ export function useSimulationWorkers() {
           useStrongBox,
           minCritValue,
           substatWeights,
-          ...(mode === 1 && targetSlot !== "" ? { targetSlot } : {}),
-          ...(mode === 1 && targetMainStat !== "" ? { targetMainStat } : {}),
+          ...(mode === SimulationMode.TargetPiece && targetSlot !== null ? { targetSlot } : {}),
+          ...(mode === SimulationMode.TargetPiece && targetMainStat !== null ? { targetMainStat } : {}),
         })
 
         return new Promise<SimulationResult>((resolve, reject) => {
@@ -109,6 +114,10 @@ export function useSimulationWorkers() {
       })
 
       const rawResults = await Promise.all(tasks)
+      
+      // Ignore results if a new run was started
+      if (runId !== currentRunId.current) return
+      
       const results = rawResults.filter((r): r is SimulationResult => r !== null)
 
       const aggregated: SimulationResult = {
@@ -129,10 +138,13 @@ export function useSimulationWorkers() {
       setRanPriority(priority)
       setResult(aggregated)
     } catch (err: unknown) {
+      if (runId !== currentRunId.current) return
       console.error("Simulation run error:", err)
       setRunError("The simulation hit an error across worker threads.")
     } finally {
-      setLoading(false)
+      if (runId === currentRunId.current) {
+        setLoading(false)
+      }
     }
   }
 

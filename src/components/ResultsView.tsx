@@ -1,43 +1,33 @@
 import { useState } from "react"
 import { ArtifactCard } from "./ArtifactCard"
 import { fmtDays, fmtTime } from "../utils/format"
-import type { ScoreMode, SimulationResult } from "../types/artifact"
+import { SimulationMode, type ScoreMode, type SimulationResult } from "../types/artifact"
 
 function ArtifactSkeleton({ loading }: { loading: boolean }) {
   return (
     <>
-      <style>{`
-        @keyframes skeletonPulse {
-          0% { opacity: 0.2; }
-          50% { opacity: 0.6; }
-          100% { opacity: 0.2; }
-        }
-        .artifact-skeleton {
-          animation: skeletonPulse 1.5s ease-in-out infinite;
-        }
-      `}</style>
       <article 
-        className={`artifact ${loading ? "artifact-skeleton" : ""}`} 
+        className={`bg-card-inner border border-line rounded-md overflow-hidden flex flex-col h-max shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition-transform duration-200 hover:-translate-y-[2px] ${loading ? "animate-pulse" : ""}`}
         style={{ opacity: loading ? 1 : 0.4, pointerEvents: "none" }}
       >
-        <header>
-          <span className="rank">#--</span>
-          <div className="slot-wrapper">
-            <div style={{ width: "20px", height: "20px", background: "rgba(255,255,255,0.1)", borderRadius: "4px" }} />
-            <div style={{ width: "60px", height: "14px", background: "rgba(255,255,255,0.1)", borderRadius: "4px" }} />
+        <header className="bg-gradient-to-br from-[#a75727] to-[#d89643] px-3 py-1.5 flex justify-between items-center text-white border-b-2 border-[#eab05f] gap-1.5">
+          <span className="bg-black/35 px-1.5 py-0.5 rounded text-[11.5px] font-bold text-white">#--</span>
+          <div className="flex items-center gap-1.5">
+            <div className="w-5 h-5 bg-white/10 rounded" />
+            <div className="w-[60px] h-[14px] bg-white/10 rounded" />
           </div>
-          <span className="level">+0</span>
+          <span className="bg-[#1e2330] text-gold px-2 py-0.5 rounded-full text-[12px] font-bold border border-gold ml-auto">+0</span>
         </header>
         
-        <div className="main" style={{ height: "45px", background: "rgba(255,255,255,0.05)", borderRadius: "6px", margin: "8px 12px" }} />
+        <div className="flex flex-col gap-0.5 m-0 px-3 pt-4 pb-3 border-b border-white/5 font-genshin h-[45px] bg-white/5 rounded-md mx-3 my-2" />
         
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px", margin: "12px 12px" }}>
+        <div className="flex flex-col gap-2 mx-3 my-3">
           {[1, 2, 3, 4].map((_, i) => (
-            <div key={i} style={{ height: "20px", background: "rgba(255,255,255,0.05)", borderRadius: "4px" }} />
+            <div key={i} className="h-5 bg-white/5 rounded" />
           ))}
         </div>
         
-        <div style={{ height: "28px", background: "rgba(255,255,255,0.05)", borderRadius: "6px", margin: "12px 12px 8px 12px" }} />
+        <div className="h-7 bg-white/5 rounded-md mx-3 mt-3 mb-2" />
       </article>
     </>
   )
@@ -46,7 +36,7 @@ function ArtifactSkeleton({ loading }: { loading: boolean }) {
 interface ResultsViewProps {
   result: SimulationResult
   loading: boolean
-  ranMode: number
+  ranMode: SimulationMode
   scoreMode?: ScoreMode
   ranPriority: number[]
   elapsedMs: number | null
@@ -56,55 +46,52 @@ export function ResultsView({ result, loading, ranMode, ranPriority, elapsedMs }
   const [scoreMode, setScoreMode] = useState<ScoreMode>("cv")
 
   return (
-    <section className="card results" aria-live="polite">
+    <section className="bg-card border border-line rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.2),inset_0_0_0_1px_rgba(255,255,255,0.05)] flex flex-col flex-1 min-h-0 overflow-hidden" aria-live="polite">
       
-      <div className="sticky-results-header">
-        <div className="results-head">
-          <h2 className="font-genshin font-bold text-3xl">Results</h2>
-          {ranMode === 1 && !loading && (
-            <span className={`badge font-genshin ${result.targetAchieved ? "ok" : "bad"}`}>
+      <div className="bg-card z-10 px-5 pt-5 pb-3 border-b border-line shrink-0">
+        <div className="flex justify-between items-center gap-3 flex-wrap">
+          <h2 className="font-genshin font-bold text-[28px] m-0 text-gold leading-[1.2] tracking-[0.5px]">Results</h2>
+          {ranMode === SimulationMode.TargetPiece && !loading && (
+            <span className={`font-genshin text-[13px] font-semibold px-2.5 py-0.5 border border-current rounded-full ${result.targetAchieved ? "text-ok" : "text-bad"}`}>
               {result.targetAchieved ? "Goal reached" : "Goal not reached within budget"}
             </span>
           )}
         </div>
 
-        <p className={`summary font-genshin ${loading ? "artifact-skeleton" : ""}`} style={{ opacity: loading ? 0.5 : 1 }}>
+        <p className={`font-genshin my-3 text-[16px] tracking-[0.3px] ${loading ? "animate-pulse" : ""}`} style={{ opacity: loading ? 0.5 : 1 }}>
           {loading ? (
-            <span style={{ display: "inline-block", background: "rgba(255,255,255,0.1)", borderRadius: "4px", width: "70%", height: "1.1em" }} />
+            <span className="inline-block bg-white/10 rounded w-[70%] h-[1.1em]" />
           ) : (
             <>
               Spending {result.totalResinSpent.toLocaleString()} Resin (Around {fmtDays(result.equivalentDays)}) got you{" "}
-              <strong style={{ fontSize: "1.2em", color: "var(--gold)" }}>{result.totalFiveStarsFound.toLocaleString()}</strong> Artifacts.
+              <strong className="text-[1.2em] text-gold">{result.totalFiveStarsFound.toLocaleString()}</strong> Artifacts.
             </>
           )}
         </p>
 
-        <dl className={`stats font-genshin ${loading ? "artifact-skeleton" : ""}`} style={{ opacity: loading ? 0.5 : 1 }}>
-          <div>
-            <dt>Domain runs</dt>
-            <dd>{loading ? <span style={{ display: "inline-block", width: "40px", height: "1.1em", background: "rgba(255,255,255,0.1)", borderRadius: "4px" }} /> : result.domainRunsCompleted.toLocaleString()}</dd>
+        <dl className={`grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-3 m-0 font-genshin ${loading ? "animate-pulse" : ""}`} style={{ opacity: loading ? 0.5 : 1 }}>
+          <div className="px-3 py-2.5 bg-black/15 border border-line rounded-md">
+            <dt className="text-[12.5px] text-muted">Domain runs</dt>
+            <dd className="m-0 font-genshin text-[22px] font-[650] tracking-[0.5px]">{loading ? <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" /> : result.domainRunsCompleted.toLocaleString()}</dd>
           </div>
-          <div>
-            <dt>Strongbox rolls</dt>
-            <dd>{loading ? <span style={{ display: "inline-block", width: "40px", height: "1.1em", background: "rgba(255,255,255,0.1)", borderRadius: "4px" }} /> : result.strongboxRollsCompleted.toLocaleString()}</dd>
+          <div className="px-3 py-2.5 bg-black/15 border border-line rounded-md">
+            <dt className="text-[12.5px] text-muted">Strongbox rolls</dt>
+            <dd className="m-0 font-genshin text-[22px] font-[650] tracking-[0.5px]">{loading ? <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" /> : result.strongboxRollsCompleted.toLocaleString()}</dd>
           </div>
-          <div>
-            <dt>Engine Run time</dt>
-            <dd>{loading ? <span style={{ display: "inline-block", width: "40px", height: "1.1em", background: "rgba(255,255,255,0.1)", borderRadius: "4px" }} /> : (elapsedMs !== null ? fmtTime(elapsedMs) : "-")}</dd>
+          <div className="px-3 py-2.5 bg-black/15 border border-line rounded-md">
+            <dt className="text-[12.5px] text-muted">Engine Run time</dt>
+            <dd className="m-0 font-genshin text-[22px] font-[650] tracking-[0.5px]">{loading ? <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" /> : (elapsedMs !== null ? fmtTime(elapsedMs) : "-")}</dd>
           </div>
         </dl>
 
-        <div className="pieces-head">
-          <h3 className="font-genshin">Best pieces ({loading ? "..." : result.topArtifacts.length})</h3>
-          <div className="toggle font-genshin" role="group" aria-label="Score shown on each piece">
+        <div className="flex justify-between items-center gap-3 flex-wrap mt-4">
+          <h3 className="font-genshin text-[16px] m-0 text-gold tracking-[0.5px]">Best pieces ({loading ? "..." : result.topArtifacts.length})</h3>
+          <div className="font-genshin inline-flex border border-line rounded-full overflow-hidden bg-black/15" role="group" aria-label="Score shown on each piece">
             <button 
               type="button" 
               aria-pressed={scoreMode === "cv"} 
               onClick={() => setScoreMode("cv")}
-              style={{
-                backgroundColor: scoreMode === "cv" ? "var(--gold)" : "transparent",
-                color: scoreMode === "cv" ? "#111" : "inherit"
-              }}
+              className={`px-3.5 py-1 text-[12.5px] border-0 cursor-pointer hover:text-gold ${scoreMode === "cv" ? "bg-gold text-[#121620] font-semibold" : "bg-transparent text-muted"}`}
             >
               Crit Value
             </button>
@@ -112,10 +99,7 @@ export function ResultsView({ result, loading, ranMode, ranPriority, elapsedMs }
               type="button" 
               aria-pressed={scoreMode === "rv"} 
               onClick={() => setScoreMode("rv")}
-              style={{
-                backgroundColor: scoreMode === "rv" ? "var(--gold)" : "transparent",
-                color: scoreMode === "rv" ? "#111" : "inherit"
-              }}
+              className={`px-3.5 py-1 text-[12.5px] border-0 cursor-pointer hover:text-gold ${scoreMode === "rv" ? "bg-gold text-[#121620] font-semibold" : "bg-transparent text-muted"}`}
             >
               Roll Value
             </button>
@@ -124,42 +108,26 @@ export function ResultsView({ result, loading, ranMode, ranPriority, elapsedMs }
       </div>
 
       {loading ? (
-        <div style={{ position: "relative" }}>
-          <div className="artifacts" style={{ opacity: 0.3 }}>
+        <div className="relative">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] auto-rows-max content-start gap-4 p-5 pb-10 max-h-[650px] overflow-y-auto artifacts-scroll opacity-30">
             <ArtifactSkeleton loading={true} />
             <ArtifactSkeleton loading={true} />
             <ArtifactSkeleton loading={true} />
           </div>
-          <div 
-            className="font-genshin"
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              textAlign: "center",
-              zIndex: 10,
-              color: "#94a3b8",
-              fontSize: "1.3rem",
-              fontWeight: "bold",
-              padding: "12px 24px",
-              borderRadius: "8px",
-              opacity: 0.5,
-            }}
-          >
+          <div className="font-genshin absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-10 text-slate-400 text-[1.3rem] font-bold px-6 py-3 rounded-lg opacity-50">
             Simulating artifact farming...
           </div>
         </div>
       ) : result.topArtifacts.length === 0 ? (
-        <div className="artifacts">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] auto-rows-max content-start gap-4 p-5 pb-10 max-h-[650px] overflow-y-auto artifacts-scroll">
           <ArtifactSkeleton loading={false} />
           <ArtifactSkeleton loading={false} />
           <ArtifactSkeleton loading={false} />
         </div>
       ) : (
-        <div className="artifacts">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] auto-rows-max content-start gap-4 p-5 pb-10 max-h-[650px] overflow-y-auto artifacts-scroll">
           {result.topArtifacts.map((art, idx) => (
-            <ArtifactCard key={idx} artifact={art} rank={idx + 1} scoreMode={scoreMode} priority={ranPriority} />
+            <ArtifactCard key={`${art.slot}-${art.mainStat.type}-${idx}`} artifact={art} rank={idx + 1} scoreMode={scoreMode} priority={ranPriority} />
           ))}
         </div>
       )}

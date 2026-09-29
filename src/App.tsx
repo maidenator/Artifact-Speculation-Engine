@@ -8,24 +8,14 @@ import { RESIN_PER_RUN } from "./constants/resin"
 import { useDockedScroll } from "./hooks/useDockedScroll"
 import { useSimulationSettings } from "./hooks/useSimulationSettings"
 import { useSimulationWorkers } from "./hooks/useSimulationWorkers"
-import { APP_CSS } from "./styles/appStyles"
+
 
 export default function App() {
   const appRef = useDockedScroll<HTMLDivElement>()
   const [isSimulating, setIsSimulating] = useState(false)
 
-  const {
-    settings,
-    setMode,
-    setResinBudget,
-    setTopK,
-    setUseStrongBox,
-    setMinCritValue,
-    setTargetMainStat,
-    setPriority,
-    changeSlot,
-    resetSettings,
-  } = useSimulationSettings()
+  const settings = useSimulationSettings(state => state.settings)
+  const resetSettings = useSimulationSettings(state => state.resetSettings)
 
   const { engineReady, engineError, loading, runError, result, ranMode, ranPriority, elapsedMs, run } =
     useSimulationWorkers()
@@ -36,53 +26,27 @@ export default function App() {
     if (!canRun) return
     setIsSimulating(true)
     try {
-      await Promise.all([
-        run(settings),
-        new Promise((resolve) => setTimeout(resolve, 1000)),
-      ])
+      await run(settings)
     } finally {
       setIsSimulating(false)
     }
   }
 
   return (
-    /* We use a Fragment (<>) here so we can return both the App and the floating ActionBar */
     <>
-      <div className="app font-genshin" ref={appRef}>
-        <style>{APP_CSS}</style>
-
-        <div className="sticky-header">
+      <div className="font-genshin max-w-[1400px] mx-auto px-5 pt-9 pb-[72px] min-h-screen text-[15px] leading-relaxed box-border lg:h-auto" ref={appRef}>
+        <div className="relative bg-page z-[100] pt-9 pb-4 mb-3">
           <AppHeader engineReady={engineReady} engineError={engineError} />
         </div>
 
-        <div className="layout">
-          <aside className="sidebar">
-            <ResinConfig
-              mode={settings.mode}
-              resinBudget={settings.resinBudget}
-              useStrongBox={settings.useStrongBox}
-              setMode={setMode}
-              setResinBudget={setResinBudget}
-              setUseStrongBox={setUseStrongBox}
-            />
-
-            <SpeculatorConfig
-              mode={settings.mode}
-              topK={settings.topK}
-              minCritValue={settings.minCritValue}
-              targetSlot={settings.targetSlot}
-              targetMainStat={settings.targetMainStat}
-              priority={settings.priority}
-              setTopK={setTopK}
-              setMinCritValue={setMinCritValue}
-              setTargetMainStat={setTargetMainStat}
-              setPriority={setPriority}
-              onSlotChange={changeSlot}
-            />
+        <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-8 lg:h-auto">
+          <aside className="lg:h-auto lg:max-h-[calc(100vh-72px)] lg:overflow-y-auto">
+            <ResinConfig />
+            <SpeculatorConfig />
           </aside>
 
-          <main>
-            {runError && <p className="error font-genshin" role="alert">{runError}</p>}
+          <main className="lg:h-auto lg:overflow-visible">
+            {runError && <p className="font-genshin text-bad border border-bad rounded-md px-3.5 py-2.5 mb-4" role="alert">{runError}</p>}
             <ResultsView 
               result={result || { 
                 topArtifacts: [], 
@@ -102,10 +66,6 @@ export default function App() {
         </div>
       </div>
 
-      {/* 
-        Moved completely outside the `.app` div!
-        Now it will perfectly float over the screen, no matter how far you scroll.
-      */}
       <ActionBar
         canRun={canRun}
         loading={loading || isSimulating}

@@ -1,74 +1,42 @@
 import { Field } from "./Field"
 import { RESIN_PER_RUN, RESIN_SHORTCUTS } from "../constants/resin"
-import type { StateSetter } from "../types/artifact"
-import { GenshinSelect } from "./selection";
+import { GenshinSelect } from "./selection"
+import { useSimulationSettings } from "../hooks/useSimulationSettings"
+import { SimulationMode } from "../types/artifact"
 
-interface ResinConfigProps {
-  mode: number
-  resinBudget: number
-  useStrongBox: boolean
-  setMode: StateSetter<number>
-  setResinBudget: StateSetter<number>
-  setUseStrongBox: StateSetter<boolean>
-}
-
-export function ResinConfig({
-  mode,
-  resinBudget,
-  useStrongBox,
-  setMode,
-  setResinBudget,
-  setUseStrongBox,
-}: ResinConfigProps) {
+export function ResinConfig() {
+  const settings = useSimulationSettings((state) => state.settings)
+  const setMode = useSimulationSettings((state) => state.setMode)
+  const setResinBudget = useSimulationSettings((state) => state.setResinBudget)
+  const setUseStrongBox = useSimulationSettings((state) => state.setUseStrongBox)
 
   return (
-    <section className="card">
+    <section className="bg-card border border-line rounded-lg p-5 mb-4 shadow-[0_8px_24px_rgba(0,0,0,0.2),inset_0_0_0_1px_rgba(255,255,255,0.05)]">
       {/* 24px space below title */}
-      <h2 className="font-genshin font-bold text-3xl" style={{ marginBottom: "24px" }}>Resin Config</h2>
+      <h2 className="font-genshin font-bold text-[28px] text-gold mb-6 leading-[1.2] tracking-[0.5px]">Resin Config</h2>
       
       {/* Set gap to exactly 24px so the space between fields and lines is uniform */}
-      <div className="grid" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-        <Field id="resin" label={mode === 0 ? "Resin to spend" : "Maximum Resin to spend"}>
-          <div 
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              background: "var(--input-bg, rgba(15, 23, 42, 0.6))",
-              border: "1px solid rgba(255, 255, 255, 0.15)",
-              borderRadius: "6px",
-              padding: "8px 12px",
-            }}
-          >
-            <img src="/icons/resin.png" alt="Resin" style={{ width: "18px", height: "18px", flexShrink: 0, opacity: 0.9 }} />
+      <div className="flex flex-col gap-6">
+        <Field id="resin" label={settings.mode === SimulationMode.ResinBudget ? "Resin to spend" : "Maximum Resin to spend"}>
+          <div className="flex items-center gap-2 bg-[var(--input-bg,rgba(15,23,42,0.6))] border border-white/15 rounded-md px-3 py-2">
+            <img src="/icons/resin.png" alt="Resin" className="w-[18px] h-[18px] shrink-0 opacity-90" />
             <input
               id="resin" 
               type="text" 
               inputMode="numeric" 
-              className="font-genshin"
-              style={{
-                flex: 1,
-                minWidth: 0,
-                background: "transparent",
-                border: "none",
-                outline: "none",
-                boxShadow: "none",
-                color: "inherit",
-                fontSize: "0.95rem",
-                padding: 0
-              }}
-              value={resinBudget ? resinBudget.toLocaleString() : ""}
+              className="font-genshin flex-1 min-w-0 bg-transparent border-none outline-none shadow-none text-inherit text-[15.2px] p-0"
+              value={settings.resinBudget ? settings.resinBudget.toLocaleString() : ""}
               onChange={(e) => {
                 const rawValue = e.target.value.replace(/\D/g, "");
                 setResinBudget(rawValue === "" ? 0 : Number(rawValue));
               }}
-              onBlur={() => setResinBudget((prev) => Math.max(RESIN_PER_RUN, Math.floor(prev / RESIN_PER_RUN) * RESIN_PER_RUN))}
+              onBlur={() => setResinBudget(Math.max(RESIN_PER_RUN, Math.floor(settings.resinBudget / RESIN_PER_RUN) * RESIN_PER_RUN))}
             />
           </div>
 
-          <div className="chips" style={{ marginTop: "12px" }}>
+          <div className="flex flex-wrap gap-1.5 mt-3">
             {RESIN_SHORTCUTS.map((s) => (
-              <button key={s.label} type="button" className="chip font-genshin" onClick={() => setResinBudget(s.resin)}>
+              <button key={s.label} type="button" className="px-3 py-1 text-[12.5px] text-muted bg-white/5 border border-line rounded-2xl cursor-pointer transition-all hover:border-gold hover:text-gold font-genshin" onClick={() => setResinBudget(s.resin)}>
                 {s.label}
               </button>
             ))}
@@ -76,46 +44,44 @@ export function ResinConfig({
         </Field>
         
         {/* Margin 0 here because the grid's 24px gap will handle the top and bottom spacing automatically */}
-        <hr style={{ border: "none", borderTop: "1px solid rgba(255, 255, 255, 0.15)", margin: 0 }} />
+        <hr className="border-none border-t border-white/15 m-0" />
         
         <Field id="mode" label="How should the simulator spend resin?">
           <GenshinSelect
-            value={mode}
-            onChange={(val) => setMode(Number(val))}
+            value={settings.mode}
+            onChange={(val) => setMode(Number(val) as SimulationMode)}
             options={[
-              { label: "Set resin budget", value: 0 },
-              { label: "Target specific artifact", value: 1 },
+              { label: "Set resin budget", value: SimulationMode.ResinBudget },
+              { label: "Target specific artifact", value: SimulationMode.TargetPiece },
             ]}
           />
         </Field>
       </div>
       
       {/* Exactly 24px margin above and below the line to match the grid gap above */}
-      <hr style={{ border: "none", borderTop: "1px solid rgba(255, 255, 255, 0.15)", margin: "24px 0" }} />
+      <hr className="border-none border-t border-white/15 my-6" />
       
       {/* Removed marginTop completely, allowing the hr's 24px bottom margin to push this down perfectly */}
-      <label className="check font-genshin" style={{ display: "flex", alignItems: "center", gap: "12px", cursor: "pointer" }}>
+      <label className="font-genshin flex items-center gap-3 cursor-pointer">
         <input 
           type="checkbox" 
-          checked={useStrongBox} 
+          checked={settings.useStrongBox} 
           onChange={(e) => setUseStrongBox(e.target.checked)} 
           style={{ display: "none" }}
         />
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <div className="flex items-center gap-3">
           <img 
             src="/icons/strongbox.webp" 
             alt="Strongbox" 
+            className="w-[50px] h-[50px] transition-all duration-200"
             style={{ 
-              width: "50px",
-              height: "50px", 
-              transition: "opacity 0.2s, filter 0.2s",
-              opacity: useStrongBox ? 1 : 0.35,
-              filter: useStrongBox ? "none" : "grayscale(100%)"
+              opacity: settings.useStrongBox ? 1 : 0.35,
+              filter: settings.useStrongBox ? "none" : "grayscale(100%)"
             }} 
           />
           <div>
             <span>Use Strongbox?</span>
-            <small style={{ display: "block", opacity: 0.7, fontSize: "0.85em" }}>Turns 3 unwanted pieces into 1 extra Artifact</small>
+            <small className="block opacity-70 text-[0.85em]">Turns 3 unwanted pieces into 1 extra Artifact</small>
           </div>
         </div>
       </label>
