@@ -27,7 +27,7 @@ export function ResultsView({ result, ranMode, ranPriority, elapsedMs }: Results
 
       <p className="summary">
         Spending {result.totalResinSpent.toLocaleString()} resin (about {fmtDays(result.equivalentDays)}) got you{" "}
-        <strong>{result.totalFiveStarsFound.toLocaleString()} five-star pieces</strong>.
+        <strong>{result.totalFiveStarsFound.toLocaleString()} 5* artifacts</strong>.
       </p>
 
       <dl className="stats">
