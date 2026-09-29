@@ -1,3 +1,4 @@
+import { useState } from "react" // 1. Make sure useState is imported
 import { AppHeader } from "./components/AppHeader"
 import { ResinConfig } from "./components/ResinConfig"
 import { SpeculatorConfig } from "./components/SpeculatorConfig"
@@ -11,6 +12,7 @@ import { APP_CSS } from "./styles/appStyles"
 
 export default function App() {
   const appRef = useDockedScroll<HTMLDivElement>()
+  const [isSimulating, setIsSimulating] = useState(false) // 2. Add local loading state
 
   const {
     settings,
@@ -29,8 +31,19 @@ export default function App() {
     useSimulationWorkers()
 
   const canRun = engineReady && !loading && settings.resinBudget >= RESIN_PER_RUN
-  const handleRun = () => {
-    if (canRun) void run(settings)
+  
+  const handleRun = async () => {
+    if (!canRun) return
+    setIsSimulating(true)
+    try {
+      // Forces a guaranteed 2-second minimum window for the skeleton animation
+      await Promise.all([
+        run(settings),
+        new Promise((resolve) => setTimeout(resolve, 1000)),
+      ])
+    } finally {
+      setIsSimulating(false)
+    }
   }
 
   return (
@@ -70,7 +83,7 @@ export default function App() {
 
           <ActionBar
             canRun={canRun}
-            loading={loading}
+            loading={loading || isSimulating}
             engineReady={engineReady}
             engineError={engineError}
             onRun={handleRun}
@@ -80,7 +93,21 @@ export default function App() {
 
         <main>
           {runError && <p className="error font-genshin" role="alert">{runError}</p>}
-          {result && <ResultsView result={result} ranMode={ranMode} ranPriority={ranPriority} elapsedMs={elapsedMs} />}
+          <ResultsView 
+            result={result || { 
+              topArtifacts: [], 
+              totalResinSpent: 0, 
+              equivalentDays: 0, 
+              totalFiveStarsFound: 0, 
+              domainRunsCompleted: 0, 
+              strongboxRollsCompleted: 0, 
+              targetAchieved: false 
+            }} 
+            loading={loading || isSimulating}
+            ranMode={ranMode} 
+            ranPriority={ranPriority} 
+            elapsedMs={elapsedMs} 
+          />
         </main>
       </div>
     </div>

@@ -8,14 +8,21 @@ interface SubstatPriorityProps {
 }
 
 export function SubstatPriority({ priority, setPriority }: SubstatPriorityProps) {
-  const hasWeights = priority.length > 0
   const unpicked = Object.keys(SUBSTAT_NAMES).map(Number).filter((id) => !priority.includes(id))
 
   return (
     <details className="advanced font-genshin">
-      <summary className="font-genshin">Substat Priority {hasWeights ? "" : "(none set, using Crit Value)"}</summary>
+      <summary 
+        className="font-genshin" 
+        style={{ display: "flex", flexDirection: "column", gap: "2px", marginBottom: "40px" }}
+      >
+        <span>Substat Priority</span>
+        <span className="hint font-genshin" style={{ fontSize: "0.85em", opacity: 0.7, fontWeight: "normal" }}>
+          Select None for Pure Crit Value
+        </span>
+      </summary>
       <p className="hint font-genshin" style={{ marginBottom: '20px' }}>Pieces are ranked by summing each substat * its weight. Setting a weight to 0 ignores that substat.</p>
-      <p className="text-sm font-genshin">Some pre-defined presets:</p>
+      <p className="pick-label font-genshin">Some pre-defined presets</p>
       <div className="chips">
         {WEIGHT_PRESETS.map((p) => (
           <button key={p.label} type="button" className="chip font-genshin" onClick={() => setPriority(priorityFrom(p.weights))}>

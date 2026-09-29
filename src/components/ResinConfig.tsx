@@ -42,16 +42,25 @@ export function ResinConfig({
           <div className="input-with-icon">
             <img src="/icons/resin.png" alt="Resin" className="field-icon" />
             <input
-              id="resin" 
-              type="number" 
-              inputMode="numeric" 
-              className="font-genshin text-lg"
-              min={RESIN_PER_RUN} 
-              step={RESIN_PER_RUN}
-              value={resinBudget || ""}
-              onChange={(e) => setResinBudget(Number(e.target.value))}
-              onBlur={() => setResinBudget((prev) => Math.max(RESIN_PER_RUN, Math.floor(prev / RESIN_PER_RUN) * RESIN_PER_RUN))}
-            />
+                id="resin" 
+                type="text" 
+                inputMode="numeric" 
+                className="font-genshin text-lg"
+                style={{
+                  background: "var(--input-bg, rgba(15, 23, 42, 0.6))",
+                  border: "1px solid var(--input-border, rgba(255, 255, 255, 0.15))",
+                  borderRadius: "6px",
+                  padding: "8px 12px",
+                  color: "inherit",
+                  outline: "none"
+                }}
+                value={resinBudget ? resinBudget.toLocaleString() : ""}
+                onChange={(e) => {
+                  const rawValue = e.target.value.replace(/\D/g, "");
+                  setResinBudget(rawValue === "" ? 0 : Number(rawValue));
+                }}
+                onBlur={() => setResinBudget((prev) => Math.max(RESIN_PER_RUN, Math.floor(prev / RESIN_PER_RUN) * RESIN_PER_RUN))}
+              />
           </div>
 
           <div className="chips">

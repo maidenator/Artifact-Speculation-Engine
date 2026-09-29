@@ -436,7 +436,7 @@ body {
 }
 .toggle button[aria-pressed="true"] {
   color: #121620;
-  background: var(--cyan);
+  background: var(--gold);
   font-weight: 600;
 }
 

@@ -81,7 +81,6 @@ export function SpeculatorConfig({
     })),
   ]
 
-  // 3. APPLIED HELPER: Attaches the icon to the dropdown options
   const mainStatOptionsList = [
     { label: "Any main stat", value: "" },
     ...mainStatOptions.map((id) => {
@@ -98,8 +97,8 @@ export function SpeculatorConfig({
     <section className="card">
       <h2 className="font-genshin font-bold text-3xl">Speculator Config</h2>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-        <Field id="topk" label="How Many Pieces to Keep?" hint="The best pieces by score are shown after the run.">
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', alignItems: 'start' }}>
+        <Field id="topk" label="Pieces to Show" hint="The best pieces by score are shown after the run.">
           <input
             id="topk"
             type="number"

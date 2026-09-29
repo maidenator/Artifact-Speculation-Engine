@@ -4,9 +4,9 @@ import { priorityFrom } from "../utils/scoring"
 import type { SimulationSettings } from "../types/artifact"
 
 export function useSimulationSettings() {
-  const [mode, setMode] = useState(0)
-  const [resinBudget, setResinBudget] = useState(2000)
-  const [topK, setTopK] = useState(3)
+  const [mode, setMode] = useState(1)
+  const [resinBudget, setResinBudget] = useState(2000)  
+  const [topK, setTopK] = useState(10)
   const [useStrongBox, setUseStrongBox] = useState(true)
   const [minCritValue, setMinCritValue] = useState(25)
   const [targetSlot, setTargetSlot] = useState<number | "">("")

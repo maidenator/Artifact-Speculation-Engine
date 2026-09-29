@@ -171,8 +171,7 @@ export const WEIGHT_PRESETS: WeightPreset[] = [
   },
 ]
 
-// Biggest single roll each substat can get (top tier from distributions.hpp,
-// rounded to 1 decimal like the engine rounds every roll)
+// WIP
 export const MAX_SUBSTAT_ROLL: Record<number, number> = {
   [Stat.CritDMG]: 7.8,
   [Stat.CritRate]: 3.9,

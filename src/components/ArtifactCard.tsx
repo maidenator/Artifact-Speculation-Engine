@@ -48,7 +48,6 @@ export function ArtifactCard({ artifact: art, rank, scoreMode, priority }: Artif
   const mainStatName = MAIN_STAT_NAMES[art.mainStat.type] ?? art.mainStat.type;
   const mainStatIcon = getStatIcon(String(mainStatName));
 
-  // Removed the dynamic card-tier class so the outer border stays clean, as requested
   return (
     <article className="artifact">
       <header>
@@ -97,17 +96,26 @@ export function ArtifactCard({ artifact: art, rank, scoreMode, priority }: Artif
           const subName = SUBSTAT_NAMES[sub.type] ?? sub.type;
           const subIcon = getStatIcon(String(subName));
           
-          //Temp
+          const isPriority = priority.includes(sub.type);
+          
           const rollHistory = (sub as typeof sub & { rollTiers?: string[] }).rollTiers 
           || Array(Math.min(sub.rolls, 6)).fill("min");
           
           return (
-            <li key={i}>
+            <li 
+              key={i}
+              style={{
+                backgroundColor: isPriority ? "rgba(255, 255, 255, 0.08)" : "transparent",
+                // border: isPriority ? "1px solid rgba(255, 255, 255, 0.03)" : "1px solid transparent",
+                borderRadius: "6px",
+                padding: "4px 8px",
+                margin: "2px 0",
+              }}>
               <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                 {subIcon && (
                   <img src={subIcon} alt="" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
                 )}
-                {subName}
+                <span>{subName}</span>
                 
                 {/* Roll Dots Container */}
                 <i style={{ display: "inline-flex", gap: "4px", marginLeft: "6px" }}>
@@ -126,7 +134,10 @@ export function ArtifactCard({ artifact: art, rank, scoreMode, priority }: Artif
         })}
       </ul>
       
-      <footer className={`font-genshin ${scoreMode === "cv" ? cvTier(art.critValue) : rvTier(rollValue(art, priority))}`}>
+      <footer 
+        className={`font-genshin ${scoreMode === "cv" ? cvTier(art.critValue) : rvTier(rollValue(art, priority))}`}
+        style={{ color: "var(--gold)" }}
+      >
         <span>{scoreMode === "cv" ? "Crit Value" : "Roll Value"}</span>
         <strong>
           {scoreMode === "cv" ? art.critValue.toFixed(1) : `${Math.round(rollValue(art, priority))}%`}
