@@ -62,11 +62,11 @@ export const SUBSTAT_NAMES: Record<number, string> = {
   [Stat.ElementalMastery]: "Elemental Mastery",
   [Stat.EnergyRecharge]: "Energy Recharge",
   [Stat.AtkPercent]: "ATK%",
-  [Stat.FlatAtk]: "Flat ATK",
+  [Stat.FlatAtk]: "ATK",
   [Stat.HpPercent]: "HP%",
-  [Stat.FlatHp]: "Flat HP",
+  [Stat.FlatHp]: "HP",
   [Stat.DefPercent]: "DEF%",
-  [Stat.FlatDef]: "Flat DEF",
+  [Stat.FlatDef]: "DEF",
 }
 
 export const SLOT_NAMES = ["Flower", "Feather", "Sands", "Goblet", "Circlet"]

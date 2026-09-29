@@ -30,7 +30,7 @@ export function ResinConfig({
         <Field id="mode" label="How should the simulator spend resin?" hint={mode === 0 ? "Spend the whole budget and show the best pieces." : "Keep farming until a piece meets your goal or the budget runs out."}>
           <GenshinSelect
             value={mode}
-            onChange={setMode}
+            onChange={(val) => setMode(Number(val))}
             options={[
               { label: "Set resin budget", value: 0 },
               { label: "Target specific artifact", value: 1 },
@@ -39,45 +39,76 @@ export function ResinConfig({
         </Field>
 
         <Field id="resin" label={mode === 0 ? "Resin to spend" : "Maximum Resin to spend"} hint={`${runs.toLocaleString()} domain runs, about ${fmtDays(resinBudget / RESIN_PER_DAY)} of resin at ${RESIN_PER_DAY}/day`}>
-          <div className="input-with-icon">
-            <img src="/icons/resin.png" alt="Resin" className="field-icon" />
+          <div 
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              background: "var(--input-bg, rgba(15, 23, 42, 0.6))",
+              border: "1px solid rgba(255, 255, 255, 0.15)",
+              borderRadius: "6px",
+              padding: "8px 12px",
+            }}
+          >
+            <img src="/icons/resin.png" alt="Resin" style={{ width: "18px", height: "18px", flexShrink: 0, opacity: 0.9 }} />
             <input
-                id="resin" 
-                type="text" 
-                inputMode="numeric" 
-                className="font-genshin text-lg"
-                style={{
-                  background: "var(--input-bg, rgba(15, 23, 42, 0.6))",
-                  border: "1px solid var(--input-border, rgba(255, 255, 255, 0.15))",
-                  borderRadius: "6px",
-                  padding: "8px 12px",
-                  color: "inherit",
-                  outline: "none"
-                }}
-                value={resinBudget ? resinBudget.toLocaleString() : ""}
-                onChange={(e) => {
-                  const rawValue = e.target.value.replace(/\D/g, "");
-                  setResinBudget(rawValue === "" ? 0 : Number(rawValue));
-                }}
-                onBlur={() => setResinBudget((prev) => Math.max(RESIN_PER_RUN, Math.floor(prev / RESIN_PER_RUN) * RESIN_PER_RUN))}
-              />
+              id="resin" 
+              type="text" 
+              inputMode="numeric" 
+              className="font-genshin"
+              style={{
+                flex: 1,
+                minWidth: 0,
+                background: "transparent",
+                border: "none",
+                outline: "none",
+                boxShadow: "none",
+                color: "inherit",
+                fontSize: "0.95rem",
+                padding: 0
+              }}
+              value={resinBudget ? resinBudget.toLocaleString() : ""}
+              onChange={(e) => {
+                const rawValue = e.target.value.replace(/\D/g, "");
+                setResinBudget(rawValue === "" ? 0 : Number(rawValue));
+              }}
+              onBlur={() => setResinBudget((prev) => Math.max(RESIN_PER_RUN, Math.floor(prev / RESIN_PER_RUN) * RESIN_PER_RUN))}
+            />
           </div>
 
-          <div className="chips">
+          <div className="chips" style={{ marginTop: "8px" }}>
             {RESIN_SHORTCUTS.map((s) => (
-              <button key={s.label} type="button" className="chip" onClick={() => setResinBudget(s.resin)}>
+              <button key={s.label} type="button" className="chip font-genshin" onClick={() => setResinBudget(s.resin)}>
                 {s.label}
               </button>
             ))}
           </div>
         </Field>
       </div>
-      <label className="check">
-        <input type="checkbox" checked={useStrongBox} onChange={(e) => setUseStrongBox(e.target.checked)} />
-        <span>
-          Use Strongbox?
-          <small>Turns 3 unwanted pieces into 1 extra Artifact</small>
-        </span>
+      <label className="check font-genshin" style={{ display: "flex", alignItems: "center", gap: "12px", marginTop: "16px", cursor: "pointer" }}>
+        <input 
+          type="checkbox" 
+          checked={useStrongBox} 
+          onChange={(e) => setUseStrongBox(e.target.checked)} 
+          style={{ display: "none" }} // Hides the native checkbox completely
+        />
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <img 
+            src="/icons/strongbox.webp" 
+            alt="Strongbox" 
+            style={{ 
+              width: "50px",
+              height: "50px", 
+              transition: "opacity 0.2s, filter 0.2s",
+              opacity: useStrongBox ? 1 : 0.35,
+              filter: useStrongBox ? "none" : "grayscale(100%)"
+            }} 
+          />
+          <div>
+            <span>Use Strongbox?</span>
+            <small style={{ display: "block", opacity: 0.7, fontSize: "0.85em" }}>Turns 3 unwanted pieces into 1 extra Artifact</small>
+          </div>
+        </div>
       </label>
     </section>
   )

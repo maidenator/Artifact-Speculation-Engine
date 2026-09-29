@@ -4,17 +4,15 @@ import { MAIN_STAT_NAMES, SLOT_MAIN_STATS, SLOT_NAMES } from "../constants/artif
 import type { StateSetter } from "../types/artifact"
 import { GenshinSelect } from "./selection"
 
-// 1. UPDATED PATHS: Pointing to the new "stat" folder
 const SLOT_ICONS: Record<number, string> = {
-  0: "/icons/flower.png",
-  1: "/icons/feather.png",
-  2: "/icons/sands.png",
-  3: "/icons/goblet.png",
-  4: "/icons/circlet.png",
+  0: "/icons/slot/flower.png",
+  1: "/icons/slot/feather.png",
+  2: "/icons/slot/sands.png",
+  3: "/icons/slot/goblet.png",
+  4: "/icons/slot/circlet.png",
 }
 
 function getStatIcon(statName: string): string | undefined {
-  // Elements & Physical
   if (statName.includes("Anemo")) return "/icons/element/anemo.png";
   if (statName.includes("Cryo")) return "/icons/element/cryo.png";
   if (statName.includes("Dendro")) return "/icons/element/dendro.png";
@@ -24,17 +22,14 @@ function getStatIcon(statName: string): string | undefined {
   if (statName.includes("Pyro")) return "/icons/element/pyro.png";
   if (statName.includes("Physical")) return "/icons/element/physical.png";
 
-  // Percent Stats (Must be checked BEFORE flat stats)
   if (statName.includes("ATK %")) return "/icons/stat/attack_percent.png";
   if (statName.includes("DEF %")) return "/icons/stat/defense_percent.png";
   if (statName.includes("HP %")) return "/icons/stat/hp_percent.png";
 
-  // Flat Stats
   if (statName.includes("ATK")) return "/icons/stat/attack.png";
   if (statName.includes("DEF")) return "/icons/stat/defense.png";
   if (statName.includes("HP")) return "/icons/stat/hp.png";
 
-  // Other Base Stats
   if (statName.includes("Crit DMG")) return "/icons/stat/crit_damage.png";
   if (statName.includes("Crit Rate")) return "/icons/stat/crit_rate.png";
   if (statName.includes("Elemental Mastery")) return "/icons/stat/elemental_mastery.png";
@@ -113,15 +108,34 @@ export function SpeculatorConfig({
 
         {mode === 1 && (
           <>
-            <Field id="mincv" label="Minimum Crit Value" hint="Crit Value = Crit DMG + 2 * Crit Rate.">
+            <Field id="mincv" label="Minimum Crit Value" hint="Crit DMG + 2 * Crit Rate.">
               <input
                 id="mincv"
-                type="number"
+                type="text"
                 inputMode="decimal"
-                min={0}
-                step={0.5}
+                className="font-genshin"
+                style={{
+                  width: "100%",
+                  background: "var(--input-bg, rgba(15, 23, 42, 0.6))",
+                  border: "1px solid var(--input-border, rgba(255, 255, 255, 0.15))",
+                  borderRadius: "6px",
+                  padding: "8px 12px",
+                  color: "inherit",
+                  outline: "none",
+                  fontSize: "0.95rem"
+                }}
                 value={minCritValue}
-                onChange={(e) => setMinCritValue(Number(e.target.value))}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === "") {
+                    setMinCritValue(0);
+                  } else {
+                    const num = parseFloat(val);
+                    if (!isNaN(num)) {
+                      setMinCritValue(num);
+                    }
+                  }
+                }}
               />
             </Field>
 
@@ -130,6 +144,7 @@ export function SpeculatorConfig({
                 value={targetSlot}
                 onChange={(val) => onSlotChange(String(val))}
                 options={slotOptionsList}
+                maxHeight="220px"
               />
             </Field>
 
@@ -138,6 +153,7 @@ export function SpeculatorConfig({
                 value={targetMainStat}
                 onChange={(val) => setTargetMainStat(val === "" ? "" : Number(val))}
                 options={mainStatOptionsList}
+                maxHeight="220px"
               />
             </Field>
           </>
