@@ -2,12 +2,12 @@ import { Listbox } from "@headlessui/react"
 
 interface Option {
   label: string
-  value: string | number | null
+  value: string | number | undefined
   icon?: string
 }
 
 interface GenshinSelectProps {
-  value: string | number | null
+  value: string | number | undefined
   onChange: (value: string | number) => void
   options: Option[]
   maxHeight?: string

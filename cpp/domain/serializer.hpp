@@ -109,4 +109,37 @@ inline std::string serializeArtifactsJson(const std::vector<Artifact> &artifacts
     return arr.dump();
 }
 
+inline std::string serializeArtifactHistoriesJson(const std::vector<std::vector<Artifact>> &histories) {
+    using json = nlohmann::json;
+    json arr = json::array();
+
+    for (const auto &history : histories) {
+        json histArr = json::array();
+        for (const auto &art : history) {
+            json a;
+            a["slot"] = static_cast<int>(art.slot);
+            a["level"] = art.level;
+            a["mainStat"] = {
+                {"type", static_cast<int>(art.mainStat.type)},
+                {"value", art.mainStat.value}
+            };
+
+            json subs = json::array();
+            for (size_t i = 0; i < art.substatCount; ++i) {
+                subs.push_back({
+                    {"type", static_cast<int>(art.subStats[i].type)},
+                    {"value", art.subStats[i].value},
+                    {"rolls", art.subStats[i].rolls}
+                });
+            }
+            a["subStats"] = subs;
+            a["critValue"] = generator::calculateCritValue(art);
+            histArr.push_back(a);
+        }
+        arr.push_back(histArr);
+    }
+
+    return arr.dump();
+}
+
 } // namespace serializer

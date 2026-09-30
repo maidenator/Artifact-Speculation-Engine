@@ -22,7 +22,7 @@ struct SimulationConfig {
     std::optional<ArtifactMainStat> targetMainStat = std::nullopt;
 
     int resinBudget = 2000;
-    int topK = 5;
+    int topK = 10;
     bool useStrongBox = false;
 
     double minCritValue = 0.0;

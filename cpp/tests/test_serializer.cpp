@@ -136,3 +136,34 @@ TEST_CASE("serializeArtifactsJson: standalone artifact list serializes correctly
     REQUIRE(parsed[0]["slot"].get<int>() == static_cast<int>(ArtifactSlot::flower));
     REQUIRE(parsed[0]["critValue"].get<double>() == Approx(7.8).margin(0.001)); // 3.9 * 2
 }
+
+// =====================================================================
+// serializeArtifactHistoriesJson
+// =====================================================================
+
+TEST_CASE("serializeArtifactHistoriesJson: artifact histories serialize correctly") {
+    std::vector<std::vector<Artifact>> histories;
+    std::vector<Artifact> history;
+    
+    Artifact art0;
+    art0.slot = ArtifactSlot::flower;
+    art0.level = 0;
+    art0.mainStat = MainStat{ ArtifactMainStat::hpFlat, 717.0 };
+    history.push_back(art0);
+    
+    Artifact art20 = art0;
+    art20.level = 20;
+    art20.mainStat.value = 4780.0;
+    history.push_back(art20);
+    
+    histories.push_back(history);
+
+    nlohmann::json parsed = nlohmann::json::parse(serializer::serializeArtifactHistoriesJson(histories));
+
+    REQUIRE(parsed.is_array());
+    REQUIRE(parsed.size() == 1);
+    REQUIRE(parsed[0].is_array());
+    REQUIRE(parsed[0].size() == 2);
+    REQUIRE(parsed[0][0]["level"].get<int>() == 0);
+    REQUIRE(parsed[0][1]["level"].get<int>() == 20);
+}

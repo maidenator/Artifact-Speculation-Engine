@@ -16,7 +16,7 @@ inline float calculateCritValue(const Artifact &art) {
     float critValue = 0.0f;
     for(size_t i  = 0; i < art.substatCount; ++i) {
         const auto &sub = art.subStats[i];
-
+        
         if(sub.type == ArtifactSubstat::critDmg)
             critValue += sub.value;
         if(sub.type == ArtifactSubstat::critRate)
@@ -50,7 +50,7 @@ inline MainStat generateMainStat(ArtifactSlot pieceType, rng::Xoshiro256 &rng) {
         }
     }
 
-    // 4. Automatically compute the Level 0 base value right here
+    // 4. Automatically compute the Level 0 base value
     double baseValue = distributions::getMainStatValue(chosenStat, 0);
 
     // 5. Return the fully initialized MainStat struct (Type + Level 0 Value)
@@ -231,10 +231,11 @@ inline void upgradeArtifactOnce(Artifact &art, rng::Xoshiro256 &rng) {
         }
 
         // Add the new 4th substat with rolls = 1
+        auto substatType = distributions::ALL_SUBSTATS[chosenIndex];
         art.subStats[3] = {
-            distributions::ALL_SUBSTATS[chosenIndex],
-            rollSubstatValue(distributions::ALL_SUBSTATS[chosenIndex], rng),
-            1 // <--- Initial roll count
+            substatType,
+            rollSubstatValue(substatType, rng),
+            1
         };
         art.substatCount = 4;
     } else {

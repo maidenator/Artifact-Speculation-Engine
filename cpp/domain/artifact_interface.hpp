@@ -19,17 +19,40 @@ public:
         masterRng = rng::Xoshiro256(seed);
     }
 
-    std::string generateBatchJson(int count) {
+    std::string generateBatchJson(int count, bool upgrade) {
         std::vector<Artifact> batch;
         batch.reserve(count);
         for (int i = 0; i < count; ++i) {
             Artifact art = generator::generateArtifact(masterRng);
-            for (int step = 0; step < 5; ++step) {
-                generator::upgradeArtifactOnce(art, masterRng);
+            if(upgrade) {
+                for (int step = 0; step < 5; ++step) {
+                    generator::upgradeArtifactOnce(art, masterRng);
+                }
             }
             batch.push_back(art);
         }
         return serializer::serializeArtifactsJson(batch);
+    }
+
+    std::string generateBatchWithHistoryJson(int count) {
+        std::vector<std::vector<Artifact>> batches;
+        batches.reserve(count);
+        for (int i = 0; i < count; ++i) {
+            std::vector<Artifact> history;
+            history.reserve(6);
+            
+            // Base artifact (+0)
+            Artifact art = generator::generateArtifact(masterRng);
+            history.push_back(art);
+            
+            // Upgrade 5 times to +20, saving state each time
+            for (int step = 0; step < 5; ++step) {
+                generator::upgradeArtifactOnce(art, masterRng);
+                history.push_back(art);
+            }
+            batches.push_back(history);
+        }
+        return serializer::serializeArtifactHistoriesJson(batches);
     }
 
     std::string runSimulationJson(const std::string &configJson) {

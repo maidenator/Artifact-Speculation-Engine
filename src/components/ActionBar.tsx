@@ -15,7 +15,6 @@ export function ActionBar({ canRun, loading, engineReady, engineError, onRun, on
   return (
     <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[99999] flex flex-col items-center">
       
-      {/* 1. The Popup Menu (Appears above the button when arrow is clicked) */}
       {showMenu && (
         <div className="absolute bottom-full mb-3 bg-card border border-line rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] min-w-[140px] max-h-[50px] flex flex-col">
           <button 
@@ -61,7 +60,7 @@ export function ActionBar({ canRun, loading, engineReady, engineError, onRun, on
             strokeWidth="3" 
             strokeLinecap="round" 
             strokeLinejoin="round"
-            className={`transition-transform duration-200 ease-in-out ${showMenu ? "rotate-180" : ""}`}
+            className={`transition-transform duration-50 ease-in-out ${showMenu ? "rotate-180" : ""}`}
           >
             <path d="M18 15l-6-6-6 6" />
           </svg>

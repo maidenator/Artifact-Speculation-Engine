@@ -2122,29 +2122,29 @@ function assignWasmExports(wasmExports) {
 }
 
 var wasmImports = {
-  /** @export */ f: ___assert_fail,
+  /** @export */ g: ___assert_fail,
   /** @export */ z: ___cxa_begin_catch,
   /** @export */ a: ___cxa_find_matching_catch_2,
   /** @export */ i: ___cxa_find_matching_catch_3,
   /** @export */ p: ___cxa_throw,
-  /** @export */ d: ___resumeException,
+  /** @export */ e: ___resumeException,
   /** @export */ H: __abort_js,
   /** @export */ y: __embind_register_bigint,
   /** @export */ G: __embind_register_bool,
   /** @export */ F: __embind_register_class,
   /** @export */ x: __embind_register_class_constructor,
-  /** @export */ u: __embind_register_class_function,
+  /** @export */ s: __embind_register_class_function,
   /** @export */ E: __embind_register_emval,
   /** @export */ w: __embind_register_float,
   /** @export */ o: __embind_register_integer,
   /** @export */ m: __embind_register_memory_view,
   /** @export */ D: __embind_register_std_string,
-  /** @export */ t: __embind_register_std_wstring,
+  /** @export */ u: __embind_register_std_wstring,
   /** @export */ C: __embind_register_void,
   /** @export */ B: _emscripten_resize_heap,
-  /** @export */ g: invoke_ii,
-  /** @export */ e: invoke_iii,
-  /** @export */ s: invoke_iiii,
+  /** @export */ f: invoke_ii,
+  /** @export */ d: invoke_iii,
+  /** @export */ t: invoke_iiii,
   /** @export */ j: invoke_iiiii,
   /** @export */ A: invoke_iiiiii,
   /** @export */ k: invoke_v,
@@ -2173,6 +2173,28 @@ function invoke_iii(index, a1, a2) {
   var sp = stackSave();
   try {
     return getWasmTableEntry(index)(a1, a2);
+  } catch (e) {
+    stackRestore(sp);
+    if (!(e instanceof EmscriptenEH)) throw e;
+    _setThrew(1, 0);
+  }
+}
+
+function invoke_v(index) {
+  var sp = stackSave();
+  try {
+    getWasmTableEntry(index)();
+  } catch (e) {
+    stackRestore(sp);
+    if (!(e instanceof EmscriptenEH)) throw e;
+    _setThrew(1, 0);
+  }
+}
+
+function invoke_ii(index, a1) {
+  var sp = stackSave();
+  try {
+    return getWasmTableEntry(index)(a1);
   } catch (e) {
     stackRestore(sp);
     if (!(e instanceof EmscriptenEH)) throw e;
@@ -2213,17 +2235,6 @@ function invoke_iiiii(index, a1, a2, a3, a4) {
   }
 }
 
-function invoke_ii(index, a1) {
-  var sp = stackSave();
-  try {
-    return getWasmTableEntry(index)(a1);
-  } catch (e) {
-    stackRestore(sp);
-    if (!(e instanceof EmscriptenEH)) throw e;
-    _setThrew(1, 0);
-  }
-}
-
 function invoke_viiiiii(index, a1, a2, a3, a4, a5, a6) {
   var sp = stackSave();
   try {
@@ -2250,17 +2261,6 @@ function invoke_iiii(index, a1, a2, a3) {
   var sp = stackSave();
   try {
     return getWasmTableEntry(index)(a1, a2, a3);
-  } catch (e) {
-    stackRestore(sp);
-    if (!(e instanceof EmscriptenEH)) throw e;
-    _setThrew(1, 0);
-  }
-}
-
-function invoke_v(index) {
-  var sp = stackSave();
-  try {
-    getWasmTableEntry(index)();
   } catch (e) {
     stackRestore(sp);
     if (!(e instanceof EmscriptenEH)) throw e;

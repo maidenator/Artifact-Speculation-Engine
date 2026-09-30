@@ -17,8 +17,8 @@ TEST_CASE("ArtifactInterface: identical seeds produce identical batch output") {
     ArtifactInterface engine1(seed);
     ArtifactInterface engine2(seed);
 
-    std::string batch1 = engine1.generateBatchJson(10);
-    std::string batch2 = engine2.generateBatchJson(10);
+    std::string batch1 = engine1.generateBatchJson(10, true);
+    std::string batch2 = engine2.generateBatchJson(10, true);
 
     REQUIRE(batch1 == batch2);
 }
@@ -31,7 +31,7 @@ TEST_CASE("ArtifactInterface: generateBatchJson returns valid level 20 artifacts
     ArtifactInterface engine(12345);
     const int count = 5;
 
-    json parsed = json::parse(engine.generateBatchJson(count));
+    json parsed = json::parse(engine.generateBatchJson(count, true));
 
     REQUIRE(parsed.is_array());
     REQUIRE(parsed.size() == static_cast<size_t>(count));
@@ -44,6 +44,24 @@ TEST_CASE("ArtifactInterface: generateBatchJson returns valid level 20 artifacts
         REQUIRE(art.contains("subStats"));
         REQUIRE(art["subStats"].size() == 4);     // 5 upgrades always end as a 4-liner
         REQUIRE(art.contains("critValue"));
+    }
+}
+
+TEST_CASE("ArtifactInterface: generateBatchWithHistoryJson returns history arrays") {
+    ArtifactInterface engine(12345);
+    const int count = 3;
+
+    json parsed = json::parse(engine.generateBatchWithHistoryJson(count));
+
+    REQUIRE(parsed.is_array());
+    REQUIRE(parsed.size() == static_cast<size_t>(count));
+
+    for (const auto& history : parsed) {
+        REQUIRE(history.is_array());
+        REQUIRE(history.size() == 6); // +0, +4, +8, +12, +16, +20
+        
+        REQUIRE(history[0]["level"].get<int>() == 0);
+        REQUIRE(history[5]["level"].get<int>() == 20);
     }
 }
 

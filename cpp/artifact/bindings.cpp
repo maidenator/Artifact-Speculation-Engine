@@ -11,5 +11,6 @@ EMSCRIPTEN_BINDINGS(artifact_engine) {
         .constructor<uint64_t>()
         .function("setSeed", &ArtifactInterface::setSeed)
         .function("generateBatchJson", &ArtifactInterface::generateBatchJson)
+        .function("generateBatchWithHistoryJson", &ArtifactInterface::generateBatchWithHistoryJson)
         .function("runSimulationJson", &ArtifactInterface::runSimulationJson);
 }
