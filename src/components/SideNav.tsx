@@ -71,22 +71,19 @@ export function SideNav({ currentPage, onNavigate }: SideNavProps) {
 
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 bg-black/40 z-[10000] transition-opacity duration-300 ${
-          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
+        className={`fixed inset-0 bg-black/40 z-[10000] transition-opacity duration-300 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          }`}
       />
 
       {/* Side Panel */}
       <div
         ref={panelRef}
-        className={`fixed top-0 left-0 h-full w-[280px] bg-card border-r border-line z-[10002] shadow-[4px_0_24px_rgba(0,0,0,0.4)] transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          open ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed top-0 left-0 h-full w-[280px] bg-card border-r border-line z-[10002] shadow-[4px_0_24px_rgba(0,0,0,0.4)] transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         {/* Panel Header */}
         <div className="px-5 pt-6 pb-4 border-b border-line">
           <h2 className="font-genshin font-bold text-[18px] text-gold m-0 tracking-[0.5px]">Navigation</h2>
-          <p className="font-genshin text-muted text-[12px] mt-1 m-0">Switch between tools</p>
         </div>
 
         {/* Navigation Items */}
@@ -97,17 +94,12 @@ export function SideNav({ currentPage, onNavigate }: SideNavProps) {
               onNavigate("speculator")
               setOpen(false)
             }}
-            className={`font-genshin w-full text-left px-4 py-3 rounded-lg border cursor-pointer transition-all duration-200 flex items-center gap-3 ${
-              currentPage === "speculator"
-                ? "bg-gold/15 border-gold text-gold"
-                : "bg-transparent border-line text-muted hover:border-gold/50 hover:text-ink hover:bg-white/5"
-            }`}
+            className={`font-genshin w-full text-left px-4 py-3 rounded-lg border cursor-pointer transition-all duration-200 flex items-center gap-3 ${currentPage === "speculator"
+              ? "bg-gold/15 border-gold text-gold"
+              : "bg-transparent border-line text-muted hover:border-gold/50 hover:text-ink hover:bg-white/5"
+              }`}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 20V10" />
-              <path d="M18 20V4" />
-              <path d="M6 20v-4" />
-            </svg>
+            <img src="/icons/speculation.png" alt="" className="w-10 h-10 object-contain opacity-100" />
             <div>
               <span className="block text-[14px] font-semibold">Speculation Engine</span>
               <span className="block text-[11px] opacity-70">Simulate resin spending</span>
@@ -120,18 +112,12 @@ export function SideNav({ currentPage, onNavigate }: SideNavProps) {
               onNavigate("sandbox")
               setOpen(false)
             }}
-            className={`font-genshin w-full text-left px-4 py-3 rounded-lg border cursor-pointer transition-all duration-200 flex items-center gap-3 ${
-              currentPage === "sandbox"
-                ? "bg-gold/15 border-gold text-gold"
-                : "bg-transparent border-line text-muted hover:border-gold/50 hover:text-ink hover:bg-white/5"
-            }`}
+            className={`font-genshin w-full text-left px-4 py-3 rounded-lg border cursor-pointer transition-all duration-200 flex items-center gap-3 ${currentPage === "sandbox"
+              ? "bg-gold/15 border-gold text-gold"
+              : "bg-transparent border-line text-muted hover:border-gold/50 hover:text-ink hover:bg-white/5"
+              }`}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="7" height="7" rx="1" />
-              <rect x="14" y="3" width="7" height="7" rx="1" />
-              <rect x="3" y="14" width="7" height="7" rx="1" />
-              <rect x="14" y="14" width="7" height="7" rx="1" />
-            </svg>
+            <img src="/icons/domain.png" alt="" className="w-10 h-10 object-contain opacity-100" />
             <div>
               <span className="block text-[14px] font-semibold">Artifact Sandbox</span>
               <span className="block text-[11px] opacity-70">Generate &amp; upgrade artifacts</span>

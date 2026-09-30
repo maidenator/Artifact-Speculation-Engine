@@ -120,7 +120,7 @@ export function ArtifactCard({ artifact: art, rank, scoreMode, priority, preview
 
           <div className="px-4 pt-2 text-white font-genshin text-[16px] font-semibold drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)] z-10 relative flex items-center gap-1.5">
             {SLOT_ICONS[art.slot] && (
-              <img src={SLOT_ICONS[art.slot]} alt="" className="w-5 h-5 object-contain opacity-75" />
+              <img src={SLOT_ICONS[art.slot]} alt="" className="w-5 h-5 object-contain opacity-100" />
             )}
             <span>{SLOT_NAMES[art.slot] ?? "Piece"}</span>
           </div>
