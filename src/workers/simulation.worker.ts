@@ -2,13 +2,14 @@ import createArtifactEngine, {
   type ArtifactEngineInstance,
   type ArtifactEngineClass,
 } from "../wasm/artifact_engine"
+import wasmUrl from "../wasm/artifact_engine.wasm?url"
 
 let engine: ArtifactEngineClass | null = null
 
 createArtifactEngine({
   locateFile(path: string) {
     if (path.endsWith(".wasm")) {
-      return "/artifact_engine.wasm"
+      return wasmUrl
     }
     return path
   },
