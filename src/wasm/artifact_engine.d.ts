@@ -1,6 +1,7 @@
 export interface ArtifactEngineClass {
   setSeed(seed: bigint | number): void;
-  generateBatchJson(count: number): string;
+  generateBatchJson(count: number, upgrade: boolean): string;
+  generateBatchWithHistoryJson(count: number): string;
   runSimulationJson(configJson: string): string;
   delete(): void;
 }

@@ -28,9 +28,9 @@ export interface SimulationResult {
 }
 
 export interface WorkerMessageData {
-  type: "READY" | "ERROR" | "RESULT"
+  type: "READY" | "ERROR" | "RESULT" | "BATCH_RESULT" | "BATCH_HISTORY_RESULT"
   success?: boolean
-  data?: SimulationResult
+  data?: any
   error?: string
 }
 

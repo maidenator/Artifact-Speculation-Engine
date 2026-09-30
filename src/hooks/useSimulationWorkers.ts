@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import SimulationWorker from "../workers/simulation.worker?worker"
 import { RESIN_PER_DAY, RESIN_PER_RUN } from "../constants/resin"
 import { scoreArtifact, weightsFromPriority } from "../utils/scoring"
-import { SimulationMode, type SimulationResult, type SimulationSettings, type WorkerMessageData } from "../types/artifact"
+import { SimulationMode, type SimulationResult, type SimulationSettings, type WorkerMessageData, type ArtifactOutput } from "../types/artifact"
 
 export function useSimulationWorkers() {
   const [engineReady, setEngineReady] = useState(false)
@@ -148,5 +148,43 @@ export function useSimulationWorkers() {
     }
   }
 
-  return { engineReady, engineError, loading, runError, result, ranMode, ranPriority, elapsedMs, run }
+  const generateBatch = async (count: number, upgrade = true) => {
+    if (workersRef.current.length === 0) throw new Error("Workers not initialized")
+    const worker = workersRef.current[0]
+    return new Promise<ArtifactOutput[]>((resolve, reject) => {
+      const handler = (e: MessageEvent<WorkerMessageData>) => {
+        if (e.data.type === "BATCH_RESULT") {
+          worker.removeEventListener("message", handler)
+          if (e.data.success && e.data.data) resolve(e.data.data)
+          else reject(new Error(e.data.error || "Batch generation failed"))
+        } else if (e.data.type === "ERROR") {
+          worker.removeEventListener("message", handler)
+          reject(new Error(e.data.error))
+        }
+      }
+      worker.addEventListener("message", handler)
+      worker.postMessage({ type: "BATCH", count, upgrade, seed: Date.now() })
+    })
+  }
+
+  const generateBatchHistory = async (count: number) => {
+    if (workersRef.current.length === 0) throw new Error("Workers not initialized")
+    const worker = workersRef.current[0]
+    return new Promise<ArtifactOutput[][]>((resolve, reject) => {
+      const handler = (e: MessageEvent<WorkerMessageData>) => {
+        if (e.data.type === "BATCH_HISTORY_RESULT") {
+          worker.removeEventListener("message", handler)
+          if (e.data.success && e.data.data) resolve(e.data.data)
+          else reject(new Error(e.data.error || "Batch history generation failed"))
+        } else if (e.data.type === "ERROR") {
+          worker.removeEventListener("message", handler)
+          reject(new Error(e.data.error))
+        }
+      }
+      worker.addEventListener("message", handler)
+      worker.postMessage({ type: "BATCH_HISTORY", count, seed: Date.now() })
+    })
+  }
+
+  return { engineReady, engineError, loading, runError, result, ranMode, ranPriority, elapsedMs, run, generateBatch, generateBatchHistory }
 }

@@ -88,3 +88,36 @@ input[type="number"] {
   background: rgba(18, 22, 32, 0.6) !important;
   border-radius: 8px !important;
 }
+
+/* ── Upgrade animations ── */
+
+/* Row flash: highlight the upgraded substat row, then fade out */
+@keyframes upgrade-row-flash {
+  0%   { background-color: rgba(211, 163, 82, 0.35); }
+  60%  { background-color: rgba(211, 163, 82, 0.15); }
+  100% { background-color: transparent; }
+}
+
+/* Delta pop: the "+3.9%" value floats up and fades */
+@keyframes upgrade-delta-pop {
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  50%  { opacity: 1; transform: translateY(-6px) scale(1.05); }
+  100% { opacity: 0; transform: translateY(-14px) scale(0.95); }
+}
+
+/* New dot scale-in */
+@keyframes upgrade-dot-pop {
+  0%   { transform: scale(0); opacity: 0; }
+  50%  { transform: scale(1.6); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.anim-row-flash {
+  animation: upgrade-row-flash 600ms ease-out forwards;
+}
+.anim-delta-pop {
+  animation: upgrade-delta-pop 600ms ease-out forwards;
+}
+.anim-dot-pop {
+  animation: upgrade-dot-pop 400ms ease-out forwards;
+}

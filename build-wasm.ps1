@@ -36,6 +36,12 @@ em++ -O3 `
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "`nWebAssembly build succeeded! Generated files in src/wasm/" -ForegroundColor Green
+    
+    # Copy the generated .wasm file to the public directory so Vite can serve it
+    Write-Host "Copying artifact_engine.wasm to public/ directory..." -ForegroundColor Cyan
+    Copy-Item -Path "src/wasm/artifact_engine.wasm" -Destination "public/artifact_engine.wasm" -Force
+    Write-Host "Done!" -ForegroundColor Green
 } else {
     Write-Host "`nBuild failed with exit code $LASTEXITCODE" -ForegroundColor Red
+    exit $LASTEXITCODE
 }

@@ -8,27 +8,34 @@ function ArtifactSkeleton({ loading }: { loading: boolean }) {
   return (
     <>
       <article 
-        className={`bg-card-inner border border-line rounded-md overflow-hidden flex flex-col h-max shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition-transform duration-200 hover:-translate-y-[2px] ${loading ? "animate-pulse" : ""}`}
+        className={`bg-[#e9e5dc] border border-line rounded-md overflow-hidden flex flex-col h-max shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition-transform duration-200 hover:-translate-y-[2px] ${loading ? "animate-pulse" : ""}`}
         style={{ opacity: loading ? 1 : 0.4, pointerEvents: "none" }}
       >
-        <header className="bg-gradient-to-br from-[#a75727] to-[#d89643] px-3 py-1.5 flex justify-between items-center text-white border-b-2 border-[#eab05f] gap-1.5">
-          <span className="bg-black/35 px-1.5 py-0.5 rounded text-[11.5px] font-bold text-white">#--</span>
-          <div className="flex items-center gap-1.5">
-            <div className="w-5 h-5 bg-white/10 rounded" />
-            <div className="w-[60px] h-[14px] bg-white/10 rounded" />
-          </div>
-          <span className="bg-[#1e2330] text-gold px-2 py-0.5 rounded-full text-[12px] font-bold border border-gold ml-auto">+0</span>
-        </header>
-        
-        <div className="flex flex-col gap-0.5 m-0 px-3 pt-4 pb-3 border-b border-white/5 font-genshin h-[45px] bg-white/5 rounded-md mx-3 my-2" />
+        <div className="bg-gradient-to-br from-[#a75727] to-[#d89643] border-b-2 border-[#eab05f] flex flex-col relative overflow-hidden">
+          <header className="px-3 py-1.5 flex justify-between items-center text-white gap-1.5 z-10">
+            <span className="bg-black/35 px-1.5 py-0.5 rounded text-[11.5px] font-bold text-white">#--</span>
+            <div className="flex items-center gap-1.5">
+              <div className="w-5 h-5 bg-white/10 rounded" />
+              <div className="w-[60px] h-[14px] bg-white/10 rounded" />
+            </div>
+            <span className="bg-black/25 text-[#f0ebe1] px-1.5 py-0.5 rounded text-[11.5px] font-bold ml-auto">+0</span>
+          </header>
+          <div className="flex flex-col gap-0.5 m-0 px-3 pt-4 pb-3 font-genshin h-[60px]" />
+        </div>
         
         <div className="flex flex-col gap-2 mx-3 my-3">
           {[1, 2, 3, 4].map((_, i) => (
-            <div key={i} className="h-5 bg-white/5 rounded" />
+            <div key={i} className="h-5 bg-black/10 rounded" />
           ))}
         </div>
         
-        <div className="h-7 bg-white/5 rounded-md mx-3 mt-3 mb-2" />
+      <div className="mt-auto px-4 pb-2 pt-1">
+        <div className="h-px bg-black/10 w-full mb-2 opacity-50" />
+        <div className="flex justify-between px-1 mb-1 mt-1">
+          <div className="h-[14px] w-20 bg-black/10 rounded" />
+          <div className="h-[14px] w-8 bg-black/10 rounded" />
+        </div>
+      </div>
       </article>
     </>
   )
