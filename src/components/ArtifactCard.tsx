@@ -95,8 +95,6 @@ export function ArtifactCard({ artifact: art, rank, scoreMode, priority, preview
         {/* Set Name Bar */}
         <div className="bg-[#b85b2e] flex justify-between items-center px-3 py-1.5 border-b-2 border-[#8a421f] text-white z-20 shadow-sm relative">
           <span className="bg-black/35 px-1.5 py-0.5 rounded text-[11.5px] font-bold">#{rank}</span>
-          <h3 className="font-genshin font-bold text-[15px] tracking-wide drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">Gladiator's Finale</h3>
-          <span className="w-7"></span>
         </div>
 
         {/* Main Stat Area with Background Image */}
@@ -120,8 +118,11 @@ export function ArtifactCard({ artifact: art, rank, scoreMode, priority, preview
             />
           </div>
 
-          <div className="px-4 pt-2 text-white font-genshin text-[16px] font-semibold drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)] z-10 relative">
-            {SLOT_NAMES[art.slot] ?? "Piece"}
+          <div className="px-4 pt-2 text-white font-genshin text-[16px] font-semibold drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)] z-10 relative flex items-center gap-1.5">
+            {SLOT_ICONS[art.slot] && (
+              <img src={SLOT_ICONS[art.slot]} alt="" className="w-5 h-5 object-contain opacity-75" />
+            )}
+            <span>{SLOT_NAMES[art.slot] ?? "Piece"}</span>
           </div>
 
           <div className="flex justify-between items-end px-4 pb-3 pt-6 font-genshin relative z-10">
