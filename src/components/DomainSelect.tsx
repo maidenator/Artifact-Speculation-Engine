@@ -29,7 +29,7 @@ export function DomainSetIcon({ enkaId, fallbackName, className, slot = 0 }: { e
       alt={fallbackName}
       title={fallbackName}
       onError={() => setSrcIndex(prev => Math.min(prev + 1, sources.length - 1))}
-      className={`object-contain ${className || "w-[30px] h-[30px] drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"}`}
+      className={`object-contain ${className || "w-[30px] h-[30px]"}`}
     />
   );
 }

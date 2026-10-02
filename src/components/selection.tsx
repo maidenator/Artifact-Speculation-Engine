@@ -13,18 +13,20 @@ interface GenshinSelectProps {
   options: Option[]
   maxHeight?: string
   theme?: "dark" | "light"
+  className?: string
+  buttonClassName?: string
 }
 
-export function GenshinSelect({ value, onChange, options, maxHeight = "220px", theme = "dark" }: GenshinSelectProps) {
+export function GenshinSelect({ value, onChange, options, maxHeight = "220px", theme = "dark", className = "w-full", buttonClassName = "h-[44px]" }: GenshinSelectProps) {
   const selectedOption = options.find((opt) => opt.value === value) || options[0]
 
   const isLight = theme === "light"
 
   return (
     <Listbox value={value} onChange={onChange}>
-      <div className="relative w-full">
+      <div className={`relative ${className}`}>
         <Listbox.Button 
-          className={`font-genshin w-full flex items-center justify-between border rounded-md px-3 cursor-pointer text-left text-[0.85rem] focus:outline-none focus-visible:ring-2 h-[44px] ${
+          className={`font-genshin w-full flex items-center justify-between border rounded-md px-3 cursor-pointer text-left text-[0.85rem] focus:outline-none focus-visible:ring-2 ${buttonClassName} ${
             isLight 
               ? "bg-black/5 border-[#495366]/20 text-[#495366] focus-visible:ring-[#b85b2e]/50 hover:bg-black/10" 
               : "bg-[var(--input-bg,rgba(15,23,42,0.6))] border-white/15 text-inherit focus-visible:ring-gold/50"

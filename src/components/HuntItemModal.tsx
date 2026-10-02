@@ -74,7 +74,7 @@ export function HuntItemModal() {
       ...availableSets.map((set) => ({
         label: (
           <div className="flex items-center justify-center w-full">
-            <DomainSetIcon enkaId={set.enkaId} fallbackName={set.name} className="w-[30px] h-[30px] drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" slot={slot} />
+            <DomainSetIcon enkaId={set.enkaId} fallbackName={set.name} className="w-[30px] h-[30px]" slot={slot} />
           </div>
         ),
         value: set.id,

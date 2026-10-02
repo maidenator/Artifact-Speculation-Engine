@@ -5,6 +5,7 @@ import { SimulationMode, type ScoreMode, type SimulationResult, type HuntListRes
 import { exportSimulationToGOOD } from "../utils/good"
 import { SLOT_NAMES, MAIN_STAT_NAMES } from "../constants/artifactData"
 import { useSimulationSettings } from "../hooks/useSimulationSettings"
+import { GenshinSelect } from "./selection"
 
 const SLOT_ICONS: Record<number, string> = {
   0: "/icons/slot/flower.png",
@@ -14,20 +15,7 @@ const SLOT_ICONS: Record<number, string> = {
   4: "/icons/slot/circlet.png",
 }
 
-function getLuckBadge(days: number, itemCount: number): { label: string; color: string } | null {
-  if (days === 0) return null
-  // Rough heuristic: average days per piece based on typical farming rates
-  const avgDaysPerPiece = 14 // ~2 weeks per piece with specific substats is reasonable
-  const expectedDays = avgDaysPerPiece * itemCount
-  const ratio = days / expectedDays
 
-  if (ratio <= 0.3) return { label: "🍀 Incredibly Lucky", color: "text-emerald-400 border-emerald-400/40 bg-emerald-400/10" }
-  if (ratio <= 0.6) return { label: "✨ Very Lucky", color: "text-green-400 border-green-400/40 bg-green-400/10" }
-  if (ratio <= 0.9) return { label: "👍 Lucky", color: "text-lime-400 border-lime-400/40 bg-lime-400/10" }
-  if (ratio <= 1.3) return { label: "📊 Average Luck", color: "text-yellow-400 border-yellow-400/40 bg-yellow-400/10" }
-  if (ratio <= 2.0) return { label: "😤 Unlucky", color: "text-orange-400 border-orange-400/40 bg-orange-400/10" }
-  return { label: "💀 Extremely Unlucky", color: "text-red-400 border-red-400/40 bg-red-400/10" }
-}
 
 function ArtifactSkeleton({ loading }: { loading: boolean }) {
   return (
@@ -83,7 +71,6 @@ export function ResultsView({ result, huntResult, loading, ranMode, ranPriority,
 
   // If we have hunt results, show the hunt-specific view
   if (huntResult && !loading) {
-    const luckBadge = getLuckBadge(huntResult.totalDays, huntResult.itemResults.length)
     const foundCount = huntResult.itemResults.filter((r) => r.found).length
     const totalCount = huntResult.itemResults.length
 
@@ -103,11 +90,6 @@ export function ResultsView({ result, huntResult, loading, ranMode, ranPriority,
             </div>
 
             <div className="flex items-center gap-2">
-              {luckBadge && (
-                <span className={`font-genshin text-[12px] font-semibold px-3 py-1 border rounded-full ${luckBadge.color}`}>
-                  {luckBadge.label}
-                </span>
-              )}
               <span className={`font-genshin text-[13px] font-semibold px-2.5 py-0.5 border border-current rounded-full ${huntResult.allFound ? "text-ok" : "text-bad"}`}>
                 {huntResult.allFound ? "All found" : "Budget exhausted"}
               </span>
@@ -253,17 +235,20 @@ export function ResultsView({ result, huntResult, loading, ranMode, ranPriority,
         <div className="flex justify-between items-center gap-3 flex-wrap mt-4">
           <div className="flex items-center gap-3">
             <h3 className="font-genshin text-[16px] m-0 text-gold tracking-[0.5px]">Best pieces</h3>
-            <select
+            <GenshinSelect
               value={topK}
-              onChange={(e) => setTopK(Number(e.target.value))}
-              className="font-genshin bg-black/20 border border-white/10 rounded px-2 py-1 text-[13px] text-muted focus:outline-none focus:border-gold cursor-pointer"
-            >
-              <option value={3}>Show top 3</option>
-              <option value={5}>Show top 5</option>
-              <option value={10}>Show top 10</option>
-              <option value={20}>Show top 20</option>
-              <option value={50}>Show top 50</option>
-            </select>
+              onChange={(val) => setTopK(Number(val))}
+              options={[
+                { label: "Show top 3", value: 3 },
+                { label: "Show top 5", value: 5 },
+                { label: "Show top 10", value: 10 },
+                { label: "Show top 20", value: 20 },
+                { label: "Show top 50", value: 50 },
+              ]}
+              theme="dark"
+              className="w-36"
+              buttonClassName="h-8 text-[13px]"
+            />
             <span className="font-genshin text-[13px] text-muted/50">
               ({loading ? "..." : result.topArtifacts.length} found)
             </span>
