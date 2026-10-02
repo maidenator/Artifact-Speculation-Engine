@@ -26,5 +26,15 @@
         }
       ]
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/yatta-api/:match*",
+      "destination": "https://gi.yatta.moe/:match*"
+    },
+    {
+      "source": "/ambr-api/:match*",
+      "destination": "https://api.ambr.top/:match*"
+    }
   ]
 }

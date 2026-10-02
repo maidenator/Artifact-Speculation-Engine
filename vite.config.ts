@@ -42,6 +42,11 @@ export default defineConfig({
         target: 'https://gi.yatta.moe',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/yatta-api/, '')
+      },
+      '/ambr-api': {
+        target: 'https://api.ambr.top',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/ambr-api/, '')
       }
     }
   },

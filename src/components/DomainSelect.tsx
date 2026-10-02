@@ -11,12 +11,11 @@ export function DomainSetIcon({ enkaId, fallbackName, className, slot = 0 }: { e
     
     if (!enkaId) return [fallback];
     
-    const yattaBase = import.meta.env.DEV ? "/yatta-api" : "https://gi.yatta.moe";
     const suffix = SLOT_SUFFIX_MAP[slot] || "4";
     const iconName = `UI_RelicIcon_${enkaId}_${suffix}`;
     return [
-      `${yattaBase}/assets/UI/reliquary/${iconName}.png`,
-      `https://api.ambr.top/assets/UI/relic/${iconName}.png`,
+      `/yatta-api/assets/UI/reliquary/${iconName}.png`,
+      `/ambr-api/assets/UI/relic/${iconName}.png`,
       fallback,
     ];
   }, [enkaId, slot]);
