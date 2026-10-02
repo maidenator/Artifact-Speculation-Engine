@@ -40,7 +40,7 @@ const CHARACTER_MAP: Record<string, any> = charactersJson
 const parseCharacter = (avatar: any): CharacterOutput | null => {
   if (!avatar || !avatar.equipList) return null
 
-  const yattaBase = import.meta.env.DEV ? "/yatta-api" : "https://gi.yatta.moe";
+  const yattaBase = "/yatta-api";
 
   const weaponEquip = avatar.equipList.find((e: any) => e.flat?.itemType === "ITEM_WEAPON")
   const weaponIcon = weaponEquip?.flat?.icon;
@@ -127,7 +127,7 @@ const parseCharacter = (avatar: any): CharacterOutput | null => {
 export const parseEnkaData = (data: any): { profile: PlayerProfile, characters: CharacterOutput[] } | null => {
   if (!data || !data.playerInfo) return null
 
-  const yattaBase = import.meta.env.DEV ? "/yatta-api" : "https://gi.yatta.moe";
+  const yattaBase = "/yatta-api";
 
   const profile: PlayerProfile = {
     nickname: data.playerInfo.nickname || "Unknown",

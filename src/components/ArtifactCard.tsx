@@ -107,10 +107,9 @@ export function ArtifactCard({ artifact: art, rank, scoreMode, priority, preview
   const sources = useMemo(() => {
     if (!art.iconUrl) return [fallbackIcon];
     const iconName = art.iconUrl.split("/").pop()?.replace(".png", "") || art.iconUrl;
-    const yattaBase = import.meta.env.DEV ? "/yatta-api" : "https://gi.yatta.moe";
     return [
-      `${yattaBase}/assets/UI/reliquary/${iconName}.png`,
-      `https://api.ambr.top/assets/UI/relic/${iconName}.png`,
+      `/yatta-api/assets/UI/reliquary/${iconName}.png`,
+      `/ambr-api/assets/UI/relic/${iconName}.png`,
       fallbackIcon,
     ];
   }, [art.iconUrl, art.slot, fallbackIcon]);
