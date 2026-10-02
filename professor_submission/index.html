@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artifact Speculation - UI Designs</title>
+  
+  <!-- Import the Genshin font for authenticity -->
+  <link href="https://fonts.cdnfonts.com/css/genshin-impact" rel="stylesheet">
+  
+  <!-- Link to the pure CSS file we generated -->
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    /* Additional layout styles specifically for this HTML showcase */
+    .showcase-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 80px;
+      padding-bottom: 120px;
+      align-items: center;
+      padding-top: 40px;
+    }
+    
+    .section-title {
+      font-size: 28px;
+      color: white;
+      text-align: center;
+      margin-bottom: 40px;
+      border-bottom: 1px solid var(--color-line);
+      padding-bottom: 16px;
+      width: 100%;
+      max-width: 1200px;
+      font-weight: normal;
+      letter-spacing: 0.05em;
+    }
+    
+    .artifact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+      width: 100%;
+      max-width: 1200px;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="showcase-layout">
+    
+    <!-- ==========================================
+         UI VIEW 1: UID Import Card
+         ========================================== -->
+    <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+      <h2 class="section-title">1. Import Screen UI</h2>
+      
+      <div class="uid-import-container" style="min-height: auto; padding: 40px 0;">
+        <div class="background-glow"></div>
+        <div class="import-card">
+          <h1 class="import-title">Artifact Speculation</h1>
+          <p class="import-subtitle">Enter your Genshin Impact UID to fetch your showcased characters and their artifacts via Enka.Network.</p>
+          
+          <div class="input-group">
+            <input type="text" class="uid-input" placeholder="Enter UID..." value="801234567">
+            <button class="fetch-button">Fetch Profile</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ==========================================
+         UI VIEW 2: Artifact Details Grid
+         ========================================== -->
+    <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+      <h2 class="section-title">2. Artifact Details UI</h2>
+      
+      <div class="artifact-grid">
+        
+        <!-- ==============================
+             Artifact Card 1: Pyro Goblet
+             ============================== -->
+        <article class="artifact-card">
+          <!-- Left side gradient (Pyro = Red/Orange) -->
+          <div class="artifact-left" style="background: linear-gradient(to bottom right, #a75727, #d89643); border-right: 1px solid rgba(138, 66, 31, 0.3);">
+            <img class="artifact-image" src="https://api.ambr.top/assets/UI/relic/UI_RelicIcon_15006_4.png" alt="Artifact">
+            
+            <div class="main-stat-info">
+              <strong class="main-stat-value">+46.6%</strong>
+              <div class="main-stat-bottom">
+                <div class="stars">
+                  <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                  <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                  <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                  <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                  <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                </div>
+                <span class="artifact-level">+20</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="artifact-right">
+            <!-- Substat 1 -->
+            <div class="substat">
+              <div class="substat-inner">
+                <div class="substat-name-wrapper">
+                  <span class="substat-name">Crit DMG</span>
+                </div>
+                <div class="substat-value-wrapper">
+                  <span class="substat-value">+21.0%</span>
+                  <div class="roll-history">
+                    <span class="roll-dot text-gold"></span>
+                    <span class="roll-dot text-mid"></span>
+                    <span class="roll-dot text-low"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Substat 2 -->
+            <div class="substat">
+              <div class="substat-inner">
+                <div class="substat-name-wrapper">
+                  <span class="substat-name">Crit Rate</span>
+                </div>
+                <div class="substat-value-wrapper">
+                  <span class="substat-value">+10.5%</span>
+                  <div class="roll-history">
+                    <span class="roll-dot text-gold"></span>
+                    <span class="roll-dot text-gold"></span>
+                    <span class="roll-dot text-mid"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Substat 3 -->
+            <div class="substat">
+              <div class="substat-inner">
+                <div class="substat-name-wrapper">
+                  <span class="substat-name">ATK %</span>
+                </div>
+                <div class="substat-value-wrapper">
+                  <span class="substat-value">+9.9%</span>
+                  <div class="roll-history">
+                    <span class="roll-dot text-mid"></span>
+                    <span class="roll-dot text-low"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Substat 4 -->
+            <div class="substat">
+              <div class="substat-inner">
+                <div class="substat-name-wrapper">
+                  <span class="substat-name">Elemental Mastery</span>
+                </div>
+                <div class="substat-value-wrapper">
+                  <span class="substat-value">+42</span>
+                  <div class="roll-history">
+                    <span class="roll-dot text-low"></span>
+                    <span class="roll-dot text-low"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ==============================
+             Artifact Card 2: Hydro Sands
+             ============================== -->
+        <article class="artifact-card">
+          <!-- Left side gradient (Hydro = Blue) -->
+          <div class="artifact-left" style="background: linear-gradient(to bottom right, #24578b, #4396d8); border-right: 1px solid rgba(36, 87, 139, 0.3);">
+            <img class="artifact-image" src="https://api.ambr.top/assets/UI/relic/UI_RelicIcon_15016_3.png" alt="Artifact">
+            
+            <div class="main-stat-info">
+              <strong class="main-stat-value">+46.6%</strong>
+              <div class="main-stat-bottom">
+                <div class="stars">
+                  <!-- 5 Stars -->
+                  <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                  <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                  <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                  <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                  <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                </div>
+                <span class="artifact-level">+20</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="artifact-right">
+            <!-- Substat 1 -->
+            <div class="substat">
+              <div class="substat-inner">
+                <div class="substat-name-wrapper">
+                  <span class="substat-name">Crit Rate</span>
+                </div>
+                <div class="substat-value-wrapper">
+                  <span class="substat-value">+14.0%</span>
+                  <div class="roll-history">
+                    <span class="roll-dot text-gold"></span>
+                    <span class="roll-dot text-gold"></span>
+                    <span class="roll-dot text-gold"></span>
+                    <span class="roll-dot text-mid"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Substat 2 -->
+            <div class="substat">
+              <div class="substat-inner">
+                <div class="substat-name-wrapper">
+                  <span class="substat-name">Crit DMG</span>
+                </div>
+                <div class="substat-value-wrapper">
+                  <span class="substat-value">+6.2%</span>
+                  <div class="roll-history">
+                    <span class="roll-dot text-low"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Substat 3 -->
+            <div class="substat">
+              <div class="substat-inner">
+                <div class="substat-name-wrapper">
+                  <span class="substat-name">DEF %</span>
+                </div>
+                <div class="substat-value-wrapper">
+                  <span class="substat-value">+12.4%</span>
+                  <div class="roll-history">
+                    <span class="roll-dot text-mid"></span>
+                    <span class="roll-dot text-mid"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Substat 4 -->
+            <div class="substat">
+              <div class="substat-inner">
+                <div class="substat-name-wrapper">
+                  <span class="substat-name">HP</span>
+                </div>
+                <div class="substat-value-wrapper">
+                  <span class="substat-value">+508</span>
+                  <div class="roll-history">
+                    <span class="roll-dot text-bad"></span>
+                    <span class="roll-dot text-bad"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+        
+        <!-- ==============================
+             Artifact Card 3: Electro Flower
+             ============================== -->
+        <article class="artifact-card">
+          <!-- Left side gradient (Electro = Purple) -->
+          <div class="artifact-left" style="background: linear-gradient(to bottom right, #5c3580, #9661d4); border-right: 1px solid rgba(92, 53, 128, 0.3);">
+            <img class="artifact-image" src="https://api.ambr.top/assets/UI/relic/UI_RelicIcon_15011_4.png" alt="Artifact">
+            
+            <div class="main-stat-info">
+              <strong class="main-stat-value">+4780</strong>
+              <div class="main-stat-bottom">
+                <div class="stars">
+                  <!-- 5 Stars -->
+                  <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                  <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                  <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                  <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                  <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                </div>
+                <span class="artifact-level">+20</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="artifact-right">
+            <!-- Substat 1 -->
+            <div class="substat">
+              <div class="substat-inner">
+                <div class="substat-name-wrapper">
+                  <span class="substat-name">Crit DMG</span>
+                </div>
+                <div class="substat-value-wrapper">
+                  <span class="substat-value">+32.6%</span>
+                  <div class="roll-history">
+                    <span class="roll-dot text-gold"></span>
+                    <span class="roll-dot text-gold"></span>
+                    <span class="roll-dot text-gold"></span>
+                    <span class="roll-dot text-gold"></span>
+                    <span class="roll-dot text-mid"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Substat 2 -->
+            <div class="substat">
+              <div class="substat-inner">
+                <div class="substat-name-wrapper">
+                  <span class="substat-name">Crit Rate</span>
+                </div>
+                <div class="substat-value-wrapper">
+                  <span class="substat-value">+3.9%</span>
+                  <div class="roll-history">
+                    <span class="roll-dot text-gold"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Substat 3 -->
+            <div class="substat">
+              <div class="substat-inner">
+                <div class="substat-name-wrapper">
+                  <span class="substat-name">Energy Recharge</span>
+                </div>
+                <div class="substat-value-wrapper">
+                  <span class="substat-value">+5.8%</span>
+                  <div class="roll-history">
+                    <span class="roll-dot text-mid"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Substat 4 -->
+            <div class="substat">
+              <div class="substat-inner">
+                <div class="substat-name-wrapper">
+                  <span class="substat-name">ATK</span>
+                </div>
+                <div class="substat-value-wrapper">
+                  <span class="substat-value">+19</span>
+                  <div class="roll-history">
+                    <span class="roll-dot text-low"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

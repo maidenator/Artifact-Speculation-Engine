@@ -11,7 +11,7 @@ interface SimulationSettingsState {
   setUseStrongBox: (useStrongBox: boolean) => void
   setMinCritValue: (minCritValue: number) => void
   setTargetSlot: (slot: number | null) => void
-  setTargetMainStat: (stat: number | null) => void
+  setTargetMainStat: (targetMainStat: number | null) => void
   setPriority: (priority: number[]) => void
   changeSlot: (value: string) => void
   resetSettings: () => void

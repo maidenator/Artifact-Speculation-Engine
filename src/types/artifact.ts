@@ -15,6 +15,39 @@ export interface ArtifactOutput {
   mainStat: { type: number; value: number }
   subStats: ArtifactSubstatEntry[]
   critValue: number
+  iconUrl?: string
+  setId?: number | string
+  enkaId?: number
+}
+
+export interface WeaponOutput {
+  level: number
+  refinement: number
+  iconUrl: string
+}
+
+export interface CharacterOutput {
+  avatarId: number
+  name: string
+  level: number
+  element: string
+  iconUrl: string
+  weapon: WeaponOutput
+  artifacts: ArtifactOutput[]
+  stats?: Record<number, number>
+  constellation?: number
+}
+
+export interface PlayerProfile {
+  nickname: string
+  level: number
+  worldLevel?: number
+  signature?: string
+  abyssFloor?: number
+  abyssChamber?: number
+  achievementCount?: number
+  profilePicture?: string
+  profilePictureUrl?: string
 }
 
 export interface SimulationResult {
@@ -25,6 +58,27 @@ export interface SimulationResult {
   strongboxRollsCompleted: number
   totalFiveStarsFound: number
   topArtifacts: ArtifactOutput[]
+}
+
+/** Result for a single hunt list item */
+export interface HuntItemResult {
+  huntItemId: string
+  found: boolean
+  resinSpent: number
+  daysSpent: number
+  artifact: ArtifactOutput | null
+}
+
+/** Aggregated result for the entire hunt list */
+export interface HuntListResult {
+  allFound: boolean
+  totalResinSpent: number
+  totalDays: number
+  condensedResin: number
+  domainRunsCompleted: number
+  strongboxRollsCompleted: number
+  itemResults: HuntItemResult[]
+  elapsedMs: number
 }
 
 export interface WorkerMessageData {
@@ -61,3 +115,17 @@ export interface SimulationSettings {
 }
 
 export type ScoreMode = "cv" | "rv"
+
+export interface HuntSubstat {
+  stat: number        // stat ID from Stat enum
+  minRolls: number    // 1–9 roll count (average roll values assumed)
+}
+
+export interface HuntListItem {
+  id: string          // unique ID
+  slot: number        // 0–4 (Flower, Feather, Sands, Goblet, Circlet)
+  mainStat: number    // stat ID from Stat enum
+  substats: HuntSubstat[]  // up to 4
+  domainId?: string   // optional target domain
+  setId?: string      // optional target set
+}

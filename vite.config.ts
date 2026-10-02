@@ -25,10 +25,25 @@ export default defineConfig({
   },
   assetsInclude: ["**/*.wasm"],
   server: {
+    watch: {
+      ignored: ['**/public/icons/**']
+    },
     headers: {
       "Cross-Origin-Opener-Policy": "same-origin",
       "Cross-Origin-Embedder-Policy": "require-corp",
     },
+    proxy: {
+      '/enka-api': {
+        target: 'https://enka.network',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/enka-api/, '')
+      },
+      '/yatta-api': {
+        target: 'https://gi.yatta.moe',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/yatta-api/, '')
+      }
+    }
   },
   build: {
     rollupOptions: {

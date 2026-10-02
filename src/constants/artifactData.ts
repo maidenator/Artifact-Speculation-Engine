@@ -184,3 +184,17 @@ export const MAX_SUBSTAT_ROLL: Record<number, number> = {
   [Stat.DefPercent]: 7.3,
   [Stat.FlatDef]: 23.2,
 }
+
+/** Average substat roll values (≈ 85% of max). Used by Hunt List to convert roll counts → minimum stat thresholds. */
+export const AVG_SUBSTAT_ROLL: Record<number, number> = {
+  [Stat.CritDMG]: 6.22,
+  [Stat.CritRate]: 3.11,
+  [Stat.ElementalMastery]: 18.65,
+  [Stat.EnergyRecharge]: 5.18,
+  [Stat.AtkPercent]: 4.66,
+  [Stat.FlatAtk]: 15.56,
+  [Stat.HpPercent]: 4.66,
+  [Stat.FlatHp]: 239.0,
+  [Stat.DefPercent]: 5.83,
+  [Stat.FlatDef]: 18.52,
+}

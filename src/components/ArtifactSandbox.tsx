@@ -2,6 +2,10 @@ import { useState, useCallback, useMemo, useRef } from "react"
 import { ArtifactCard, ANIMATION_DURATION_MS } from "./ArtifactCard"
 import type { UpgradeAnimation } from "./ArtifactCard"
 import { SubstatPriority } from "./SubstatPriority"
+import { GenshinSelect } from "./selection"
+import { Field } from "./Field"
+import { DOMAIN_OPTIONS } from "./DomainSelect"
+import { ARTIFACT_DOMAINS } from "../constants/domains"
 
 import { useSimulationWorkers } from "../hooks/useSimulationWorkers"
 import { scoreArtifact, weightsFromPriority, getRollTier, inferRollTiers } from "../utils/scoring"
@@ -58,6 +62,7 @@ export function ArtifactSandbox() {
   const [artifacts, setArtifacts] = useState<SandboxArtifact[]>([])
   const [loading, setLoading] = useState(false)
   const [count, setCount] = useState(5)
+  const [domainId, setDomainId] = useState<string>("")
   const [priority, setPriority] = useState<number[]>([])
   const [scoreMode, setScoreMode] = useState<ScoreMode>("cv")
   const [upgradeAnims, setUpgradeAnims] = useState<Map<number, UpgradeAnimation>>(new Map())
@@ -121,7 +126,22 @@ export function ArtifactSandbox() {
     try {
       const histories = await generateBatchHistory(count)
 
+      const activeDomain = ARTIFACT_DOMAINS.find(d => d.id === domainId);
+
       const newArtifacts: SandboxArtifact[] = histories.map((history) => {
+        if (activeDomain) {
+          const pseudoRandom = Math.random() < 0.5;
+          const chosenSet = activeDomain.sets[pseudoRandom ? 0 : 1];
+          for (const snapshot of history) {
+            snapshot.setId = chosenSet.id;
+            snapshot.enkaId = chosenSet.enkaId;
+            if (chosenSet.enkaId) {
+              const slotSuffixMap: Record<number, string> = { 0: "4", 1: "2", 2: "5", 3: "1", 4: "3" };
+              const suffix = slotSuffixMap[snapshot.slot] || "4";
+              snapshot.iconUrl = `UI_RelicIcon_${chosenSet.enkaId}_${suffix}.png`;
+            }
+          }
+        }
         // Step 0: Initialize base rollTiers
         for (const sub of history[0].subStats) {
           sub.rollTiers = inferRollTiers(sub.type, sub.value, sub.rolls)
@@ -173,7 +193,7 @@ export function ArtifactSandbox() {
     } finally {
       setLoading(false)
     }
-  }, [engineReady, loading, count, generateBatchHistory])
+  }, [engineReady, loading, count, domainId, generateBatchHistory])
 
   const upgradeOne = (id: number) => {
     setArtifacts((prev) => {
@@ -251,7 +271,18 @@ export function ArtifactSandbox() {
           {/* Generate Card */}
           <section className="bg-card border border-line rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.2),inset_0_0_0_1px_rgba(255,255,255,0.05)]">
             <div className="px-5 pt-5 pb-4 border-b border-line">
-              <h2 className="font-genshin font-bold text-[18px] m-0 text-gold tracking-[0.5px] mb-3">Generate</h2>
+              <h2 className="font-genshin font-bold text-[28px] text-gold mb-6 leading-[1.2] tracking-[0.5px]">Generate</h2>
+
+              <div className="mb-4">
+                <Field id="sandboxDomain" label="Domain">
+                  <GenshinSelect
+                    value={domainId}
+                    onChange={(val) => setDomainId(String(val))}
+                    options={DOMAIN_OPTIONS}
+                    maxHeight="220px"
+                  />
+                </Field>
+              </div>
 
               <div className="flex items-center gap-4 flex-wrap">
                 {/* Count Input */}
@@ -322,8 +353,8 @@ export function ArtifactSandbox() {
         </aside>
 
         {/* Right: Artifacts Grid */}
-        <main className="lg:h-auto lg:overflow-visible">
-          <section className="bg-card border border-line rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.2),inset_0_0_0_1px_rgba(255,255,255,0.05)] overflow-hidden">
+        <main className="lg:h-0 lg:min-h-full flex flex-col">
+          <section className="bg-card border border-line rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.2),inset_0_0_0_1px_rgba(255,255,255,0.05)] overflow-hidden flex flex-col h-full">
             <div className="bg-card z-10 px-5 pt-5 pb-3 border-b border-line shrink-0">
               <div className="flex justify-between items-center gap-3 flex-wrap">
                 <h2 className="font-genshin font-bold text-[18px] m-0 text-gold tracking-[0.5px]">
@@ -361,14 +392,14 @@ export function ArtifactSandbox() {
             </div>
 
             {artifacts.length === 0 && !loading ? (
-              <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] auto-rows-max content-start gap-4 p-5 pb-10 max-h-[650px] overflow-y-auto artifacts-scroll">
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] auto-rows-max content-start gap-4 p-5 pb-10 flex-1 overflow-y-auto artifacts-scroll">
                 <ArtifactSkeleton />
                 <ArtifactSkeleton />
                 <ArtifactSkeleton />
               </div>
             ) : loading ? (
-              <div className="relative">
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] auto-rows-max content-start gap-4 p-5 pb-10 max-h-[650px] overflow-y-auto artifacts-scroll opacity-30">
+              <div className="relative flex-1 flex flex-col min-h-0">
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] auto-rows-max content-start gap-4 p-5 pb-10 flex-1 overflow-y-auto artifacts-scroll opacity-30">
                   <ArtifactSkeleton />
                   <ArtifactSkeleton />
                   <ArtifactSkeleton />
@@ -378,7 +409,7 @@ export function ArtifactSandbox() {
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] auto-rows-max content-start gap-5 p-5 pb-10 max-h-[700px] overflow-y-auto artifacts-scroll">
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] auto-rows-max content-start gap-4 p-5 pb-10 flex-1 overflow-y-auto artifacts-scroll">
                 {sortedArtifacts.map((sandboxArt, idx) => {
                   const displayArt = sandboxArt.history[sandboxArt.currentStep]
                   const isMaxed = sandboxArt.currentStep >= 5

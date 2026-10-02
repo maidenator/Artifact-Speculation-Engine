@@ -36,7 +36,7 @@ function getStatIcon(statName: string): string | undefined {
   if (statName.includes("Elemental Mastery")) return "/icons/stat/elemental_mastery.png";
   if (statName.includes("Energy Recharge")) return "/icons/stat/energy_recharge.png";
   if (statName.includes("Healing Bonus")) return "/icons/stat/healing_bonus.png";
-  return undefined; 
+  return undefined;
 }
 
 export function SpeculatorConfig() {
@@ -77,7 +77,7 @@ export function SpeculatorConfig() {
       <h2 className="font-genshin font-bold text-[28px] text-gold mb-6 leading-[1.2] tracking-[0.5px]">Speculator Config</h2>
 
       <div className="grid grid-cols-2 gap-6 items-start">
-        
+
         <Field id="topk" label="Artifacts to Show">
           <GenshinSelect
             value={topK}
@@ -94,7 +94,7 @@ export function SpeculatorConfig() {
 
         {mode === SimulationMode.TargetPiece && (
           <>
-            <Field id="mincv" label="Minimum Crit Value">
+            <Field id="mincv" label="Min Crit Value">
               <input
                 id="mincv"
                 type="text"

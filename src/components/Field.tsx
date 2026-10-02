@@ -10,7 +10,9 @@ interface FieldProps {
 export function Field({ id, label, hint, children }: FieldProps) {
   return (
     <div>
-      <label htmlFor={id} className="font-genshin block text-[13px] font-medium text-muted mb-1.5 tracking-[0.3px]">{label}</label>
+      <label htmlFor={id} className="font-genshin block text-[13px] font-medium text-muted mb-1.5 tracking-[0.3px] whitespace-nowrap">
+        {label}
+      </label>
       {children}
       {hint && <p className="font-genshin mt-[5px] text-[12.5px] text-muted tracking-[0.3px]">{hint}</p>}
     </div>

@@ -2,14 +2,16 @@ import { useState } from "react"
 import { SideNav, type AppPage } from "./components/SideNav"
 import { AppHeader } from "./components/AppHeader"
 import { ResinConfig } from "./components/ResinConfig"
-import { SpeculatorConfig } from "./components/SpeculatorConfig"
+import { HuntListPanel } from "./components/HuntListPanel"
 import { ActionBar } from "./components/ActionBar"
 import { ResultsView } from "./components/ResultsView"
 import { ArtifactSandbox } from "./components/ArtifactSandbox"
+import { UIDImport } from "./components/UIDImport"
 import { RESIN_PER_RUN } from "./constants/resin"
 import { useDockedScroll } from "./hooks/useDockedScroll"
 import { useSimulationSettings } from "./hooks/useSimulationSettings"
 import { useSimulationWorkers } from "./hooks/useSimulationWorkers"
+import { useHuntList } from "./hooks/useHuntList"
 
 
 export default function App() {
@@ -19,8 +21,9 @@ export default function App() {
 
   const settings = useSimulationSettings(state => state.settings)
   const resetSettings = useSimulationSettings(state => state.resetSettings)
+  const huntItems = useHuntList(state => state.items)
 
-  const { engineReady, engineError, loading, runError, result, ranMode, ranPriority, elapsedMs, run } =
+  const { engineReady, engineError, loading, runError, result, huntResult, ranMode, ranPriority, elapsedMs, run, runHuntList } =
     useSimulationWorkers()
 
   const canRun = engineReady && !loading && settings.resinBudget >= RESIN_PER_RUN
@@ -29,7 +32,11 @@ export default function App() {
     if (!canRun) return
     setIsSimulating(true)
     try {
-      await run(settings)
+      if (huntItems.length > 0) {
+        await runHuntList(huntItems, settings)
+      } else {
+        await run(settings)
+      }
     } finally {
       setIsSimulating(false)
     }
@@ -39,20 +46,33 @@ export default function App() {
     <>
       <SideNav currentPage={currentPage} onNavigate={setCurrentPage} />
 
-      {currentPage === "speculator" && (
-        <>
-          <div className="font-genshin max-w-[1400px] mx-auto px-5 pt-9 pb-[72px] min-h-screen text-[15px] leading-relaxed box-border lg:h-auto" ref={appRef}>
+      <div className="ml-[72px]">
+        {currentPage === "speculator" && (
+          <>
+          <div className="font-genshin max-w-[1800px] mx-auto px-5 pt-9 pb-[72px] min-h-screen text-[15px] leading-relaxed box-border lg:h-auto" ref={appRef}>
             <div className="relative bg-page z-[100] pt-9 pb-4 mb-3">
               <AppHeader engineReady={engineReady} engineError={engineError} />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-8 lg:h-auto">
-              <aside className="lg:h-auto lg:max-h-[calc(100vh-72px)] lg:overflow-y-auto">
-                <ResinConfig />
-                <SpeculatorConfig />
-              </aside>
+            <div className="flex flex-col xl:flex-row gap-6 xl:gap-8 lg:h-auto items-start">
+              <div className="flex flex-col lg:flex-row gap-4 shrink-0">
+                <aside className="lg:h-auto lg:max-h-[calc(100vh-72px)] lg:overflow-y-auto custom-scrollbar pr-1.5 w-full lg:w-[320px]">
+                  <ResinConfig />
+                  <ActionBar
+                    canRun={canRun}
+                    loading={loading || isSimulating}
+                    engineReady={engineReady}
+                    engineError={engineError}
+                    onRun={handleRun}
+                    onReset={resetSettings}
+                  />
+                </aside>
+                <aside className="lg:h-auto lg:max-h-[calc(100vh-72px)] lg:overflow-y-auto custom-scrollbar pr-1.5 w-full lg:w-[360px]">
+                  <HuntListPanel />
+                </aside>
+              </div>
 
-              <main className="lg:h-auto lg:overflow-visible">
+              <main className="lg:h-auto lg:overflow-visible w-full min-w-0 flex-1">
                 {runError && <p className="font-genshin text-bad border border-bad rounded-md px-3.5 py-2.5 mb-4" role="alert">{runError}</p>}
                 <ResultsView 
                   result={result || { 
@@ -64,6 +84,7 @@ export default function App() {
                     strongboxRollsCompleted: 0, 
                     targetAchieved: false 
                   }} 
+                  huntResult={huntResult}
                   loading={loading || isSimulating}
                   ranMode={ranMode} 
                   ranPriority={ranPriority} 
@@ -72,19 +93,12 @@ export default function App() {
               </main>
             </div>
           </div>
-
-          <ActionBar
-            canRun={canRun}
-            loading={loading || isSimulating}
-            engineReady={engineReady}
-            engineError={engineError}
-            onRun={handleRun}
-            onReset={resetSettings}
-          />
         </>
       )}
 
       {currentPage === "sandbox" && <ArtifactSandbox />}
+      {currentPage === "uid" && <UIDImport />}
+      </div>
     </>
   )
 }

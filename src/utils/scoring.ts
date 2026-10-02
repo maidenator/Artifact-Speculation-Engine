@@ -66,6 +66,13 @@ export const getRollTier = (statType: number, delta: number): string => {
   return TIER_NAMES[bestIdx]
 }
 
+export const inferRollCount = (statType: number, totalValue: number): number => {
+  const values = ROLL_VALUES_ROUNDED[statType]
+  if (!values) return 1
+  const avg = (values[0] + values[3]) / 2
+  return Math.max(1, Math.round(totalValue / avg))
+}
+
 /** 
  * Reverse engineer the sequence of rolls from a total sum.
  * Uses a greedy approach since we just need *a* valid path to color the dots.

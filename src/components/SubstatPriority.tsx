@@ -25,7 +25,7 @@ export function SubstatPriority({ priority, setPriority }: SubstatPriorityProps)
       <p className="font-genshin mt-4 text-[13px] text-muted">Some pre-defined presets</p>
       <div className="flex flex-wrap gap-1.5 mt-2">
         {WEIGHT_PRESETS.map((p) => (
-          <button key={p.label} type="button" className="font-genshin px-3 py-1 text-[12.5px] text-muted bg-white/5 border border-line rounded-2xl cursor-pointer transition-all hover:border-gold hover:text-gold" onClick={() => setPriority(priorityFrom(p.weights))}>
+          <button key={p.label} type="button" className="font-genshin px-3 py-1 text-[12.5px] text-muted bg-white/5 border border-line rounded-2xl cursor-pointer transition-all duration-200 ease-out hover:border-gold hover:text-gold hover:scale-105 active:scale-95" onClick={() => setPriority(priorityFrom(p.weights))}>
             {p.label}
           </button>
         ))}
@@ -39,7 +39,7 @@ export function SubstatPriority({ priority, setPriority }: SubstatPriorityProps)
             <button
               key={id}
               type="button"
-              className={`font-genshin px-3 py-1 text-[12.5px] border rounded-2xl cursor-pointer transition-all ${picked ? "border-gold text-gold bg-[#e4b76a]/15" : "text-muted bg-white/5 border-line hover:border-gold hover:text-gold"}`}
+              className={`font-genshin px-3 py-1 text-[12.5px] border rounded-2xl cursor-pointer transition-all duration-200 ease-out hover:scale-105 active:scale-95 ${picked ? "border-gold text-gold bg-[#e4b76a]/15" : "text-muted bg-white/5 border-line hover:border-gold hover:text-gold"}`}
               aria-pressed={picked}
               onClick={() => setPriority(picked ? priority.filter((s) => s !== id) : [...priority, id])}
             >

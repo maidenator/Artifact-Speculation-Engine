@@ -1,13 +1,49 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/eternal_speculation_engine.webp" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Artifact Speculation Engine</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/icons/speculation.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Artifact Speculation Engine</title>
+  <meta property="og:title" content="Artifact Speculation Engine" />
+  <meta property="og:description" content="Simulate resin spending and see what artifacts you'd realistically get" />
+  <link rel="preload" as="image" href="/icons/sumeru.png" />
+  <meta property="og:image" content="/icons/speculation.png" />
+
+  <!-- Preload critical UI icons -->
+  <!-- Slot icons -->
+  <link rel="preload" as="image" href="/icons/slot/flower.png" />
+  <link rel="preload" as="image" href="/icons/slot/feather.png" />
+  <link rel="preload" as="image" href="/icons/slot/sands.png" />
+  <link rel="preload" as="image" href="/icons/slot/goblet.png" />
+  <link rel="preload" as="image" href="/icons/slot/circlet.png" />
+  <!-- Stat icons -->
+  <link rel="preload" as="image" href="/icons/stat/attack.png" />
+  <link rel="preload" as="image" href="/icons/stat/attack_percent.png" />
+  <link rel="preload" as="image" href="/icons/stat/crit_damage.png" />
+  <link rel="preload" as="image" href="/icons/stat/crit_rate.png" />
+  <link rel="preload" as="image" href="/icons/stat/defense.png" />
+  <link rel="preload" as="image" href="/icons/stat/defense_percent.png" />
+  <link rel="preload" as="image" href="/icons/stat/elemental_mastery.png" />
+  <link rel="preload" as="image" href="/icons/stat/energy_recharge.png" />
+  <link rel="preload" as="image" href="/icons/stat/healing_bonus.png" />
+  <link rel="preload" as="image" href="/icons/stat/hp.png" />
+  <link rel="preload" as="image" href="/icons/stat/hp_percent.png" />
+  <!-- Element icons -->
+  <link rel="preload" as="image" href="/icons/element/anemo.png" />
+  <link rel="preload" as="image" href="/icons/element/cryo.png" />
+  <link rel="preload" as="image" href="/icons/element/dendro.png" />
+  <link rel="preload" as="image" href="/icons/element/electro.png" />
+  <link rel="preload" as="image" href="/icons/element/geo.png" />
+  <link rel="preload" as="image" href="/icons/element/hydro.png" />
+  <link rel="preload" as="image" href="/icons/element/physical.png" />
+  <link rel="preload" as="image" href="/icons/element/pyro.png" />
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>

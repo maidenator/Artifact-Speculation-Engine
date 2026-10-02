@@ -2,6 +2,8 @@ import { MAIN_STAT_NAMES, SLOT_NAMES, SUBSTAT_NAMES } from "../constants/artifac
 import { fmtStat } from "../utils/format"
 import { rvTier, cvTier, rollValue, inferRollTiers } from "../utils/scoring"
 import type { ArtifactOutput, ScoreMode } from "../types/artifact"
+import { useMemo, useState } from "react"
+import { ARTIFACT_DOMAINS } from "../constants/domains"
 
 const SLOT_ICONS: Record<number | string, string> = {
   0: "/icons/slot/flower.png",
@@ -79,6 +81,18 @@ export function ArtifactCard({ artifact: art, rank, scoreMode, priority, preview
   const mainStatName = MAIN_STAT_NAMES[art.mainStat.type] ?? art.mainStat.type;
   const mainStatIcon = getStatIcon(String(mainStatName));
 
+  const setName = useMemo(() => {
+    if (!art.setId) return "Gladiator's Finale";
+    for (const domain of ARTIFACT_DOMAINS) {
+      for (const set of domain.sets) {
+        if (set.id === art.setId || set.enkaId === art.setId || set.name === art.setId) {
+          return set.name;
+        }
+      }
+    }
+    return String(art.setId);
+  }, [art.setId]);
+
   const tier = scoreMode === "cv" ? cvTier(art.critValue) : rvTier(rollValue(art, priority));
   const tierColors: Record<string, string> = {
     "cv-max": "[&_strong]:text-bad",
@@ -88,13 +102,33 @@ export function ArtifactCard({ artifact: art, rank, scoreMode, priority, preview
     "cv-low": "[&_strong]:text-muted"
   };
 
+  const fallbackIcon = `/icons/artifactset/Gladiator${SLOT_NAMES[art.slot] ?? "Flower"}.png`;
+
+  const sources = useMemo(() => {
+    if (!art.iconUrl) return [fallbackIcon];
+    const iconName = art.iconUrl.split("/").pop()?.replace(".png", "") || art.iconUrl;
+    const yattaBase = import.meta.env.DEV ? "/yatta-api" : "https://gi.yatta.moe";
+    return [
+      `${yattaBase}/assets/UI/reliquary/${iconName}.png`,
+      `https://api.ambr.top/assets/UI/relic/${iconName}.png`,
+      fallbackIcon,
+    ];
+  }, [art.iconUrl, art.slot, fallbackIcon]);
+
+  const [srcIndex, setSrcIndex] = useState(0);
+
   return (
     <article className="bg-[#e9e5dc] border border-line rounded-md overflow-hidden flex flex-col h-max shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition-transform duration-200 hover:-translate-y-[2px]">
       {/* Top Section (Header + Main Stat) */}
       <div className="flex flex-col relative overflow-hidden">
         {/* Set Name Bar */}
         <div className="bg-[#b85b2e] flex justify-between items-center px-3 py-1.5 border-b-2 border-[#8a421f] text-white z-20 shadow-sm relative">
-          <span className="bg-black/35 px-1.5 py-0.5 rounded text-[11.5px] font-bold">#{rank}</span>
+          <div className="flex items-center gap-2">
+            <span className="bg-black/35 px-1.5 py-0.5 rounded text-[11.5px] font-bold">#{rank}</span>
+            {setName && (
+              <span className="font-genshin text-[13px] font-semibold tracking-wide drop-shadow-sm opacity-95">{setName}</span>
+            )}
+          </div>
         </div>
 
         {/* Main Stat Area with Background Image */}
@@ -112,8 +146,9 @@ export function ArtifactCard({ artifact: art, rank, scoreMode, priority, preview
 
           <div className="absolute top-1/2 -translate-y-1/2 right-0 pointer-events-none z-10">
             <img
-              src={`/icons/artifactset/Gladiator${SLOT_NAMES[art.slot] ?? "Flower"}.png`}
+              src={sources[srcIndex] || fallbackIcon}
               alt=""
+              onError={() => setSrcIndex((prev) => Math.min(prev + 1, sources.length - 1))}
               className="w-[120px] h-[120px] object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)]"
             />
           </div>
@@ -167,13 +202,13 @@ export function ArtifactCard({ artifact: art, rank, scoreMode, priority, preview
                 key={`${i}-${upgradeAnimation?.key ?? 0}`}
                 className={`flex justify-between items-center py-0 px-1 rounded-md text-[#495366] font-semibold relative ${isPriority ? "bg-black/5" : "bg-transparent"} ${isAnimating ? "anim-row-flash" : ""}`}
               >
-                <span className="flex items-center gap-1.5">
+                <span className="flex items-center gap-1.5 min-w-0">
                   {subIcon && (
-                    <img src={subIcon} alt="" className="w-4 h-4 object-contain invert opacity-60" />
+                    <img src={subIcon} alt="" className="w-4 h-4 object-contain invert opacity-60 shrink-0" />
                   )}
-                  <span>{subName}</span>
+                  <span className="truncate">{subName}</span>
 
-                  <i className="not-italic text-cyan tracking-[2px] ml-1.5 inline-flex gap-1">
+                  <i className="not-italic text-cyan tracking-[2px] ml-1.5 inline-flex gap-1 shrink-0">
                     {rollHistory.map((tier: string, rIdx: number) => {
                       // Animate the newest dot (last one) when this row is upgrading
                       const isNewDot = isAnimating && rIdx === rollHistory.length - 1;
@@ -187,7 +222,7 @@ export function ArtifactCard({ artifact: art, rank, scoreMode, priority, preview
                     })}
                   </i>
                 </span>
-                <span className="relative">
+                <span className="relative shrink-0 ml-2">
                   {fmtStat(sub.type, sub.value)}
                   {/* Floating delta value */}
                   {isAnimating && upgradeAnimation && (
