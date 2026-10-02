@@ -77,12 +77,12 @@ export function ResultsView({ result, huntResult, loading, ranMode, ranPriority,
     return (
       <section className="bg-card border border-line rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.2),inset_0_0_0_1px_rgba(255,255,255,0.05)] flex flex-col flex-1 min-h-0 overflow-hidden" aria-live="polite">
 
-        {/* Damage Report Header */}
+        {/* Hunt Results Header */}
         <div className="bg-card z-10 px-5 pt-5 pb-4 border-b border-line shrink-0">
           <div className="flex justify-between items-start gap-3 flex-wrap">
             <div>
               <h2 className="font-genshin font-bold text-[28px] m-0 text-gold leading-[1.2] tracking-[0.5px]">
-                Damage Report
+                Results
               </h2>
               <p className="font-genshin text-[12px] text-muted mt-1">
                 {foundCount}/{totalCount} artifacts found
@@ -140,8 +140,8 @@ export function ResultsView({ result, huntResult, loading, ranMode, ranPriority,
             <div
               key={itemResult.huntItemId}
               className={`flex flex-col p-4 rounded-xl border transition-all h-full ${itemResult.found
-                  ? "bg-white/[0.02] border-white/10"
-                  : "bg-red-500/[0.03] border-red-500/20"
+                ? "bg-white/[0.02] border-white/10"
+                : "bg-red-500/[0.03] border-red-500/20"
                 }`}
             >
               {/* Artifact card */}
