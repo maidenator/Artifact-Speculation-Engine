@@ -100,17 +100,15 @@ inline Artifact generateArtifactSubstats(MainStat mainStat, rng::Xoshiro256 &rng
     // 4. Determine how many substats to roll
     int substatCount = isFourLiner? 4 : 3;
     art.substatCount = substatCount;
-    std::array<SubstatRoll, 4> substats {};
+
+    // Calculate initial total weight
+    uint32_t totalWeight = 0;
+    for(size_t j = 0; j < substatSize; ++j) {
+        if(!selectedStats[j]) totalWeight += distributions::getSubStatWeight(distributions::ALL_SUBSTATS[j]);
+    }
 
     // 5. Loop to pick each substat
     for(int i = 0; i < substatCount; ++i) {
-        // Sum the weights of unselected stats
-        uint32_t totalWeight = 0;
-
-        for(size_t j = 0; j < substatSize; ++j) {
-            if(!selectedStats[j]) totalWeight += distributions::getSubStatWeight(distributions::ALL_SUBSTATS[j]);
-        }
-        
         // Roll random threshold
         uint32_t roll = rng::fastUniformRange(0, totalWeight - 1, rng);
         uint32_t sum = 0;
@@ -121,7 +119,7 @@ inline Artifact generateArtifactSubstats(MainStat mainStat, rng::Xoshiro256 &rng
             if(selectedStats[j]) continue;
 
             sum += distributions::getSubStatWeight(distributions::ALL_SUBSTATS[j]);
-            if(roll <= sum) {
+            if(roll < sum) {
                 chosenIndex = j;
                 break;
             }
@@ -129,9 +127,16 @@ inline Artifact generateArtifactSubstats(MainStat mainStat, rng::Xoshiro256 &rng
 
         // Mark as selected so it won't repeat
         selectedStats[chosenIndex] = true;
-        art.subStats[i].type = distributions::ALL_SUBSTATS[chosenIndex];
-        art.subStats[i].value = rollSubstatValue(distributions::ALL_SUBSTATS[chosenIndex], rng);
-        art.subStats[i].rolls = 1;
+        
+        // Subtract the weight of the chosen stat from the total weight
+        auto substatType = distributions::ALL_SUBSTATS[chosenIndex];
+        totalWeight -= distributions::getSubStatWeight(substatType);
+
+        art.subStats[i] = {
+            substatType,
+            rollSubstatValue(substatType, rng),
+            1
+        };
     }
 
     return art;
