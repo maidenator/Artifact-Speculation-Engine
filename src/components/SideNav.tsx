@@ -41,30 +41,6 @@ export function SideNav({ currentPage, onNavigate }: SideNavProps) {
           <span className="whitespace-nowrap font-genshin text-[14px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 ml-1 font-semibold">Artifact Sandbox</span>
         </button>
 
-        <button
-          type="button"
-          onClick={() => onNavigate("uid")}
-          className={`flex items-center w-full h-12 rounded-lg cursor-pointer transition-colors duration-200 shrink-0 relative border ${
-            currentPage === "uid" 
-              ? "bg-gold/15 border-gold text-gold" 
-              : "bg-transparent border-transparent text-muted hover:bg-white/5 hover:border-white/10 hover:text-white"
-          }`}
-        >
-          <div className="w-12 h-12 flex items-center justify-center shrink-0">
-            <img src="/icons/handbook.png" alt="" className={`w-7 h-7 object-contain transition-opacity ${currentPage === "uid" ? "opacity-100" : "opacity-70"}`} />
-          </div>
-          <span className="whitespace-nowrap font-genshin text-[14px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 ml-1 font-semibold">UID Import</span>
-        </button>
-
-        <div className="w-full h-[1px] bg-white/10 my-2 shrink-0 transition-all duration-300" />
-        
-        {/* Placeholder mock links */}
-        <div className="flex items-center w-full h-12 rounded-lg bg-transparent text-muted shrink-0 border border-transparent pointer-events-none opacity-50">
-          <div className="w-12 h-12 flex items-center justify-center shrink-0">
-            <Settings className="w-6 h-6" strokeWidth={2} />
-          </div>
-          <span className="whitespace-nowrap font-genshin text-[14px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 ml-1 font-semibold">Settings</span>
-        </div>
       </nav>
     </div>
   )
