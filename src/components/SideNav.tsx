@@ -1,5 +1,3 @@
-import { Settings } from "lucide-react" // keep settings icon as placeholder
-
 export type AppPage = "speculator" | "sandbox" | "uid"
 
 interface SideNavProps {
@@ -14,11 +12,10 @@ export function SideNav({ currentPage, onNavigate }: SideNavProps) {
         <button
           type="button"
           onClick={() => onNavigate("speculator")}
-          className={`flex items-center w-full h-12 rounded-lg cursor-pointer transition-colors duration-200 shrink-0 relative border ${
-            currentPage === "speculator" 
-              ? "bg-gold/15 border-gold text-gold" 
+          className={`flex items-center w-full h-12 rounded-lg cursor-pointer transition-colors duration-200 shrink-0 relative border ${currentPage === "speculator"
+              ? "bg-gold/15 border-gold text-gold"
               : "bg-transparent border-transparent text-muted hover:bg-white/5 hover:border-white/10 hover:text-white"
-          }`}
+            }`}
         >
           <div className="w-12 h-12 flex items-center justify-center shrink-0">
             <img src="/icons/speculation.png" alt="" className={`w-7 h-7 object-contain transition-opacity ${currentPage === "speculator" ? "opacity-100" : "opacity-70"}`} />
@@ -29,11 +26,10 @@ export function SideNav({ currentPage, onNavigate }: SideNavProps) {
         <button
           type="button"
           onClick={() => onNavigate("sandbox")}
-          className={`flex items-center w-full h-12 rounded-lg cursor-pointer transition-colors duration-200 shrink-0 relative border ${
-            currentPage === "sandbox" 
-              ? "bg-gold/15 border-gold text-gold" 
+          className={`flex items-center w-full h-12 rounded-lg cursor-pointer transition-colors duration-200 shrink-0 relative border ${currentPage === "sandbox"
+              ? "bg-gold/15 border-gold text-gold"
               : "bg-transparent border-transparent text-muted hover:bg-white/5 hover:border-white/10 hover:text-white"
-          }`}
+            }`}
         >
           <div className="w-12 h-12 flex items-center justify-center shrink-0">
             <img src="/icons/domain.png" alt="" className={`w-7 h-7 object-contain transition-opacity ${currentPage === "sandbox" ? "opacity-100" : "opacity-70"}`} />
