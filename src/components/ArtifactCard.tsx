@@ -6,13 +6,6 @@ import type { ArtifactOutput, ScoreMode } from "../types/artifact"
 import { useMemo, useState, useRef, useEffect } from "react"
 import { ARTIFACT_DOMAINS } from "../constants/domains"
 
-const SLOT_ICONS: Record<number | string, string> = {
-  0: "/icons/slot/flower.png",
-  1: "/icons/slot/feather.png",
-  2: "/icons/slot/sands.png",
-  3: "/icons/slot/goblet.png",
-  4: "/icons/slot/circlet.png",
-}
 
 function getStatIcon(statName: string): string | undefined {
   if (statName.includes("Anemo")) return "/icons/element/anemo.png";
@@ -78,22 +71,21 @@ const rollTierColors: Record<string, string> = {
   "min": "text-muted"
 };
 
-export function ArtifactCard({ artifact: art, rank, scoreMode, priority, previewSubstat, upgradeAnimation }: ArtifactCardProps) {
+export function ArtifactCard({ artifact: art, scoreMode, priority, previewSubstat, upgradeAnimation }: ArtifactCardProps) {
   const pieceNameRef = useRef<HTMLSpanElement>(null)
 
   const mainStatName = MAIN_STAT_NAMES[art.mainStat.type] ?? art.mainStat.type;
-  const mainStatIcon = getStatIcon(String(mainStatName));
 
-  const { setName, setId: resolvedSetId } = useMemo(() => {
-    if (!art.setId) return { setName: "Gladiator's Finale", setId: "gladiators_finale" };
+  const { setId: resolvedSetId } = useMemo(() => {
+    if (!art.setId) return { setId: "gladiators_finale" };
     for (const domain of ARTIFACT_DOMAINS) {
       for (const set of domain.sets) {
         if (set.id === art.setId || set.enkaId === art.setId || set.name === art.setId) {
-          return { setName: set.name, setId: set.id };
+          return { setId: set.id };
         }
       }
     }
-    return { setName: String(art.setId), setId: String(art.setId) };
+    return { setId: String(art.setId) };
   }, [art.setId]);
 
   const pieceName = ARTIFACT_PIECE_NAMES[resolvedSetId]
