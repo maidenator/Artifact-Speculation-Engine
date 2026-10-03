@@ -230,7 +230,7 @@ export function UIDImport() {
 
     try {
       const apiUrl = `https://enka.network/api/uid/${trimmed}`
-      const res = await fetch(import.meta.env.DEV ? `/enka-api/api/uid/${trimmed}` : `https://corsproxy.io/?url=${encodeURIComponent(apiUrl)}`)
+      const res = await fetch(import.meta.env.DEV ? `/enka-api/api/uid/${trimmed}` : `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`)
       if (!res.ok) {
         if (res.status === 400) throw new Error("Invalid UID format")
         if (res.status === 404) throw new Error("Player not found")
