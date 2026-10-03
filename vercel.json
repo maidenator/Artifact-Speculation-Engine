@@ -35,6 +35,10 @@
     {
       "source": "/ambr-api/:match*",
       "destination": "https://api.ambr.top/:match*"
+    },
+    {
+      "source": "/akasha-api/:match*",
+      "destination": "https://akasha.cv/:match*"
     }
   ]
 }

@@ -72,10 +72,13 @@ export function CompactArtifactCard({ artifact: art, priority = [], scoreMode = 
   }, [art.iconUrl]);
 
   return (
-    <article className="flex bg-[#e9e5dc] rounded-md overflow-hidden border border-line shadow-sm hover:border-gold/50 transition-colors w-full h-[110px]">
+    <article className="flex bg-[#e9e5dc] rounded-none overflow-hidden border border-line shadow-sm hover:border-gold/50 transition-colors w-full h-[110px]">
 
       {/* Left Box (Image & Main Stat) */}
-      <div className="w-[150px] shrink-0 bg-gradient-to-br from-[#a75727] to-[#d89643] relative overflow-hidden flex flex-col p-2 border-r border-[#8a421f]/30">
+      <div 
+        className="w-[150px] shrink-0 relative overflow-hidden flex flex-col p-2 border-r border-[#8a421f]/30"
+        style={{ backgroundImage: "url('/akasha-api/static/media/artifact-5star-bg.9b1e39605b95141946ef.jpg')", backgroundSize: "cover", backgroundPosition: "top" }}
+      >
         <img
           src={sources[srcIndex] || fallbackIcon}
           alt=""
@@ -93,7 +96,7 @@ export function CompactArtifactCard({ artifact: art, priority = [], scoreMode = 
 
         <div className="relative z-10 flex flex-col items-start w-full text-white font-genshin drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] mt-auto">
           <strong className="text-[26px] font-bold leading-none tracking-tight mb-1">
-            {fmtStat(art.mainStat.type, art.mainStat.value).startsWith('+') ? fmtStat(art.mainStat.type, art.mainStat.value) : `+${fmtStat(art.mainStat.type, art.mainStat.value)}`}
+            {fmtStat(art.mainStat.type, art.mainStat.value).replace('+', '')}
           </strong>
           <div className="flex items-center justify-between w-full gap-1">
             <div className="flex gap-[0.5px]">
@@ -122,25 +125,24 @@ export function CompactArtifactCard({ artifact: art, priority = [], scoreMode = 
 
           return (
             <div key={i} className={`flex items-center justify-between w-full px-1.5 py-[5px] rounded-md transition-colors ${isPriority ? "bg-black/10" : ""}`}>
-              <div className="flex items-center gap-1.5 min-w-0">
-                {subIcon && (
-                  <img src={subIcon} alt="" className="w-3.5 h-3.5 object-contain invert opacity-60 shrink-0" />
+              <div className="flex items-center min-w-0">
+                {subIcon ? (
+                  <img src={subIcon} alt="" className="w-3.5 h-3.5 object-contain invert opacity-60 shrink-0 mr-1" />
+                ) : (
+                  <span className="text-[#8a8a8a] text-lg leading-none mt-[-2px] font-bold mx-[2px]">&middot;</span>
                 )}
                 <span className={`text-[13px] font-genshin font-bold leading-none whitespace-nowrap ${isPriority ? "text-[#3b4354]" : "text-[#495366]/90"}`}>
-                  {subName}
+                  {subName}{formattedVal.startsWith('+') ? formattedVal : `+${formattedVal}`}
                 </span>
-                <div className="flex items-center gap-[3px] ml-0.5">
-                  {rollHistory.map((tier: string, rIdx: number) => (
-                    <span
-                      key={rIdx}
-                      className={`w-1.5 h-1.5 rounded-full bg-current ${rollTierColors[tier] ?? "text-muted"}`}
-                    />
-                  ))}
-                </div>
               </div>
-              <span className={`text-[14px] font-genshin font-bold text-right leading-none ${isPriority ? "text-[#3b4354]" : "text-[#495366]"}`}>
-                {formattedVal.startsWith('+') ? formattedVal : `+${formattedVal}`}
-              </span>
+              <div className="flex items-center gap-[3px] ml-0.5">
+                {rollHistory.map((tier: string, rIdx: number) => (
+                  <span
+                    key={rIdx}
+                    className={`w-1.5 h-1.5 rounded-full bg-current ${rollTierColors[tier] ?? "text-muted"}`}
+                  />
+                ))}
+              </div>
             </div>
           )
         })}

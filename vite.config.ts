@@ -47,6 +47,11 @@ export default defineConfig({
         target: 'https://api.ambr.top',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/ambr-api/, '')
+      },
+      '/akasha-api': {
+        target: 'https://akasha.cv',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/akasha-api/, '')
       }
     }
   },

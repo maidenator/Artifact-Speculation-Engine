@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { ArtifactCard } from "./ArtifactCard"
+import { ArtifactGrid } from "./ArtifactGrid"
 import { fmtDays, fmtTime } from "../utils/format"
 import { SimulationMode, type ScoreMode, type SimulationResult, type HuntListResult } from "../types/artifact"
 import { exportSimulationToGOOD } from "../utils/good"
@@ -26,7 +27,6 @@ function ArtifactSkeleton({ loading }: { loading: boolean }) {
       >
         <div className="bg-gradient-to-br from-[#a75727] to-[#d89643] border-b-2 border-[#eab05f] flex flex-col relative overflow-hidden">
           <header className="px-3 py-1.5 flex justify-between items-center text-white gap-1.5 z-10">
-            <span className="bg-black/35 px-1.5 py-0.5 rounded text-[11.5px] font-bold text-white">#--</span>
             <div className="flex items-center gap-1.5">
               <div className="w-5 h-5 bg-white/10 rounded" />
               <div className="w-[60px] h-[14px] bg-white/10 rounded" />
@@ -298,29 +298,29 @@ export function ResultsView({ result, huntResult, loading, ranMode, ranPriority,
 
       {loading ? (
         <div className="relative">
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] auto-rows-max content-start gap-4 p-5 pb-10 max-h-[650px] overflow-y-auto artifacts-scroll opacity-30">
+          <ArtifactGrid className="max-h-[650px] opacity-30">
             <ArtifactSkeleton loading={true} />
             <ArtifactSkeleton loading={true} />
             <ArtifactSkeleton loading={true} />
             <ArtifactSkeleton loading={true} />
-          </div>
+          </ArtifactGrid>
           <div className="font-genshin absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-10 text-slate-400 text-[1.3rem] font-bold px-6 py-3 rounded-lg opacity-50">
             Simulating artifact farming...
           </div>
         </div>
       ) : result.topArtifacts.length === 0 ? (
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] auto-rows-max content-start gap-4 p-5 pb-10 max-h-[650px] overflow-y-auto artifacts-scroll">
+        <ArtifactGrid className="max-h-[650px]">
           <ArtifactSkeleton loading={false} />
           <ArtifactSkeleton loading={false} />
           <ArtifactSkeleton loading={false} />
           <ArtifactSkeleton loading={false} />
-        </div>
+        </ArtifactGrid>
       ) : (
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] auto-rows-max content-start gap-4 p-5 pb-10 max-h-[650px] overflow-y-auto artifacts-scroll">
+        <ArtifactGrid className="max-h-[650px]">
           {result.topArtifacts.map((art, idx) => (
             <ArtifactCard key={`${art.slot}-${art.mainStat.type}-${idx}`} artifact={art} rank={idx + 1} scoreMode={scoreMode} priority={ranPriority} />
           ))}
-        </div>
+        </ArtifactGrid>
       )}
 
     </section>

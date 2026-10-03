@@ -180,6 +180,20 @@ export function useSimulationWorkers() {
           .slice(0, topK),
       }
 
+      // Assign random sets to artifacts that don't have one (cosmetic only)
+      for (const art of aggregated.topArtifacts) {
+        if (!art.setId) {
+          const randomDomain = ARTIFACT_DOMAINS[Math.floor(Math.random() * ARTIFACT_DOMAINS.length)]
+          const chosenSet = randomDomain.sets[Math.random() < 0.5 ? 0 : 1]
+          art.setId = chosenSet.id as any
+          if (chosenSet.enkaId) {
+            const slotSuffixMap: Record<number, string> = { 0: "4", 1: "2", 2: "5", 3: "1", 4: "3" }
+            const suffix = slotSuffixMap[art.slot] || "4"
+            art.iconUrl = `UI_RelicIcon_${chosenSet.enkaId}_${suffix}.png`
+          }
+        }
+      }
+
       setElapsedMs(performance.now() - start)
       setRanMode(mode)
       setRanPriority(priority)

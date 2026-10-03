@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, useRef } from "react"
 import { ArtifactCard, ANIMATION_DURATION_MS } from "./ArtifactCard"
+import { ArtifactGrid } from "./ArtifactGrid"
 import type { UpgradeAnimation } from "./ArtifactCard"
 import { SubstatPriority } from "./SubstatPriority"
 import { GenshinSelect } from "./selection"
@@ -392,24 +393,24 @@ export function ArtifactSandbox() {
             </div>
 
             {artifacts.length === 0 && !loading ? (
-              <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] auto-rows-max content-start gap-4 p-5 pb-10 flex-1 overflow-y-auto artifacts-scroll">
+              <ArtifactGrid className="flex-1">
                 <ArtifactSkeleton />
                 <ArtifactSkeleton />
                 <ArtifactSkeleton />
-              </div>
+              </ArtifactGrid>
             ) : loading ? (
               <div className="relative flex-1 flex flex-col min-h-0">
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] auto-rows-max content-start gap-4 p-5 pb-10 flex-1 overflow-y-auto artifacts-scroll opacity-30">
+                <ArtifactGrid className="flex-1 opacity-30">
                   <ArtifactSkeleton />
                   <ArtifactSkeleton />
                   <ArtifactSkeleton />
-                </div>
+                </ArtifactGrid>
                 <div className="font-genshin absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-10 text-slate-400 text-[1.3rem] font-bold px-6 py-3 rounded-lg opacity-50">
                   Generating artifacts...
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] auto-rows-max content-start gap-4 p-5 pb-10 flex-1 overflow-y-auto artifacts-scroll">
+              <ArtifactGrid className="flex-1">
                 {sortedArtifacts.map((sandboxArt, idx) => {
                   const displayArt = sandboxArt.history[sandboxArt.currentStep]
                   const isMaxed = sandboxArt.currentStep >= 5
@@ -425,7 +426,7 @@ export function ArtifactSandbox() {
                   }
 
                   return (
-                    <div key={sandboxArt.id} className="flex flex-col gap-2">
+                    <div key={sandboxArt.id} className="flex flex-col gap-2 w-full max-w-[300px] mx-auto">
                       <ArtifactCard
                         artifact={displayArt}
                         rank={idx + 1}
@@ -463,7 +464,7 @@ export function ArtifactSandbox() {
                     </div>
                   )
                 })}
-              </div>
+              </ArtifactGrid>
             )}
           </section>
         </main>
