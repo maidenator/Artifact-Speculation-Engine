@@ -35,8 +35,8 @@ inline float calculateCritValue(const Artifact &art) {
 inline MainStat generateMainStat(ArtifactSlot pieceType, rng::Xoshiro256 &rng) {
     // 1. Grab the weights for the given piece type
     auto weights = distributions::getMainStatWeights(pieceType);
-    // 2. Generate a number between 0 - 100
-    double roll = rng::fastUniformRange(0, 100, rng);
+    // 2. Generate a continuous number between 0 - 100
+    double roll = rng::fastUniformDouble(rng) * 100.0;
 
     // 3. Initialize a running sum that goes through the weight value/s of the given piece type.
     double sum = 0.0;
@@ -67,7 +67,7 @@ inline MainStat generateMainStat(ArtifactSlot pieceType, rng::Xoshiro256 &rng) {
 inline double rollSubstatValue(ArtifactSubstat subStat, rng::Xoshiro256 &rng) {
     auto subStats = distributions::getSubstatValues(subStat);
     double rolledValue = subStats[rng::fastUniformRange(0, 3, rng)];
-    return std::round(rolledValue * 10.0) / 10.0;
+    return std::round(rolledValue * 100.0) / 100.0;
 }
 
 /**

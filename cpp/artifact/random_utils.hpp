@@ -96,4 +96,15 @@ inline int32_t fastUniformRange(int32_t min, int32_t max, Xoshiro256 &rng) {
     
     return min + static_cast<int32_t>(randomOffset);
 }
+
+/**
+ * Generates a uniformly-distributed random double in the interval [0, 1).
+ * This is useful for probabilistic algorithms and sampling.
+ * 
+ * @param rng the xoshiro256 random engine
+ * @return a floating point number in [0.0, 1.0)
+ */
+inline double fastUniformDouble(Xoshiro256 &rng) {
+    return (rng() >> 11) * 0x1.0p-53;
+}
 }

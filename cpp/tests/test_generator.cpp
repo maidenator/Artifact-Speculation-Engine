@@ -100,7 +100,7 @@ TEST_CASE("rollSubstatValue always returns one of the four defined tiers") {
     for (auto stat : distributions::ALL_SUBSTATS) {
         auto tiers = distributions::getSubstatValues(stat);
         std::set<double> roundedTiers;
-        for (auto v : tiers) roundedTiers.insert(std::round(v * 10.0) / 10.0);
+        for (auto v : tiers) roundedTiers.insert(std::round(v * 100.0) / 100.0);
 
         for (int i = 0; i < 50; ++i) {
             double rolled = generator::rollSubstatValue(stat, gen);

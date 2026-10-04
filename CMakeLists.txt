@@ -23,6 +23,7 @@ FetchContent_MakeAvailable(Catch2 nlohmann_json)
 # --- Test Target ---
 add_executable(tests
     cpp/tests/test_distributions.cpp
+    cpp/tests/test_generator_distributions.cpp
     cpp/tests/test_random_utils.cpp
     cpp/tests/test_generator.cpp
     cpp/tests/test_simulator.cpp
