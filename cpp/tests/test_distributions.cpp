@@ -329,3 +329,13 @@ TEST_CASE("mainStatToSubStat: result is consistent with isMainStatConflict") {
         REQUIRE(distributions::isMainStatConflict(mainStat, *mapped));
     }
 }
+
+// =====================================================================
+// Core game constants
+// =====================================================================
+
+TEST_CASE("Core game constants: RESIN_PER_RUN, DOUBLE_5_STAR_CHANCE, and FOUR_LINER_CHANCE") {
+    REQUIRE(distributions::RESIN_PER_RUN == 20);
+    REQUIRE(distributions::DOUBLE_5_STAR_CHANCE == Catch::Approx(0.065));
+    REQUIRE(distributions::FOUR_LINER_CHANCE == Catch::Approx(0.20));
+}

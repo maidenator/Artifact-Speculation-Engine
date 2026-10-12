@@ -16,8 +16,8 @@ ___
 - [X] Add regression tests for each of the four hunt bugs
 
 **Font bundle size** (`src/index.css:3-9`)
-- [ ] Subset the 7.2 MB CJK TTF to the Latin and UI glyphs actually used
-- [ ] Convert the subset to WOFF2 (target: 30–80 kB)
+- [X] Subset the 7.2 MB CJK TTF to the Latin and UI glyphs actually used
+- [X] Convert the subset to WOFF2 (target: 30–80 kB)
 
 ## P1: High
 
@@ -33,7 +33,7 @@ ___
 
 **Statistics and game data**
 - [ ] Remove the dead `while (remainingBudget > 0)` loop
-- [ ] Use the existing named constants (`FOUR_LINER_CHANCE`, `DOUBLE_5_STAR_CHANCE`, `RESIN_PER_RUN`) instead of magic numbers
+- [X] Use the existing named constants (`FOUR_LINER_CHANCE`, `DOUBLE_5_STAR_CHANCE`, `RESIN_PER_RUN`) instead of magic numbers
 - [ ] Export game constants from WASM, or generate a shared `game-data.json`, so the C++ and TS copies can't drift
 
 **Security**

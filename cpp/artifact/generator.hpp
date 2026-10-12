@@ -80,8 +80,8 @@ inline double rollSubstatValue(ArtifactSubstat subStat, rng::Xoshiro256 &rng) {
 inline Artifact generateArtifactSubstats(MainStat mainStat, rng::Xoshiro256 &rng) {
     Artifact art;
 
-    // 1. Identify if we have a four liner. (1 in 5 chance for an artifact to start with four stats.)
-    bool isFourLiner = rng::fastUniformRange(0, 4, rng) == 0;
+    // 1. Identify if we have a four liner using the named constant
+    bool isFourLiner = rng::fastUniformDouble(rng) < distributions::FOUR_LINER_CHANCE;
 
     // 2. Initialize a pool of 10 unselected Substats
     std::array<bool, 10> selectedStats = {false};

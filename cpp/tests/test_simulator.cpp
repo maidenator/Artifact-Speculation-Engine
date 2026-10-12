@@ -15,8 +15,8 @@ TEST_CASE("Simulation: FixedResin mode", "[simulation][fixed_resin]") {
 
         // Runs must cost 20 resin each, so total spent must be >= requested budget
         REQUIRE(summary.totalResinSpent >= 2000);
-        REQUIRE(summary.totalResinSpent % 20 == 0);
-        REQUIRE(summary.domainRunsCompleted == summary.totalResinSpent / 20);
+        REQUIRE(summary.totalResinSpent % distributions::RESIN_PER_RUN == 0);
+        REQUIRE(summary.domainRunsCompleted == summary.totalResinSpent / distributions::RESIN_PER_RUN);
 
         // Days conversion check (180 resin/day)
         double expectedDays = static_cast<double>(summary.totalResinSpent) / 180.0;

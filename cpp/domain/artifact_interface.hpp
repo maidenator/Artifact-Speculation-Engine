@@ -165,10 +165,10 @@ inline SimulationSummary ArtifactInterface::executeSimulation(const SimulationCo
             break;
         }
 
-        summary.totalResinSpent += 20;
+        summary.totalResinSpent += distributions::RESIN_PER_RUN;
         summary.domainRunsCompleted++;
 
-        int dropsThisRun = (rng::fastUniformRange(1, 1000, masterRng) <= 65) ? 2 : 1;
+        int dropsThisRun = (rng::fastUniformDouble(masterRng) < distributions::DOUBLE_5_STAR_CHANCE) ? 2 : 1;
 
         for (int d = 0; d < dropsThisRun; ++d) {
             summary.totalFiveStarsFound++;
