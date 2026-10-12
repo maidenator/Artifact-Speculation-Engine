@@ -218,10 +218,16 @@ export function ResultsView({ result, huntResult, loading, ranMode, ranPriority,
               Configure your simulation on the left and click <strong className="text-gold">Run simulation</strong> to simulate Monte Carlo trials.
             </span>
           ) : ranMode === SimulationMode.TargetPiece && result.trials && result.trials > 1 ? (
-            <>
-              Simulated <strong className="text-gold">{result.trials}</strong> trials. Median cost to find target:{" "}
-              <strong className="text-[1.2em] text-gold">{result.totalResinSpent.toLocaleString()}</strong> Resin (Around {fmtDays(result.equivalentDays)}).
-            </>
+            result.targetAchieved ? (
+              <>
+                Simulated <strong className="text-gold">{result.trials}</strong> trials. Median cost to find target:{" "}
+                <strong className="text-[1.2em] text-gold">{result.totalResinSpent.toLocaleString()}</strong> Resin (Around {fmtDays(result.equivalentDays)}).
+              </>
+            ) : (
+              <>
+                Target not found within <strong className="text-bad">{result.totalResinSpent.toLocaleString()}</strong> Resin budget limit across <strong className="text-gold">{result.trials}</strong> trials.
+              </>
+            )
           ) : (
             <>
               Spending {result.totalResinSpent.toLocaleString()} Resin (Around {fmtDays(result.equivalentDays)}) got you{" "}
@@ -254,13 +260,25 @@ export function ResultsView({ result, huntResult, loading, ranMode, ranPriority,
                   {loading ? (
                     <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" />
                   ) : result.trials ? (
-                    `${Math.round(result.medianResinSpent ?? 0).toLocaleString()} Resin`
+                    result.successfulTrials === 0 ? (
+                      <span className="text-bad text-[18px]">Not reached</span>
+                    ) : (result.successRate ?? 0) < 0.5 ? (
+                      <span className="text-[18px]">&gt; {result.totalResinSpent.toLocaleString()}</span>
+                    ) : (
+                      `${Math.round(result.medianResinSpent ?? 0).toLocaleString()} Resin`
+                    )
                   ) : (
                     "-"
                   )}
                 </dd>
                 <span className="text-[11px] text-muted">
-                  {result.trials ? `~${fmtDays((result.medianResinSpent ?? 0) / 180)}` : "50th percentile"}
+                  {result.trials
+                    ? result.successfulTrials === 0
+                      ? "0% success rate"
+                      : (result.successRate ?? 0) >= 0.5
+                      ? `~${fmtDays((result.medianResinSpent ?? 0) / 180)}`
+                      : "50% of trials failed"
+                    : "50th percentile"}
                 </span>
               </div>
               <div className="px-3 py-2.5 bg-black/15 border border-line rounded-md">
@@ -269,13 +287,25 @@ export function ResultsView({ result, huntResult, loading, ranMode, ranPriority,
                   {loading ? (
                     <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" />
                   ) : result.trials ? (
-                    `${Math.round(result.p90ResinSpent ?? 0).toLocaleString()} Resin`
+                    result.successfulTrials === 0 ? (
+                      <span className="text-bad text-[18px]">Not reached</span>
+                    ) : (result.successRate ?? 0) < 0.9 ? (
+                      <span className="text-[18px]">&gt; {result.totalResinSpent.toLocaleString()}</span>
+                    ) : (
+                      `${Math.round(result.p90ResinSpent ?? 0).toLocaleString()} Resin`
+                    )
                   ) : (
                     "-"
                   )}
                 </dd>
                 <span className="text-[11px] text-muted">
-                  {result.trials ? `~${fmtDays((result.p90ResinSpent ?? 0) / 180)}` : "High confidence"}
+                  {result.trials
+                    ? result.successfulTrials === 0
+                      ? "0% success rate"
+                      : (result.successRate ?? 0) >= 0.9
+                      ? `~${fmtDays((result.p90ResinSpent ?? 0) / 180)}`
+                      : "90% confidence not reached"
+                    : "High confidence"}
                 </span>
               </div>
               <div className="px-3 py-2.5 bg-black/15 border border-line rounded-md">
