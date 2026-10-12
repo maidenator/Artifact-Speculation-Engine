@@ -4,7 +4,6 @@ import { RESIN_PER_DAY, RESIN_PER_RUN } from "../constants/resin"
 import { scoreArtifact, weightsFromPriority } from "../utils/scoring"
 import { SimulationMode, type SimulationResult, type SimulationSettings, type WorkerMessageData, type ArtifactOutput, type HuntListItem, type HuntItemResult, type HuntListResult } from "../types/artifact"
 import { ARTIFACT_DOMAINS } from "../constants/domains"
-import { AVG_SUBSTAT_ROLL } from "../constants/artifactData"
 
 export function useSimulationWorkers() {
   const [engineReady, setEngineReady] = useState(false)
@@ -210,29 +209,8 @@ export function useSimulationWorkers() {
   }
 
   /**
-   * Check if an artifact meets a hunt list item's requirements.
-   * Verifies slot, main stat, and that all required substats are present
-   * with values >= (minRolls × average roll value).
-   */
-  const artifactMeetsHuntItem = (art: ArtifactOutput, item: HuntListItem): boolean => {
-    // Check slot
-    if (art.slot !== item.slot) return false
-    // Check main stat
-    if (art.mainStat.type !== item.mainStat) return false
-    // Check each required substat
-    for (const req of item.substats) {
-      const sub = art.subStats.find((s) => s.type === req.stat)
-      if (!sub) return false
-      const minValue = AVG_SUBSTAT_ROLL[req.stat] * req.minRolls
-      if (sub.value < minValue * 0.95) return false // 5% tolerance for rounding
-    }
-    return true
-  }
-
-  /**
-   * Run a hunt list simulation: farm artifacts until ALL items on the list are found.
-   * Each domain run generates 2 artifacts. We check every generated artifact against
-   * all unfulfilled hunt list items. Stops when all items are found or budget exhausted.
+   * Run a hunt list simulation: farm artifacts until ALL items on the list are found
+   * or budget exhausted. Runs the C++ HuntList engine directly in WebAssembly per domain.
    */
   const runHuntList = async (huntItems: HuntListItem[], settings: SimulationSettings) => {
     if (workersRef.current.length === 0 || huntItems.length === 0) return
@@ -261,99 +239,93 @@ export function useSimulationWorkers() {
       let totalResinSpent = 0
       let totalDomainRuns = 0
       let totalStrongboxRolls = 0
-      // Group items by domainId
-      const itemsByDomain = new Map<string | undefined, { item: HuntListItem; index: number }[]>()
+
+      // Group items by domainId (defaulting undefined to first domain)
+      const itemsByDomain = new Map<string, { item: HuntListItem; index: number }[]>()
       for (let i = 0; i < huntItems.length; i++) {
         const item = huntItems[i]
-        const key = item.domainId
+        const key = item.domainId || ARTIFACT_DOMAINS[0].id
         if (!itemsByDomain.has(key)) itemsByDomain.set(key, [])
         itemsByDomain.get(key)!.push({ item, index: i })
       }
 
-      // Farm each domain sequentially
+      // Farm each domain sequentially using C++ HuntList engine
       for (const [domainId, domainGroupItems] of itemsByDomain.entries()) {
-        const isGroupFound = () => domainGroupItems.every((g) => itemResults[g.index].found)
-        let currentChunkSize = 500
+        if (runId !== currentRunId.current) return
+        if (totalResinSpent >= maxBudget) break
 
-        while (totalResinSpent < maxBudget && !isGroupFound()) {
-          if (runId !== currentRunId.current) return
+        const remainingBudget = maxBudget - totalResinSpent
+        if (remainingBudget < RESIN_PER_RUN) break
 
-          const remainingBudget = Math.min(currentChunkSize, maxBudget - totalResinSpent)
-          if (remainingBudget < RESIN_PER_RUN) break
+        const activeDomain = ARTIFACT_DOMAINS.find((d) => d.id === domainId) || ARTIFACT_DOMAINS[0]
 
-          // Build substat weights from unfulfilled items in this domain group
-          const unfulfilledItems = domainGroupItems.filter((g) => !itemResults[g.index].found)
-          const weightMap: Record<number, number> = {}
-          for (const g of unfulfilledItems) {
-            for (const sub of g.item.substats) {
-              weightMap[sub.stat] = (weightMap[sub.stat] || 0) + 1
+        // Map items in this domain group to C++ HuntTarget structures
+        const huntTargets = domainGroupItems.map((g) => {
+          let setIndex = -1
+          if (g.item.setId && activeDomain) {
+            if (activeDomain.sets[0].id === g.item.setId) setIndex = 0
+            else if (activeDomain.sets[1].id === g.item.setId) setIndex = 1
+          }
+
+          return {
+            id: g.item.id,
+            slot: g.item.slot,
+            mainStat: g.item.mainStat,
+            setIndex,
+            substats: g.item.substats.map((s) => ({
+              stat: s.stat,
+              minRolls: s.minRolls,
+            })),
+          }
+        })
+
+        const payload = JSON.stringify({
+          mode: SimulationMode.HuntList,
+          resinBudget: remainingBudget,
+          useStrongBox,
+          huntTargets,
+        })
+
+        const res = await new Promise<SimulationResult>((resolve, reject) => {
+          const handler = (e: MessageEvent<WorkerMessageData>) => {
+            if (e.data.type === "RESULT") {
+              worker.removeEventListener("message", handler)
+              if (e.data.success && e.data.data) resolve(e.data.data)
+              else reject(new Error(e.data.error ?? "Worker error"))
             }
           }
-          const substatWeights = Object.entries(weightMap).map(([stat, weight]) => ({
-            stat: Number(stat),
-            weight,
-          }))
+          worker.addEventListener("message", handler)
+          worker.postMessage({ configJson: payload, seed: Date.now() + totalResinSpent })
+        })
 
-          const payload = JSON.stringify({
-            mode: SimulationMode.ResinBudget,
-            resinBudget: remainingBudget,
-            topK: Math.floor(remainingBudget / RESIN_PER_RUN) * 2, // Get all generated artifacts
-            useStrongBox,
-            minCritValue: 0,
-            substatWeights,
-          })
+        const domainStartingResin = totalResinSpent
+        totalResinSpent += res.totalResinSpent
+        totalDomainRuns += res.domainRunsCompleted
+        totalStrongboxRolls += res.strongboxRollsCompleted
 
-          const res = await new Promise<SimulationResult>((resolve, reject) => {
-            const handler = (e: MessageEvent<WorkerMessageData>) => {
-              if (e.data.type === "RESULT") {
-                worker.removeEventListener("message", handler)
-                if (e.data.success && e.data.data) resolve(e.data.data)
-                else reject(new Error(e.data.error ?? "Worker error"))
-              }
-            }
-            worker.addEventListener("message", handler)
-            worker.postMessage({ configJson: payload, seed: Date.now() + totalResinSpent })
-          })
-
-          totalResinSpent += res.totalResinSpent
-          totalDomainRuns += res.domainRunsCompleted
-          totalStrongboxRolls += res.strongboxRollsCompleted
-          
-          currentChunkSize = Math.min(50000, currentChunkSize * 2)
-
-          // Assign sets to artifacts based on THIS domain group's domainId
-          if (domainId) {
-            const activeDomain = ARTIFACT_DOMAINS.find((d) => d.id === domainId)
-            if (activeDomain) {
-              for (const art of res.topArtifacts) {
-                const pseudoRandom = Math.random() < 0.5
-                const chosenSet = activeDomain.sets[pseudoRandom ? 0 : 1]
+        // Process found hunt results returned from C++
+        if (res.huntResults) {
+          for (const hr of res.huntResults) {
+            const g = domainGroupItems.find((d) => d.item.id === hr.id)
+            if (g && hr.found && hr.artifact) {
+              const art = hr.artifact
+              // Assign the correct set metadata based on setIndex
+              if (activeDomain && hr.setIndex >= 0 && hr.setIndex < activeDomain.sets.length) {
+                const chosenSet = activeDomain.sets[hr.setIndex]
                 art.setId = chosenSet.id as any
+                art.setName = chosenSet.name
                 if (chosenSet.enkaId) {
                   const slotSuffixMap: Record<number, string> = { 0: "4", 1: "2", 2: "5", 3: "1", 4: "3" }
                   const suffix = slotSuffixMap[art.slot] || "4"
                   art.iconUrl = `UI_RelicIcon_${chosenSet.enkaId}_${suffix}.png`
                 }
               }
-            }
-          }
 
-          // Check each generated artifact against unfulfilled hunt items in this group
-          for (const art of res.topArtifacts) {
-            for (const g of unfulfilledItems) {
-              if (itemResults[g.index].found) continue
-              const item = g.item
-
-              // Check set filter
-              if (item.setId && art.setId !== item.setId) continue
-
-              if (artifactMeetsHuntItem(art, item)) {
-                itemResults[g.index].found = true
-                itemResults[g.index].resinSpent = totalResinSpent
-                itemResults[g.index].daysSpent = totalResinSpent / RESIN_PER_DAY
-                itemResults[g.index].artifact = art
-                break // One artifact can only fulfill one hunt item
-              }
+              const exactResin = domainStartingResin + hr.resinSpent
+              itemResults[g.index].found = true
+              itemResults[g.index].resinSpent = exactResin
+              itemResults[g.index].daysSpent = exactResin / RESIN_PER_DAY
+              itemResults[g.index].artifact = art
             }
           }
         }

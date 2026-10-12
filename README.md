@@ -8,12 +8,12 @@ ___
 ## P0: Critical
 
 **Hunt List correctness** (`useSimulationWorkers.ts`, `artifact_interface.hpp`)
-- [ ] Remove the cap of 20 results so all simulated artifacts are checked
-- [ ] Remove the duplicate 50% set roll in JS, so the set chance is applied once
-- [ ] Fix "set chosen, Domain = Any" so those items can be found
-- [ ] Record resin spent at the moment each item is found, not the batch total
-- [ ] Move hunt matching into the C++ engine
-- [ ] Add regression tests for each of the four hunt bugs
+- [X] Remove the cap of 20 results so all simulated artifacts are checked
+- [X] Remove the duplicate 50% set roll in JS, so the set chance is applied once
+- [X] Fix "set chosen, Domain = Any" so those items can be found
+- [X] Record resin spent at the moment each item is found, not the batch total
+- [X] Move hunt matching into the C++ engine
+- [X] Add regression tests for each of the four hunt bugs
 
 **Font bundle size** (`src/index.css:3-9`)
 - [ ] Subset the 7.2 MB CJK TTF to the Latin and UI glyphs actually used
@@ -74,7 +74,7 @@ ___
 - [ ] Replace `any` in `WorkerMessageData`, `enka.ts`, and `setId` with discriminated unions and a schema
 - [ ] Tighten `ArtifactOutput` to use `SlotId` / `StatId`
 - [ ] Key stat icons by stat ID instead of display name
-- [ ] Extract the artifact-to-JSON serializer, which is duplicated three times
+- [X] Extract the artifact-to-JSON serializer, which is duplicated three times
 - [ ] Extract shared UI pieces: `ArtifactIcon`, `ScoreModeToggle`, `useDraggable`, a skeleton card
 - [ ] Move `setState` calls out of `setArtifacts` updaters in `ArtifactSandbox`, and clear animation timers on unmount
 - [ ] Fix the GOOD export to write the real `setKey` instead of always `GladiatorsFinale`

@@ -17,6 +17,7 @@ export interface ArtifactOutput {
   critValue: number
   iconUrl?: string
   setId?: number | string
+  setName?: string
   enkaId?: number
 }
 
@@ -58,6 +59,13 @@ export interface SimulationResult {
   strongboxRollsCompleted: number
   totalFiveStarsFound: number
   topArtifacts: ArtifactOutput[]
+  huntResults?: {
+    id: string
+    found: boolean
+    resinSpent: number
+    artifact: ArtifactOutput | null
+    setIndex: number
+  }[]
 }
 
 /** Result for a single hunt list item */
@@ -101,6 +109,7 @@ export interface WeightPreset {
 export enum SimulationMode {
   ResinBudget = 0,
   TargetPiece = 1,
+  HuntList = 2,
 }
 
 export interface SimulationSettings {

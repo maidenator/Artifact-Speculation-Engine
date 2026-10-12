@@ -91,6 +91,37 @@ inline SimulationSummary ArtifactInterface::executeSimulation(const SimulationCo
 
     int junkFiveStarCount = 0;
 
+    struct HuntTracker {
+        HuntTarget target;
+        bool found = false;
+        int resinSpent = 0;
+        std::optional<Artifact> artifact = std::nullopt;
+        int setIndex = -1;
+    };
+    std::vector<HuntTracker> huntTrackers;
+    size_t huntItemsRemaining = 0;
+    if (config.mode == SimulationMode::HuntList) {
+        huntTrackers.reserve(config.huntTargets.size());
+        for (const auto &t : config.huntTargets) {
+            huntTrackers.push_back({t, false, 0, std::nullopt, -1});
+        }
+        huntItemsRemaining = huntTrackers.size();
+    }
+
+    auto checkHuntMatch = [&](const Artifact &art, int setIdx) -> bool {
+        for (auto &tracker : huntTrackers) {
+            if (!tracker.found && artifactMeetsHuntTarget(art, setIdx, tracker.target)) {
+                tracker.found = true;
+                tracker.resinSpent = summary.totalResinSpent;
+                tracker.artifact = art;
+                tracker.setIndex = setIdx;
+                huntItemsRemaining--;
+                return true;
+            }
+        }
+        return false;
+    };
+
     auto processPiece = [&](Artifact &art) -> bool {
         if (config.targetSlot.has_value() && art.slot != *config.targetSlot) {
             junkFiveStarCount++;
@@ -126,6 +157,13 @@ inline SimulationSummary ArtifactInterface::executeSimulation(const SimulationCo
         if (config.mode == SimulationMode::TargetGoal && config.resinBudget > 0 && summary.totalResinSpent >= config.resinBudget) {
             break;
         }
+        if (config.mode == SimulationMode::HuntList && huntItemsRemaining == 0) {
+            summary.targetAchieved = true;
+            break;
+        }
+        if (config.mode == SimulationMode::HuntList && config.resinBudget > 0 && summary.totalResinSpent >= config.resinBudget) {
+            break;
+        }
 
         summary.totalResinSpent += 20;
         summary.domainRunsCompleted++;
@@ -135,15 +173,37 @@ inline SimulationSummary ArtifactInterface::executeSimulation(const SimulationCo
         for (int d = 0; d < dropsThisRun; ++d) {
             summary.totalFiveStarsFound++;
 
-            if (rng::fastUniformRange(0, 1, masterRng) == 0) {
+            if (config.mode == SimulationMode::HuntList) {
+                int dropSet = rng::fastUniformRange(0, 1, masterRng);
                 Artifact art = generator::generateArtifact(masterRng);
-                if (processPiece(art) && config.mode == SimulationMode::TargetGoal) {
+                for (int step = 0; step < 5; ++step) {
+                    generator::upgradeArtifactOnce(art, masterRng);
+                }
+                double score = evaluateArtifactScore(art, config);
+                updateReservoir(art, score);
+
+                bool matched = checkHuntMatch(art, dropSet);
+                if (!matched) {
+                    junkFiveStarCount++;
+                }
+                if (huntItemsRemaining == 0) {
                     summary.targetAchieved = true;
                     break;
                 }
             } else {
-                junkFiveStarCount++;
+                if (rng::fastUniformRange(0, 1, masterRng) == 0) {
+                    Artifact art = generator::generateArtifact(masterRng);
+                    if (processPiece(art) && config.mode == SimulationMode::TargetGoal) {
+                        summary.targetAchieved = true;
+                        break;
+                    }
+                } else {
+                    junkFiveStarCount++;
+                }
             }
+        }
+        if (config.mode == SimulationMode::HuntList && huntItemsRemaining == 0) {
+            break;
         }
 
         if (config.useStrongBox) {
@@ -153,12 +213,58 @@ inline SimulationSummary ArtifactInterface::executeSimulation(const SimulationCo
                 summary.totalFiveStarsFound++;
 
                 Artifact boxArt = generator::generateArtifact(masterRng);
-                if (processPiece(boxArt) && config.mode == SimulationMode::TargetGoal) {
-                    summary.targetAchieved = true;
-                    break;
+
+                if (config.mode == SimulationMode::HuntList) {
+                    for (int step = 0; step < 5; ++step) {
+                        generator::upgradeArtifactOnce(boxArt, masterRng);
+                    }
+                    double score = evaluateArtifactScore(boxArt, config);
+                    updateReservoir(boxArt, score);
+
+                    bool matched = false;
+                    for (auto &tracker : huntTrackers) {
+                        if (!tracker.found) {
+                            int targetSet = (tracker.target.setIndex != -1) ? tracker.target.setIndex : 0;
+                            if (artifactMeetsHuntTarget(boxArt, targetSet, tracker.target)) {
+                                tracker.found = true;
+                                tracker.resinSpent = summary.totalResinSpent;
+                                tracker.artifact = boxArt;
+                                tracker.setIndex = targetSet;
+                                huntItemsRemaining--;
+                                matched = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (huntItemsRemaining == 0) {
+                        summary.targetAchieved = true;
+                        break;
+                    }
+                } else {
+                    if (processPiece(boxArt) && config.mode == SimulationMode::TargetGoal) {
+                        summary.targetAchieved = true;
+                        break;
+                    }
                 }
             }
+            if (config.mode == SimulationMode::HuntList && huntItemsRemaining == 0) {
+                break;
+            }
         }
+    }
+
+    if (config.mode == SimulationMode::HuntList) {
+        summary.huntResults.reserve(huntTrackers.size());
+        for (const auto &tr : huntTrackers) {
+            summary.huntResults.push_back({
+                tr.target.id,
+                tr.found,
+                tr.resinSpent,
+                tr.artifact,
+                tr.setIndex
+            });
+        }
+        summary.targetAchieved = (huntItemsRemaining == 0);
     }
 
     summary.equivalentDays = static_cast<double>(summary.totalResinSpent) / 180.0;

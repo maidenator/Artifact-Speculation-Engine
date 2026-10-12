@@ -125,3 +125,55 @@ TEST_CASE("satisfiesTargetCriteria: minimum Crit Value threshold") {
         REQUIRE(satisfiesTargetCriteria(artLowCV, config, 0.0) == true);
     }
 }
+
+TEST_CASE("artifactMeetsHuntTarget: slot, main stat, set index, and substat matching") {
+    Artifact art = createMockArtifact(
+        ArtifactSlot::goblet,
+        ArtifactMainStat::pyroDmg,
+        {
+            SubstatRoll{ ArtifactSubstat::critRate, 7.0, 2 },
+            SubstatRoll{ ArtifactSubstat::critDmg, 14.0, 2 }
+        }
+    );
+
+    HuntTarget target;
+    target.id = "target-1";
+    target.slot = ArtifactSlot::goblet;
+    target.mainStat = ArtifactMainStat::pyroDmg;
+    target.setIndex = 0;
+    target.substats.push_back({ ArtifactSubstat::critRate, 2, 0.0 }); // 2 rolls of CR ≈ 6.22 * 0.95 = 5.9
+
+    SECTION("matching slot, main stat, set index, and substats passes") {
+        REQUIRE(artifactMeetsHuntTarget(art, 0, target) == true);
+    }
+
+    SECTION("set index -1 allows any set") {
+        target.setIndex = -1;
+        REQUIRE(artifactMeetsHuntTarget(art, 1, target) == true);
+    }
+
+    SECTION("mismatched set index fails") {
+        REQUIRE(artifactMeetsHuntTarget(art, 1, target) == false);
+    }
+
+    SECTION("mismatched slot fails") {
+        target.slot = ArtifactSlot::sands;
+        REQUIRE(artifactMeetsHuntTarget(art, 0, target) == false);
+    }
+
+    SECTION("mismatched main stat fails") {
+        target.mainStat = ArtifactMainStat::hydroDmg;
+        REQUIRE(artifactMeetsHuntTarget(art, 0, target) == false);
+    }
+
+    SECTION("missing required substat fails") {
+        target.substats.push_back({ ArtifactSubstat::energyRecharge, 1, 0.0 });
+        REQUIRE(artifactMeetsHuntTarget(art, 0, target) == false);
+    }
+
+    SECTION("substat value below threshold fails") {
+        target.substats.clear();
+        target.substats.push_back({ ArtifactSubstat::critRate, 5, 0.0 }); // 5 rolls > 7.0
+        REQUIRE(artifactMeetsHuntTarget(art, 0, target) == false);
+    }
+}

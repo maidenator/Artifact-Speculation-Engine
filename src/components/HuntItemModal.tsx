@@ -56,7 +56,7 @@ export function HuntItemModal() {
   const [slot, setSlot] = useState<number>(0)
   const [mainStat, setMainStat] = useState<number | null>(null)
   const [substats, setSubstats] = useState<HuntSubstat[]>([])
-  const [domainId, setDomainId] = useState<string | undefined>(undefined)
+  const [domainId, setDomainId] = useState<string | undefined>(ARTIFACT_DOMAINS[0].id)
   const [selectedSetId, setSelectedSetId] = useState<string | undefined>(undefined)
 
   // Available sets based on domain selection
@@ -70,7 +70,7 @@ export function HuntItemModal() {
 
   const setOptions = useMemo(() => {
     return [
-      { label: "Any", value: "" },
+      { label: "Either Set", value: "" },
       ...availableSets.map((set) => ({
         label: (
           <div className="flex items-center justify-center w-full">
@@ -83,17 +83,14 @@ export function HuntItemModal() {
   }, [availableSets, slot])
 
   const domainOptions = useMemo(() => {
-    return [
-      { label: "Any", value: "" },
-      ...ARTIFACT_DOMAINS.map((domain) => ({
-        label: (
-          <div className="flex items-center justify-center w-full">
-            <SplitDomainIcon domain={domain} slot={slot} />
-          </div>
-        ),
-        value: domain.id,
-      })),
-    ]
+    return ARTIFACT_DOMAINS.map((domain) => ({
+      label: (
+        <div className="flex items-center justify-center w-full">
+          <SplitDomainIcon domain={domain} slot={slot} />
+        </div>
+      ),
+      value: domain.id,
+    }))
   }, [slot])
 
   const [pos, setPos] = useState({ x: 0, y: 0 })
@@ -132,13 +129,13 @@ export function HuntItemModal() {
         setSlot(editingItem.slot)
         setMainStat(editingItem.mainStat)
         setSubstats([...editingItem.substats])
-        setDomainId(editingItem.domainId)
+        setDomainId(editingItem.domainId || ARTIFACT_DOMAINS[0].id)
         setSelectedSetId(editingItem.setId)
       } else {
         setSlot(0)
         setMainStat(Stat.FlatHp) // Default: flower -> HP
         setSubstats([])
-        setDomainId(undefined)
+        setDomainId(ARTIFACT_DOMAINS[0].id)
         setSelectedSetId(undefined)
       }
     }
@@ -230,7 +227,7 @@ export function HuntItemModal() {
       slot,
       mainStat,
       substats,
-      domainId,
+      domainId: domainId || ARTIFACT_DOMAINS[0].id,
       setId: selectedSetId,
     }
 

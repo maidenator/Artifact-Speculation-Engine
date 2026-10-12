@@ -1,7 +1,10 @@
 $ErrorActionPreference = "Stop"
 
 # 1. Activate Emscripten environment
-$emsdkPath = "$PSScriptRoot\emscripten\emsdk\emsdk_env.ps1"
+$emsdkPath = "$PSScriptRoot\..\emscripten\emsdk\emsdk_env.ps1"
+if (-not (Test-Path $emsdkPath)) {
+    $emsdkPath = "$PSScriptRoot\emscripten\emsdk\emsdk_env.ps1"
+}
 
 if (-not (Test-Path $emsdkPath)) {
     Write-Error "Could not find emsdk_env.ps1 at $emsdkPath. Please verify the folder structure."

@@ -166,7 +166,7 @@ function preRun() {
 function initRuntime() {
   runtimeInitialized = true;
   // No ATINITS hooks
-  wasmExports["J"]();
+  wasmExports["K"]();
 }
 
 function postRun() {
@@ -2107,50 +2107,51 @@ init_RegisteredPointer();
 var ___getTypeName, _malloc, _free, _setThrew, __emscripten_tempret_set, __emscripten_stack_restore, _emscripten_stack_get_current, ___cxa_increment_exception_refcount, ___cxa_can_catch, ___cxa_get_exception_ptr, memory, __indirect_function_table, wasmMemory, wasmTable;
 
 function assignWasmExports(wasmExports) {
-  ___getTypeName = wasmExports["K"];
-  _malloc = wasmExports["M"];
-  _free = wasmExports["N"];
-  _setThrew = wasmExports["O"];
-  __emscripten_tempret_set = wasmExports["P"];
-  __emscripten_stack_restore = wasmExports["Q"];
-  _emscripten_stack_get_current = wasmExports["R"];
-  ___cxa_increment_exception_refcount = wasmExports["S"];
-  ___cxa_can_catch = wasmExports["T"];
-  ___cxa_get_exception_ptr = wasmExports["U"];
-  memory = wasmMemory = wasmExports["I"];
-  __indirect_function_table = wasmTable = wasmExports["L"];
+  ___getTypeName = wasmExports["L"];
+  _malloc = wasmExports["N"];
+  _free = wasmExports["O"];
+  _setThrew = wasmExports["P"];
+  __emscripten_tempret_set = wasmExports["Q"];
+  __emscripten_stack_restore = wasmExports["R"];
+  _emscripten_stack_get_current = wasmExports["S"];
+  ___cxa_increment_exception_refcount = wasmExports["T"];
+  ___cxa_can_catch = wasmExports["U"];
+  ___cxa_get_exception_ptr = wasmExports["V"];
+  memory = wasmMemory = wasmExports["J"];
+  __indirect_function_table = wasmTable = wasmExports["M"];
 }
 
 var wasmImports = {
-  /** @export */ g: ___assert_fail,
-  /** @export */ z: ___cxa_begin_catch,
+  /** @export */ h: ___assert_fail,
+  /** @export */ A: ___cxa_begin_catch,
   /** @export */ a: ___cxa_find_matching_catch_2,
   /** @export */ i: ___cxa_find_matching_catch_3,
   /** @export */ p: ___cxa_throw,
   /** @export */ e: ___resumeException,
-  /** @export */ H: __abort_js,
-  /** @export */ y: __embind_register_bigint,
-  /** @export */ G: __embind_register_bool,
-  /** @export */ F: __embind_register_class,
-  /** @export */ x: __embind_register_class_constructor,
+  /** @export */ I: __abort_js,
+  /** @export */ z: __embind_register_bigint,
+  /** @export */ H: __embind_register_bool,
+  /** @export */ G: __embind_register_class,
+  /** @export */ y: __embind_register_class_constructor,
   /** @export */ s: __embind_register_class_function,
-  /** @export */ E: __embind_register_emval,
-  /** @export */ w: __embind_register_float,
+  /** @export */ F: __embind_register_emval,
+  /** @export */ x: __embind_register_float,
   /** @export */ o: __embind_register_integer,
   /** @export */ m: __embind_register_memory_view,
-  /** @export */ D: __embind_register_std_string,
+  /** @export */ E: __embind_register_std_string,
   /** @export */ u: __embind_register_std_wstring,
-  /** @export */ C: __embind_register_void,
-  /** @export */ B: _emscripten_resize_heap,
+  /** @export */ D: __embind_register_void,
+  /** @export */ C: _emscripten_resize_heap,
   /** @export */ f: invoke_ii,
   /** @export */ d: invoke_iii,
   /** @export */ t: invoke_iiii,
   /** @export */ j: invoke_iiiii,
-  /** @export */ A: invoke_iiiiii,
+  /** @export */ B: invoke_iiiiii,
   /** @export */ k: invoke_v,
   /** @export */ r: invoke_vi,
   /** @export */ b: invoke_vii,
-  /** @export */ h: invoke_viii,
+  /** @export */ w: invoke_viid,
+  /** @export */ g: invoke_viii,
   /** @export */ c: invoke_viiii,
   /** @export */ l: invoke_viiiii,
   /** @export */ n: invoke_viiiiii,
@@ -2283,6 +2284,17 @@ function invoke_vi(index, a1) {
   var sp = stackSave();
   try {
     getWasmTableEntry(index)(a1);
+  } catch (e) {
+    stackRestore(sp);
+    if (!(e instanceof EmscriptenEH)) throw e;
+    _setThrew(1, 0);
+  }
+}
+
+function invoke_viid(index, a1, a2, a3) {
+  var sp = stackSave();
+  try {
+    getWasmTableEntry(index)(a1, a2, a3);
   } catch (e) {
     stackRestore(sp);
     if (!(e instanceof EmscriptenEH)) throw e;
