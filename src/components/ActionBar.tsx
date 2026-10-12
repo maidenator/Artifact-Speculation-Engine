@@ -7,9 +7,10 @@ interface ActionBarProps {
   engineError: string | null
   onRun: () => void
   onReset: () => void
+  buttonText?: string
 }
 
-export function ActionBar({ canRun, loading, engineReady, engineError, onRun, onReset }: ActionBarProps) {
+export function ActionBar({ canRun, loading, engineReady, engineError, onRun, onReset, buttonText }: ActionBarProps) {
   const [showMenu, setShowMenu] = useState(false)
 
   return (
@@ -46,7 +47,7 @@ export function ActionBar({ canRun, loading, engineReady, engineError, onRun, on
               </svg>
               Simulating...
             </span>
-          ) : "Run simulation"}
+          ) : (buttonText ?? "Run simulation")}
         </button>
         
         {/* Vertical Divider Line */}

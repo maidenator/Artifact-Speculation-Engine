@@ -69,8 +69,8 @@ export function ResultsView({ result, huntResult, loading, ranMode, ranPriority,
   const topK = useSimulationSettings(state => state.settings.topK)
   const setTopK = useSimulationSettings(state => state.setTopK)
 
-  // If we have hunt results, show the hunt-specific view
-  if (huntResult && !loading) {
+  // If we have hunt results and ran HuntList mode, show the hunt-specific view
+  if (huntResult && !loading && ranMode === SimulationMode.HuntList) {
     const foundCount = huntResult.itemResults.filter((r) => r.found).length
     const totalCount = huntResult.itemResults.length
 

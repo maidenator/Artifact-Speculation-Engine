@@ -12,6 +12,7 @@ import { useDockedScroll } from "./hooks/useDockedScroll"
 import { useSimulationSettings } from "./hooks/useSimulationSettings"
 import { useSimulationWorkers } from "./hooks/useSimulationWorkers"
 import { useHuntList } from "./hooks/useHuntList"
+import { SimulationMode } from "./types/artifact"
 
 
 export default function App() {
@@ -26,13 +27,18 @@ export default function App() {
   const { engineReady, engineError, loading, runError, result, huntResult, ranMode, ranPriority, elapsedMs, run, runHuntList } =
     useSimulationWorkers()
 
-  const canRun = engineReady && !loading && settings.resinBudget >= RESIN_PER_RUN
+  const isHuntMode = settings.mode === SimulationMode.HuntList
+  const canRun =
+    engineReady &&
+    !loading &&
+    settings.resinBudget >= RESIN_PER_RUN &&
+    (!isHuntMode || huntItems.length > 0)
   
   const handleRun = async () => {
     if (!canRun) return
     setIsSimulating(true)
     try {
-      if (huntItems.length > 0) {
+      if (isHuntMode) {
         await runHuntList(huntItems, settings)
       } else {
         await run(settings)
@@ -65,11 +71,14 @@ export default function App() {
                     engineError={engineError}
                     onRun={handleRun}
                     onReset={resetSettings}
+                    buttonText={isHuntMode && huntItems.length === 0 ? "Add items to Hunt List" : undefined}
                   />
                 </aside>
-                <aside className="lg:h-auto lg:max-h-[calc(100vh-72px)] lg:overflow-y-auto custom-scrollbar pr-1.5 w-full lg:w-[360px]">
-                  <HuntListPanel />
-                </aside>
+                {isHuntMode && (
+                  <aside className="lg:h-auto lg:max-h-[calc(100vh-72px)] lg:overflow-y-auto custom-scrollbar pr-1.5 w-full lg:w-[360px]">
+                    <HuntListPanel />
+                  </aside>
+                )}
               </div>
 
               <main className="lg:h-auto lg:overflow-visible w-full min-w-0 flex-1">

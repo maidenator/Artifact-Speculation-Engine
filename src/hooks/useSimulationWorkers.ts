@@ -295,6 +295,8 @@ export function useSimulationWorkers() {
       }
 
       setHuntResult(huntListResult)
+      setRanMode(SimulationMode.HuntList)
+      setResult(null)
       setElapsedMs(elapsed)
     } catch (err: unknown) {
       if (runId !== currentRunId.current) return

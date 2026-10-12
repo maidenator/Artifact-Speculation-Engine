@@ -115,10 +115,17 @@ export function ResinConfig() {
             onChange={(val) => setMode(Number(val) as SimulationMode)}
             options={[
               { label: "Target specific artifact", value: SimulationMode.TargetPiece },
+              { label: "Hunt list (multi-piece)", value: SimulationMode.HuntList },
               { label: "Set resin budget", value: SimulationMode.ResinBudget },
             ]}
           />
         </Field>
+
+        {settings.mode === SimulationMode.HuntList && (
+          <div className="bg-white/5 border border-line rounded-lg p-3 text-[13px] text-muted leading-relaxed">
+            Configure target artifacts in the <strong className="text-gold">Hunt List</strong> panel to the right. The simulator will farm until all listed pieces are found or the maximum resin limit is reached.
+          </div>
+        )}
 
         {settings.mode === SimulationMode.TargetPiece && (
           <>
