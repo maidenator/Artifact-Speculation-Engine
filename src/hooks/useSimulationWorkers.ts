@@ -12,7 +12,7 @@ export function useSimulationWorkers() {
   const [loading, setLoading] = useState(false)
   const [runError, setRunError] = useState<string | null>(null)
   const [result, setResult] = useState<SimulationResult | null>(null)
-  const [ranMode, setRanMode] = useState<SimulationMode>(SimulationMode.ResinBudget)
+  const [ranMode, setRanMode] = useState<SimulationMode>(SimulationMode.TargetPiece)
   const [ranPriority, setRanPriority] = useState<number[]>([])
   const [elapsedMs, setElapsedMs] = useState<number | null>(null)
   const [huntResult, setHuntResult] = useState<HuntListResult | null>(null)
@@ -108,6 +108,9 @@ export function useSimulationWorkers() {
               } else {
                 reject(new Error(e.data.error ?? "Worker execution error"))
               }
+            } else if (e.data.type === "ERROR") {
+              worker.removeEventListener("message", handler)
+              reject(new Error(e.data.error ?? "Worker execution error"))
             }
           }
           worker.addEventListener("message", handler)

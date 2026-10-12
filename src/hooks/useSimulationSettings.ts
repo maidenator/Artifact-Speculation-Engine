@@ -7,6 +7,7 @@ interface SimulationSettingsState {
   settings: SimulationSettings
   setMode: (mode: SimulationMode) => void
   setResinBudget: (resinBudget: number) => void
+  setTrials: (trials: number) => void
   setTopK: (topK: number) => void
   setUseStrongBox: (useStrongBox: boolean) => void
   setMinCritValue: (minCritValue: number) => void
@@ -20,6 +21,7 @@ interface SimulationSettingsState {
 const defaultSettings: SimulationSettings = {
   mode: SimulationMode.TargetPiece,
   resinBudget: 2000,
+  trials: 100,
   topK: 10,
   useStrongBox: true,
   minCritValue: 25,
@@ -32,6 +34,7 @@ export const useSimulationSettings = create<SimulationSettingsState>((set) => ({
   settings: defaultSettings,
   setMode: (mode) => set((state) => ({ settings: { ...state.settings, mode } })),
   setResinBudget: (resinBudget) => set((state) => ({ settings: { ...state.settings, resinBudget } })),
+  setTrials: (trials) => set((state) => ({ settings: { ...state.settings, trials } })),
   setTopK: (topK) => set((state) => ({ settings: { ...state.settings, topK } })),
   setUseStrongBox: (useStrongBox) => set((state) => ({ settings: { ...state.settings, useStrongBox } })),
   setMinCritValue: (minCritValue) => set((state) => ({ settings: { ...state.settings, minCritValue } })),

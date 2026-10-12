@@ -86,7 +86,7 @@ export default function App() {
                   }} 
                   huntResult={huntResult}
                   loading={loading || isSimulating}
-                  ranMode={ranMode} 
+                  ranMode={result ? ranMode : settings.mode} 
                   ranPriority={ranPriority} 
                   elapsedMs={elapsedMs} 
                 />

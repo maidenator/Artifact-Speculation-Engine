@@ -199,7 +199,7 @@ export function ResultsView({ result, huntResult, loading, ranMode, ranPriority,
       <div className="bg-card z-10 px-5 pt-5 pb-3 border-b border-line shrink-0">
         <div className="flex justify-between items-center gap-3 flex-wrap">
           <h2 className="font-genshin font-bold text-[28px] m-0 text-gold leading-[1.2] tracking-[0.5px]">Results</h2>
-          {ranMode === SimulationMode.TargetPiece && !loading && (
+          {ranMode === SimulationMode.TargetPiece && !loading && Boolean(result.trials) && (
             <span className={`font-genshin text-[13px] font-semibold px-2.5 py-0.5 border border-current rounded-full ${result.targetAchieved ? "text-ok" : "text-bad"}`}>
               {result.targetAchieved
                 ? result.trials && result.trials > 1
@@ -213,6 +213,10 @@ export function ResultsView({ result, huntResult, loading, ranMode, ranPriority,
         <p className={`font-genshin my-3 text-[16px] tracking-[0.3px] ${loading ? "animate-pulse" : ""}`} style={{ opacity: loading ? 0.5 : 1 }}>
           {loading ? (
             <span className="inline-block bg-white/10 rounded w-[70%] h-[1.1em]" />
+          ) : !result.trials && elapsedMs === null ? (
+            <span className="text-muted">
+              Configure your simulation on the left and click <strong className="text-gold">Run simulation</strong> to simulate Monte Carlo trials.
+            </span>
           ) : ranMode === SimulationMode.TargetPiece && result.trials && result.trials > 1 ? (
             <>
               Simulated <strong className="text-gold">{result.trials}</strong> trials. Median cost to find target:{" "}
@@ -227,33 +231,65 @@ export function ResultsView({ result, huntResult, loading, ranMode, ranPriority,
         </p>
 
         <dl className={`grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-3 m-0 font-genshin ${loading ? "animate-pulse" : ""}`} style={{ opacity: loading ? 0.5 : 1 }}>
-          {ranMode === SimulationMode.TargetPiece && result.trials && result.trials > 1 ? (
+          {ranMode === SimulationMode.TargetPiece ? (
             <>
               <div className="px-3 py-2.5 bg-black/15 border border-line rounded-md">
                 <dt className="text-[12.5px] text-muted">Success chance</dt>
                 <dd className="m-0 font-genshin text-[22px] font-[650] tracking-[0.5px]">
-                  {loading ? <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" /> : `${((result.successRate ?? 0) * 100).toFixed(1)}%`}
+                  {loading ? (
+                    <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" />
+                  ) : result.trials ? (
+                    `${((result.successRate ?? 0) * 100).toFixed(1)}%`
+                  ) : (
+                    "-"
+                  )}
                 </dd>
-                <span className="text-[11px] text-muted">{result.successfulTrials}/{result.trials} trials</span>
+                <span className="text-[11px] text-muted">
+                  {result.trials ? `${result.successfulTrials}/${result.trials} trials` : "Monte Carlo rate"}
+                </span>
               </div>
               <div className="px-3 py-2.5 bg-black/15 border border-line rounded-md">
                 <dt className="text-[12.5px] text-muted">Median cost (p50)</dt>
                 <dd className="m-0 font-genshin text-[22px] font-[650] tracking-[0.5px]">
-                  {loading ? <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" /> : `${Math.round(result.medianResinSpent ?? 0).toLocaleString()} Resin`}
+                  {loading ? (
+                    <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" />
+                  ) : result.trials ? (
+                    `${Math.round(result.medianResinSpent ?? 0).toLocaleString()} Resin`
+                  ) : (
+                    "-"
+                  )}
                 </dd>
-                <span className="text-[11px] text-muted">~{fmtDays((result.medianResinSpent ?? 0) / 180)}</span>
+                <span className="text-[11px] text-muted">
+                  {result.trials ? `~${fmtDays((result.medianResinSpent ?? 0) / 180)}` : "50th percentile"}
+                </span>
               </div>
               <div className="px-3 py-2.5 bg-black/15 border border-line rounded-md">
                 <dt className="text-[12.5px] text-muted">90th percentile (p90)</dt>
                 <dd className="m-0 font-genshin text-[22px] font-[650] tracking-[0.5px]">
-                  {loading ? <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" /> : `${Math.round(result.p90ResinSpent ?? 0).toLocaleString()} Resin`}
+                  {loading ? (
+                    <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" />
+                  ) : result.trials ? (
+                    `${Math.round(result.p90ResinSpent ?? 0).toLocaleString()} Resin`
+                  ) : (
+                    "-"
+                  )}
                 </dd>
-                <span className="text-[11px] text-muted">~{fmtDays((result.p90ResinSpent ?? 0) / 180)}</span>
+                <span className="text-[11px] text-muted">
+                  {result.trials ? `~${fmtDays((result.p90ResinSpent ?? 0) / 180)}` : "High confidence"}
+                </span>
               </div>
               <div className="px-3 py-2.5 bg-black/15 border border-line rounded-md">
                 <dt className="text-[12.5px] text-muted">Engine Run time</dt>
-                <dd className="m-0 font-genshin text-[22px] font-[650] tracking-[0.5px]">{loading ? <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" /> : (elapsedMs !== null ? fmtTime(elapsedMs) : "-")}</dd>
-                <span className="text-[11px] text-muted">{result.trials} trials simulated</span>
+                <dd className="m-0 font-genshin text-[22px] font-[650] tracking-[0.5px]">
+                  {loading ? (
+                    <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" />
+                  ) : (
+                    elapsedMs !== null ? fmtTime(elapsedMs) : "-"
+                  )}
+                </dd>
+                <span className="text-[11px] text-muted">
+                  {result.trials ? `${result.trials} trials simulated` : "Multi-thread Monte Carlo"}
+                </span>
               </div>
             </>
           ) : (
