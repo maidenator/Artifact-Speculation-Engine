@@ -2,7 +2,6 @@
 
 **An artifact domain simulator that uses a Monte Carlo engine to simulate game accurate artifact runs.**
 ___
-### TODO:
 
 # TODO: Artifact Speculation Engine
 
