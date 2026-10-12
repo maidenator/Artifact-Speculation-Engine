@@ -26,9 +26,9 @@ ___
 - [ ] Create one shared worker pool at module level instead of one per component
 - [ ] Start workers lazily on first run, and cap them at `min(hardwareConcurrency - 1, 8)`
 - [ ] Stop the Sandbox from starting a second worker set
-- [ ] Fix Target mode so it doesn't sum spent resin across failed workers
-- [ ] Split **trials** across workers, not the budget
-- [ ] Report success probability and percentiles (p50, p90) instead of a single draw
+- [X] Fix Target mode so it doesn't sum spent resin across failed workers
+- [X] Split **trials** across workers, not the budget
+- [X] Report success probability and percentiles (p50, p90) instead of a single draw
 - [ ] Add a cancel button that terminates and respawns the worker
 
 **Statistics and game data**
@@ -44,7 +44,7 @@ ___
 
 **Testing and CI**
 - [ ] Add a frontend job to CI, and widen the workflow triggers beyond `cpp/**`
-- [ ] Move orchestration logic into pure functions (`splitTrials`, `aggregate`, `matchesHuntItem`) and unit-test them
+- [X] Move orchestration logic into pure functions (`splitTrials`, `aggregate`, `matchesHuntItem`) and unit-test them
 - [ ] Add a contract test that parses `serializeSummaryJson` output in TS
 - [ ] Add a Playwright smoke test: load → "Engine ready" → run → cards appear
 
