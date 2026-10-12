@@ -12,7 +12,7 @@ export function useSimulationWorkers() {
   const [loading, setLoading] = useState(false)
   const [runError, setRunError] = useState<string | null>(null)
   const [result, setResult] = useState<SimulationResult | null>(null)
-  const [ranMode, setRanMode] = useState<SimulationMode>(SimulationMode.TargetPiece)
+  const [ranMode, setRanMode] = useState<SimulationMode>(SimulationMode.HuntList)
   const [ranPriority, setRanPriority] = useState<number[]>([])
   const [elapsedMs, setElapsedMs] = useState<number | null>(null)
   const [huntResult, setHuntResult] = useState<HuntListResult | null>(null)

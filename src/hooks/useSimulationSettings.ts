@@ -19,7 +19,7 @@ interface SimulationSettingsState {
 }
 
 const defaultSettings: SimulationSettings = {
-  mode: SimulationMode.TargetPiece,
+  mode: SimulationMode.HuntList,
   resinBudget: 2000,
   trials: 100,
   topK: 10,
@@ -56,7 +56,7 @@ export const useSimulationSettings = create<SimulationSettingsState>((set) => ({
   resetSettings: () => set({
     settings: {
       ...defaultSettings,
-      mode: SimulationMode.ResinBudget,
+      mode: SimulationMode.HuntList,
       topK: 3, // As per original resetSettings logic
     }
   }),

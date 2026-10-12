@@ -114,8 +114,8 @@ export function ResinConfig() {
             value={settings.mode}
             onChange={(val) => setMode(Number(val) as SimulationMode)}
             options={[
-              { label: "Target specific artifact", value: SimulationMode.TargetPiece },
               { label: "Hunt list (multi-piece)", value: SimulationMode.HuntList },
+              { label: "Target specific artifact", value: SimulationMode.TargetPiece },
               { label: "Set resin budget", value: SimulationMode.ResinBudget },
             ]}
           />
