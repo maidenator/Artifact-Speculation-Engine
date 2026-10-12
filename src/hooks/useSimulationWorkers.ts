@@ -89,74 +89,31 @@ export function useSimulationWorkers() {
 
         if (workerBudget <= 0) return Promise.resolve(null)
 
-        const runWorkerWithSetFilter = async (budget: number, seedBase: number): Promise<SimulationResult> => {
-          let remainingBudget = budget;
-          
-          let aggregatedResult: SimulationResult = {
-            targetAchieved: false,
-            totalResinSpent: 0,
-            equivalentDays: 0,
-            domainRunsCompleted: 0,
-            strongboxRollsCompleted: 0,
-            totalFiveStarsFound: 0,
-            topArtifacts: []
-          };
+        const payload = JSON.stringify({
+          mode,
+          resinBudget: workerBudget,
+          topK,
+          useStrongBox,
+          minCritValue,
+          substatWeights,
+          ...(mode === SimulationMode.TargetPiece && targetSlot !== null ? { targetSlot } : {}),
+          ...(mode === SimulationMode.TargetPiece && targetMainStat !== null ? { targetMainStat } : {}),
+        })
 
-          while (remainingBudget > 0) {
-            const payload = JSON.stringify({
-              mode,
-              resinBudget: remainingBudget,
-              topK,
-              useStrongBox,
-              minCritValue,
-              substatWeights,
-              ...(mode === SimulationMode.TargetPiece && targetSlot !== null ? { targetSlot } : {}),
-              ...(mode === SimulationMode.TargetPiece && targetMainStat !== null ? { targetMainStat } : {}),
-            })
-
-            const res = await new Promise<SimulationResult>((resolve, reject) => {
-              const handler = (e: MessageEvent<WorkerMessageData>) => {
-                if (e.data.type === "RESULT") {
-                  worker.removeEventListener("message", handler)
-                  if (e.data.success && e.data.data) {
-                    resolve(e.data.data)
-                  } else {
-                    reject(new Error(e.data.error ?? "Worker execution error"))
-                  }
-                }
-              }
-              worker.addEventListener("message", handler)
-              worker.postMessage({ configJson: payload, seed: seedBase + remainingBudget })
-            });
-
-            // Add results to aggregation
-            aggregatedResult.totalResinSpent += res.totalResinSpent;
-            aggregatedResult.equivalentDays += res.equivalentDays;
-            aggregatedResult.domainRunsCompleted += res.domainRunsCompleted;
-            aggregatedResult.strongboxRollsCompleted += res.strongboxRollsCompleted;
-            aggregatedResult.totalFiveStarsFound += res.totalFiveStarsFound;
-            
-            // Settings domainId has been moved to HuntListItem, so standard runs (TargetPiece) do not use domain logic anymore.
-            aggregatedResult.topArtifacts = [...aggregatedResult.topArtifacts, ...res.topArtifacts];
-
-            if (mode === SimulationMode.TargetPiece) {
-              if (res.targetAchieved) {
-                aggregatedResult.targetAchieved = true;
-                break;
+        return new Promise<SimulationResult>((resolve, reject) => {
+          const handler = (e: MessageEvent<WorkerMessageData>) => {
+            if (e.data.type === "RESULT") {
+              worker.removeEventListener("message", handler)
+              if (e.data.success && e.data.data) {
+                resolve(e.data.data)
               } else {
-                break;
+                reject(new Error(e.data.error ?? "Worker execution error"))
               }
-            } else {
-              break;
             }
           }
-
-
-
-          return aggregatedResult;
-        };
-
-        return runWorkerWithSetFilter(workerBudget, Date.now() + index * 10007);
+          worker.addEventListener("message", handler)
+          worker.postMessage({ configJson: payload, seed: Date.now() + index * 10007 })
+        })
       })
 
       const rawResults = await Promise.all(tasks)

@@ -32,7 +32,7 @@ ___
 - [ ] Add a cancel button that terminates and respawns the worker
 
 **Statistics and game data**
-- [ ] Remove the dead `while (remainingBudget > 0)` loop
+- [X] Remove the dead `while (remainingBudget > 0)` loop
 - [X] Use the existing named constants (`FOUR_LINER_CHANCE`, `DOUBLE_5_STAR_CHANCE`, `RESIN_PER_RUN`) instead of magic numbers
 - [ ] Export game constants from WASM, or generate a shared `game-data.json`, so the C++ and TS copies can't drift
 
