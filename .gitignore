@@ -25,9 +25,15 @@ dist-ssr
 *.exe
 emscripten/
 external/
+vibe-wise-universal/
+.vibe-wise-bundle/
+.vibe-wise/
+.agents/
+.vercel/
 
 # CMake build directories
 build/
 build-*/
 out/
-.vercel
+EXECUTIVESUMMARY.md
+SUGGESTIONS.md
