@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react"
 import SimulationWorker from "../workers/simulation.worker?worker"
 import { RESIN_PER_DAY, RESIN_PER_RUN } from "../constants/resin"
-import { scoreArtifact, weightsFromPriority } from "../utils/scoring"
+import { weightsFromPriority } from "../utils/scoring"
+import { splitTrials, aggregate } from "../utils/orchestration"
 import { SimulationMode, type SimulationResult, type SimulationSettings, type WorkerMessageData, type ArtifactOutput, type HuntListItem, type HuntItemResult, type HuntListResult } from "../types/artifact"
 import { ARTIFACT_DOMAINS } from "../constants/domains"
 
@@ -76,22 +77,20 @@ export function useSimulationWorkers() {
     const substatWeights = weightsFromPriority(priority)
 
     const numWorkers = workersRef.current.length
-    const totalRuns = Math.floor(resinBudget / RESIN_PER_RUN)
-    const baseRunsPerWorker = Math.floor(totalRuns / numWorkers)
-    const extraRuns = totalRuns % numWorkers
+    const totalTrials = settings.trials ?? (mode === SimulationMode.TargetPiece ? 100 : 1)
+    const trialsPerWorker = splitTrials(totalTrials, numWorkers)
 
     const start = performance.now()
 
     try {
       const tasks = workersRef.current.map((worker, index) => {
-        const workerRuns = baseRunsPerWorker + (index < extraRuns ? 1 : 0)
-        const workerBudget = workerRuns * RESIN_PER_RUN
-
-        if (workerBudget <= 0) return Promise.resolve(null)
+        const workerTrials = trialsPerWorker[index] ?? 0
+        if (workerTrials <= 0) return Promise.resolve(null)
 
         const payload = JSON.stringify({
           mode,
-          resinBudget: workerBudget,
+          resinBudget,
+          trials: workerTrials,
           topK,
           useStrongBox,
           minCritValue,
@@ -122,19 +121,7 @@ export function useSimulationWorkers() {
       if (runId !== currentRunId.current) return
       
       const results = rawResults.filter((r): r is SimulationResult => r !== null)
-
-      const aggregated: SimulationResult = {
-        targetAchieved: results.some((r) => r.targetAchieved),
-        totalResinSpent: results.reduce((acc, r) => acc + r.totalResinSpent, 0),
-        equivalentDays: results.reduce((acc, r) => acc + r.totalResinSpent, 0) / RESIN_PER_DAY,
-        domainRunsCompleted: results.reduce((acc, r) => acc + r.domainRunsCompleted, 0),
-        strongboxRollsCompleted: results.reduce((acc, r) => acc + r.strongboxRollsCompleted, 0),
-        totalFiveStarsFound: results.reduce((acc, r) => acc + r.totalFiveStarsFound, 0),
-        topArtifacts: results
-          .flatMap((r) => r.topArtifacts)
-          .sort((a, b) => scoreArtifact(b, substatWeights) - scoreArtifact(a, substatWeights))
-          .slice(0, topK),
-      }
+      const aggregated = aggregate(results, substatWeights, topK)
 
       // Assign random sets to artifacts that don't have one (cosmetic only)
       for (const art of aggregated.topArtifacts) {

@@ -168,3 +168,70 @@ TEST_CASE("Simulation: Strongbox Recycling", "[simulation][strongbox]") {
         REQUIRE(summary.strongboxRollsCompleted == 0);
     }
 }
+
+TEST_CASE("Simulation: Multi-Trial Monte Carlo", "[simulation][trials]") {
+    ArtifactInterface interface(777);
+
+    SECTION("Runs multiple trials in TargetGoal mode and aggregates metrics") {
+        SimulationConfig config;
+        config.mode = SimulationMode::TargetGoal;
+        config.targetSlot = ArtifactSlot::flower;
+        config.minCritValue = 20.0;
+        config.resinBudget = 10000;
+        config.trials = 20;
+
+        auto summary = interface.executeSimulation(config);
+
+        REQUIRE(summary.trials == 20);
+        REQUIRE(summary.successfulTrials > 0);
+        REQUIRE(summary.successRate > 0.0);
+        REQUIRE(summary.targetAchieved == true);
+        REQUIRE(summary.trialResinSpents.size() == 20);
+        REQUIRE(summary.trialTargetAchieved.size() == 20);
+        REQUIRE(summary.minResinSpent > 0.0);
+        REQUIRE(summary.medianResinSpent >= summary.minResinSpent);
+        REQUIRE(summary.p90ResinSpent >= summary.medianResinSpent);
+        REQUIRE(summary.maxResinSpent >= summary.p90ResinSpent);
+    }
+
+    SECTION("Reports zero success rate for unattainable goals") {
+        SimulationConfig config;
+        config.mode = SimulationMode::TargetGoal;
+        config.targetSlot = ArtifactSlot::goblet;
+        config.targetMainStat = ArtifactMainStat::pyroDmg;
+        config.minCritValue = 54.0;
+        config.resinBudget = 200;
+        config.trials = 10;
+
+        auto summary = interface.executeSimulation(config);
+
+        REQUIRE(summary.trials == 10);
+        REQUIRE(summary.successfulTrials == 0);
+        REQUIRE(summary.successRate == 0.0);
+        REQUIRE(summary.targetAchieved == false);
+        for (int resin : summary.trialResinSpents) {
+            REQUIRE(resin == 200);
+        }
+    }
+
+    SECTION("JSON serialization round-trip includes multi-trial fields") {
+        std::string jsonConfig = R"({
+            "mode": 1,
+            "targetSlot": 0,
+            "minCritValue": 20.0,
+            "resinBudget": 10000,
+            "trials": 5
+        })";
+
+        std::string resultJson = interface.runSimulationJson(jsonConfig);
+        auto parsed = nlohmann::json::parse(resultJson);
+
+        REQUIRE(parsed["trials"].get<int>() == 5);
+        REQUIRE(parsed.contains("successfulTrials"));
+        REQUIRE(parsed.contains("successRate"));
+        REQUIRE(parsed.contains("medianResinSpent"));
+        REQUIRE(parsed.contains("p90ResinSpent"));
+        REQUIRE(parsed["trialResinSpents"].is_array());
+        REQUIRE(parsed["trialResinSpents"].size() == 5);
+    }
+}

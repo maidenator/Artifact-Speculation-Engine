@@ -201,7 +201,11 @@ export function ResultsView({ result, huntResult, loading, ranMode, ranPriority,
           <h2 className="font-genshin font-bold text-[28px] m-0 text-gold leading-[1.2] tracking-[0.5px]">Results</h2>
           {ranMode === SimulationMode.TargetPiece && !loading && (
             <span className={`font-genshin text-[13px] font-semibold px-2.5 py-0.5 border border-current rounded-full ${result.targetAchieved ? "text-ok" : "text-bad"}`}>
-              {result.targetAchieved ? "Goal reached" : "Goal not reached within budget"}
+              {result.targetAchieved
+                ? result.trials && result.trials > 1
+                  ? `Goal reached (${((result.successRate ?? 0) * 100).toFixed(1)}% success)`
+                  : "Goal reached"
+                : "Goal not reached within budget"}
             </span>
           )}
         </div>
@@ -209,6 +213,11 @@ export function ResultsView({ result, huntResult, loading, ranMode, ranPriority,
         <p className={`font-genshin my-3 text-[16px] tracking-[0.3px] ${loading ? "animate-pulse" : ""}`} style={{ opacity: loading ? 0.5 : 1 }}>
           {loading ? (
             <span className="inline-block bg-white/10 rounded w-[70%] h-[1.1em]" />
+          ) : ranMode === SimulationMode.TargetPiece && result.trials && result.trials > 1 ? (
+            <>
+              Simulated <strong className="text-gold">{result.trials}</strong> trials. Median cost to find target:{" "}
+              <strong className="text-[1.2em] text-gold">{result.totalResinSpent.toLocaleString()}</strong> Resin (Around {fmtDays(result.equivalentDays)}).
+            </>
           ) : (
             <>
               Spending {result.totalResinSpent.toLocaleString()} Resin (Around {fmtDays(result.equivalentDays)}) got you{" "}
@@ -218,18 +227,51 @@ export function ResultsView({ result, huntResult, loading, ranMode, ranPriority,
         </p>
 
         <dl className={`grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-3 m-0 font-genshin ${loading ? "animate-pulse" : ""}`} style={{ opacity: loading ? 0.5 : 1 }}>
-          <div className="px-3 py-2.5 bg-black/15 border border-line rounded-md">
-            <dt className="text-[12.5px] text-muted">Domain runs</dt>
-            <dd className="m-0 font-genshin text-[22px] font-[650] tracking-[0.5px]">{loading ? <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" /> : result.domainRunsCompleted.toLocaleString()}</dd>
-          </div>
-          <div className="px-3 py-2.5 bg-black/15 border border-line rounded-md">
-            <dt className="text-[12.5px] text-muted">Strongbox rolls</dt>
-            <dd className="m-0 font-genshin text-[22px] font-[650] tracking-[0.5px]">{loading ? <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" /> : result.strongboxRollsCompleted.toLocaleString()}</dd>
-          </div>
-          <div className="px-3 py-2.5 bg-black/15 border border-line rounded-md">
-            <dt className="text-[12.5px] text-muted">Engine Run time</dt>
-            <dd className="m-0 font-genshin text-[22px] font-[650] tracking-[0.5px]">{loading ? <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" /> : (elapsedMs !== null ? fmtTime(elapsedMs) : "-")}</dd>
-          </div>
+          {ranMode === SimulationMode.TargetPiece && result.trials && result.trials > 1 ? (
+            <>
+              <div className="px-3 py-2.5 bg-black/15 border border-line rounded-md">
+                <dt className="text-[12.5px] text-muted">Success chance</dt>
+                <dd className="m-0 font-genshin text-[22px] font-[650] tracking-[0.5px]">
+                  {loading ? <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" /> : `${((result.successRate ?? 0) * 100).toFixed(1)}%`}
+                </dd>
+                <span className="text-[11px] text-muted">{result.successfulTrials}/{result.trials} trials</span>
+              </div>
+              <div className="px-3 py-2.5 bg-black/15 border border-line rounded-md">
+                <dt className="text-[12.5px] text-muted">Median cost (p50)</dt>
+                <dd className="m-0 font-genshin text-[22px] font-[650] tracking-[0.5px]">
+                  {loading ? <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" /> : `${Math.round(result.medianResinSpent ?? 0).toLocaleString()} Resin`}
+                </dd>
+                <span className="text-[11px] text-muted">~{fmtDays((result.medianResinSpent ?? 0) / 180)}</span>
+              </div>
+              <div className="px-3 py-2.5 bg-black/15 border border-line rounded-md">
+                <dt className="text-[12.5px] text-muted">90th percentile (p90)</dt>
+                <dd className="m-0 font-genshin text-[22px] font-[650] tracking-[0.5px]">
+                  {loading ? <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" /> : `${Math.round(result.p90ResinSpent ?? 0).toLocaleString()} Resin`}
+                </dd>
+                <span className="text-[11px] text-muted">~{fmtDays((result.p90ResinSpent ?? 0) / 180)}</span>
+              </div>
+              <div className="px-3 py-2.5 bg-black/15 border border-line rounded-md">
+                <dt className="text-[12.5px] text-muted">Engine Run time</dt>
+                <dd className="m-0 font-genshin text-[22px] font-[650] tracking-[0.5px]">{loading ? <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" /> : (elapsedMs !== null ? fmtTime(elapsedMs) : "-")}</dd>
+                <span className="text-[11px] text-muted">{result.trials} trials simulated</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="px-3 py-2.5 bg-black/15 border border-line rounded-md">
+                <dt className="text-[12.5px] text-muted">Domain runs</dt>
+                <dd className="m-0 font-genshin text-[22px] font-[650] tracking-[0.5px]">{loading ? <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" /> : result.domainRunsCompleted.toLocaleString()}</dd>
+              </div>
+              <div className="px-3 py-2.5 bg-black/15 border border-line rounded-md">
+                <dt className="text-[12.5px] text-muted">Strongbox rolls</dt>
+                <dd className="m-0 font-genshin text-[22px] font-[650] tracking-[0.5px]">{loading ? <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" /> : result.strongboxRollsCompleted.toLocaleString()}</dd>
+              </div>
+              <div className="px-3 py-2.5 bg-black/15 border border-line rounded-md">
+                <dt className="text-[12.5px] text-muted">Engine Run time</dt>
+                <dd className="m-0 font-genshin text-[22px] font-[650] tracking-[0.5px]">{loading ? <span className="inline-block w-10 h-[1.1em] bg-white/10 rounded" /> : (elapsedMs !== null ? fmtTime(elapsedMs) : "-")}</dd>
+              </div>
+            </>
+          )}
         </dl>
 
         <div className="flex justify-between items-center gap-3 flex-wrap mt-4">

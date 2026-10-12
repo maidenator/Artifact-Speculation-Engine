@@ -48,6 +48,7 @@ inline SimulationConfig parseConfigJson(const std::string &jsonStr) {
     }
 
     if (j.contains("resinBudget")) config.resinBudget = j["resinBudget"].get<int>();
+    if (j.contains("trials")) config.trials = j["trials"].get<int>();
     if (j.contains("topK")) config.topK = j["topK"].get<int>();
     if (j.contains("useStrongBox")) config.useStrongBox = j["useStrongBox"].get<bool>();
     if (j.contains("minCritValue")) config.minCritValue = j["minCritValue"].get<double>();
@@ -108,6 +109,17 @@ inline std::string serializeSummaryJson(const SimulationSummary &summary) {
     j["domainRunsCompleted"] = summary.domainRunsCompleted;
     j["strongboxRollsCompleted"] = summary.strongboxRollsCompleted;
     j["totalFiveStarsFound"] = summary.totalFiveStarsFound;
+
+    j["trials"] = summary.trials;
+    j["successfulTrials"] = summary.successfulTrials;
+    j["successRate"] = summary.successRate;
+    j["medianResinSpent"] = summary.medianResinSpent;
+    j["p90ResinSpent"] = summary.p90ResinSpent;
+    j["minResinSpent"] = summary.minResinSpent;
+    j["maxResinSpent"] = summary.maxResinSpent;
+    j["meanResinSpent"] = summary.meanResinSpent;
+    j["trialResinSpents"] = summary.trialResinSpents;
+    j["trialTargetAchieved"] = summary.trialTargetAchieved;
 
     json topArts = json::array();
     for (const auto &art : summary.topArtifacts) {

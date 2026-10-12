@@ -47,6 +47,7 @@ struct SimulationConfig {
     std::optional<ArtifactMainStat> targetMainStat = std::nullopt;
 
     int resinBudget = 2000;
+    int trials = 1;
     int topK = 10;
     bool useStrongBox = false;
 
@@ -67,6 +68,18 @@ struct SimulationSummary {
     int domainRunsCompleted = 0;
     int strongboxRollsCompleted = 0;
     int totalFiveStarsFound = 0;
+
+    // Multi-trial statistics
+    int trials = 1;
+    int successfulTrials = 0;
+    double successRate = 0.0;
+    double medianResinSpent = 0.0;
+    double p90ResinSpent = 0.0;
+    double minResinSpent = 0.0;
+    double maxResinSpent = 0.0;
+    double meanResinSpent = 0.0;
+    std::vector<int> trialResinSpents;
+    std::vector<bool> trialTargetAchieved;
 
     std::vector<Artifact> topArtifacts;
     std::vector<HuntItemResultCpp> huntResults;

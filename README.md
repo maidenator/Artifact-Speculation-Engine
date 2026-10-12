@@ -90,7 +90,7 @@ ___
 **Dependencies and build**
 - [ ] Upgrade vite 5 → current and vitest 2 → current (clears the critical and high audit findings)
 - [ ] Remove `legacy-peer-deps=true` and fix the peer conflicts
-- [ ] Remove unused packages: `ts-morph`, `lucide-react`, and the packages used only by the dead `ui/button.tsx`
+- [X] Remove unused packages: `ts-morph`, `lucide-react`, and the packages used only by the dead `ui/button.tsx`
 - [ ] Add `URL_HASH SHA256` to the `nlohmann_json` FetchContent, and pin Catch2 to a commit
 - [ ] Delete the duplicate vendored `cpp/nlohmann/json.hpp`
 - [ ] Enable `-Wall -Wextra -Wconversion -Werror` for tests, and fix the 76 warnings

@@ -66,6 +66,16 @@ export interface SimulationResult {
     artifact: ArtifactOutput | null
     setIndex: number
   }[]
+  trials?: number
+  successfulTrials?: number
+  successRate?: number
+  medianResinSpent?: number
+  p90ResinSpent?: number
+  minResinSpent?: number
+  maxResinSpent?: number
+  meanResinSpent?: number
+  trialResinSpents?: number[]
+  trialTargetAchieved?: boolean[]
 }
 
 /** Result for a single hunt list item */
@@ -115,6 +125,7 @@ export enum SimulationMode {
 export interface SimulationSettings {
   mode: SimulationMode
   resinBudget: number
+  trials?: number
   topK: number
   useStrongBox: boolean
   minCritValue: number

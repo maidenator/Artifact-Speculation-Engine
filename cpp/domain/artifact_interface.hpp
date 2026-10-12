@@ -3,6 +3,8 @@
 #include <vector>
 #include <cstdint>
 #include <algorithm>
+#include <cmath>
+#include <numeric>
 
 #include "simulation_types.hpp"
 #include "serializer.hpp"
@@ -61,13 +63,14 @@ public:
         return serializer::serializeSummaryJson(summary);
     }
 
+    SimulationSummary executeSingleTrial(const SimulationConfig &config);
     SimulationSummary executeSimulation(const SimulationConfig &config);
 
 private:
     rng::Xoshiro256 masterRng;
 };
 
-inline SimulationSummary ArtifactInterface::executeSimulation(const SimulationConfig &config) {
+inline SimulationSummary ArtifactInterface::executeSingleTrial(const SimulationConfig &config) {
     SimulationSummary summary;
 
     const size_t effectiveK = std::clamp(static_cast<size_t>(config.topK), size_t(1), size_t(20));
@@ -270,6 +273,126 @@ inline SimulationSummary ArtifactInterface::executeSimulation(const SimulationCo
     summary.equivalentDays = static_cast<double>(summary.totalResinSpent) / 180.0;
     summary.topArtifacts.reserve(reservoir.size());
     for (const auto &entry : reservoir) {
+        summary.topArtifacts.push_back(entry.art);
+    }
+
+    return summary;
+}
+
+inline SimulationSummary ArtifactInterface::executeSimulation(const SimulationConfig &config) {
+    int totalTrials = std::max(1, config.trials);
+    if (totalTrials == 1) {
+        SimulationSummary single = executeSingleTrial(config);
+        single.trials = 1;
+        single.successfulTrials = single.targetAchieved ? 1 : 0;
+        single.successRate = single.targetAchieved ? 1.0 : 0.0;
+        single.medianResinSpent = single.totalResinSpent;
+        single.p90ResinSpent = single.totalResinSpent;
+        single.minResinSpent = single.totalResinSpent;
+        single.maxResinSpent = single.totalResinSpent;
+        single.meanResinSpent = single.totalResinSpent;
+        single.trialResinSpents = { single.totalResinSpent };
+        single.trialTargetAchieved = { single.targetAchieved };
+        return single;
+    }
+
+    SimulationSummary summary;
+    summary.trials = totalTrials;
+
+    const size_t effectiveK = std::clamp(static_cast<size_t>(config.topK), size_t(1), size_t(20));
+    struct ScoredArtifact {
+        Artifact art;
+        double score;
+    };
+    std::vector<ScoredArtifact> globalReservoir;
+    globalReservoir.reserve(effectiveK + 1);
+
+    auto updateGlobalReservoir = [&](const Artifact &art, double score) {
+        globalReservoir.push_back({art, score});
+        std::sort(globalReservoir.begin(), globalReservoir.end(), [](const ScoredArtifact &a, const ScoredArtifact &b) {
+            return a.score > b.score;
+        });
+        if (globalReservoir.size() > effectiveK) {
+            globalReservoir.pop_back();
+        }
+    };
+
+    std::vector<int> allResinSpents;
+    std::vector<int> successfulResinSpents;
+    std::vector<bool> allSuccesses;
+    allResinSpents.reserve(totalTrials);
+    allSuccesses.reserve(totalTrials);
+
+    long long sumDomainRuns = 0;
+    long long sumStrongboxRolls = 0;
+    long long sumFiveStars = 0;
+
+    for (int t = 0; t < totalTrials; ++t) {
+        SimulationSummary trialSummary = executeSingleTrial(config);
+
+        allResinSpents.push_back(trialSummary.totalResinSpent);
+        allSuccesses.push_back(trialSummary.targetAchieved);
+
+        sumDomainRuns += trialSummary.domainRunsCompleted;
+        sumStrongboxRolls += trialSummary.strongboxRollsCompleted;
+        sumFiveStars += trialSummary.totalFiveStarsFound;
+
+        if (trialSummary.targetAchieved) {
+            summary.successfulTrials++;
+            successfulResinSpents.push_back(trialSummary.totalResinSpent);
+        }
+
+        for (const auto &art : trialSummary.topArtifacts) {
+            double score = evaluateArtifactScore(art, config);
+            updateGlobalReservoir(art, score);
+        }
+
+        if (t == 0 || trialSummary.targetAchieved) {
+            summary.huntResults = trialSummary.huntResults;
+        }
+    }
+
+    summary.successRate = static_cast<double>(summary.successfulTrials) / totalTrials;
+    summary.targetAchieved = (summary.successfulTrials > 0);
+    summary.trialResinSpents = std::move(allResinSpents);
+    summary.trialTargetAchieved = std::move(allSuccesses);
+
+    summary.domainRunsCompleted = static_cast<int>(sumDomainRuns);
+    summary.strongboxRollsCompleted = static_cast<int>(sumStrongboxRolls);
+    summary.totalFiveStarsFound = static_cast<int>(sumFiveStars);
+
+    const std::vector<int> &resinData = (!successfulResinSpents.empty()) ? successfulResinSpents : summary.trialResinSpents;
+    std::vector<int> sortedResin = resinData;
+    std::sort(sortedResin.begin(), sortedResin.end());
+
+    auto computePercentile = [&](const std::vector<int> &data, double p) -> double {
+        if (data.empty()) return 0.0;
+        double idx = p * (data.size() - 1);
+        size_t lower = static_cast<size_t>(std::floor(idx));
+        size_t upper = static_cast<size_t>(std::ceil(idx));
+        if (lower == upper) return data[lower];
+        double weight = idx - lower;
+        return data[lower] * (1.0 - weight) + data[upper] * weight;
+    };
+
+    summary.minResinSpent = sortedResin.front();
+    summary.maxResinSpent = sortedResin.back();
+    summary.medianResinSpent = computePercentile(sortedResin, 0.5);
+    summary.p90ResinSpent = computePercentile(sortedResin, 0.9);
+
+    double sum = 0.0;
+    for (int r : sortedResin) sum += r;
+    summary.meanResinSpent = sum / sortedResin.size();
+
+    if (config.mode == SimulationMode::TargetGoal) {
+        summary.totalResinSpent = static_cast<int>(std::round(summary.medianResinSpent));
+    } else {
+        summary.totalResinSpent = config.resinBudget;
+    }
+    summary.equivalentDays = static_cast<double>(summary.totalResinSpent) / 180.0;
+
+    summary.topArtifacts.reserve(globalReservoir.size());
+    for (const auto &entry : globalReservoir) {
         summary.topArtifacts.push_back(entry.art);
     }
 
